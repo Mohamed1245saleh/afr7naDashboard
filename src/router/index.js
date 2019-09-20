@@ -33,7 +33,10 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        guest: true,
+      }
     },
     {
       path: '/dashboard',
@@ -112,24 +115,57 @@ const router = new Router({
       component: Others,
       secure: true
     },
+    {
+      path: '/events',
+      name: 'Events',
+      component: loadView('Events'),
+      secure: true
+    },
+    {
+      path: '/flash-ads',
+      name: 'FlashAds',
+      component: loadView('FlashAds'),
+      secure: true
+    },
   ]
 })
 
 
 router.beforeEach((to, from, next) => {
-  router.options.routes.forEach((route) => {
-    // If this is the current route and it's secure
-    if (to.matched[0].path === route.path && route.secure) {
-      axios.get(baseURL + 'api/admin/check')
-      .catch((e) => {
-        if(e.response.data == 'unauthenticated'){
-          Vue.ls.set('token', null)
-          return next('/login');
-        }
-      })
+  
+  if(to.matched.some(record => record.meta.secure)) {
+    if (localStorage.getItem('admin') == null) {
+        window.location.href = '/login'
+    } else {
+        next()
     }
-  });
-  next()
+  } else if(to.matched.some(record => record.meta.guest)) {
+    if(localStorage.getItem('admin') == null){
+        next()
+    }
+    else{
+        next({ name: 'Home'})
+    }
+  }else {
+      next() 
+  }
 })
+
+
+// router.beforeEach((to, from, next) => {
+//   router.options.routes.forEach((route) => {
+//     // If this is the current route and it's secure
+//     if (to.matched[0].path === route.path && route.secure) {
+//       axios.get(baseURL + 'api/admin/check')
+//       .catch((e) => {
+//         if(e.response.data == 'unauthenticated'){
+//           Vue.ls.set('token', null)
+//           return next('/login');
+//         }
+//       })
+//     }
+//   });
+//   next()
+// })
 
 export default router;

@@ -1,17 +1,15 @@
 <template>
 <v-app id="inspire" style="overlay:hidden">
-    <v-navigation-drawer color="blue" right v-model="drawer"  app temporary fixed>
+    <v-navigation-drawer color="blue" right v-model="drawer" app temporary fixed>
         <v-toolbar flat class="transparent">
             <v-list class="pa-0">
                 <v-list-tile avatar>
-                    <img src="../assets/logo.png">
-                    
+                    <img src="../assets/logo.jpeg" style="width: 100px">
                 </v-list-tile>
             </v-list>
         </v-toolbar>
         <v-list>
             <template v-for="item in items">
-
                 <v-layout v-if="item.heading" :key="item.heading" row align-center>
                     <v-flex xs6>
                         <v-subheader v-if="item.heading">
@@ -59,42 +57,34 @@
     <v-toolbar :clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed>
         <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <span class="hidden-sm-and-down">		لوحة التحكم 		</span>
+            <span class="hidden-sm-and-down">لوحة التحكم</span>
         </v-toolbar-title>
        
         <v-spacer></v-spacer>
-         
-       
-     
-     
-       
+    
          <v-btn icon  @click="countryDialog = !countryDialog">
-                        <v-icon >account_balance</v-icon>
-                        
-                    </v-btn>
+            <v-icon >account_balance</v-icon>
+        </v-btn>
                     
       <notifications/>
 
 
         <v-btn icon  @click="dialog = !dialog">
-                        <v-icon >lock</v-icon>
-                        
-                    </v-btn>
+            <v-icon >lock</v-icon>
+        </v-btn>
         <v-btn icon  @click="logout">
-                        <v-icon >logout</v-icon>
-                        
-                    </v-btn>
+            <v-icon >logout</v-icon>
+        </v-btn>
                     
     </v-toolbar>
+
+    
     <v-content>
-                <slot></slot>
+        <slot></slot>
     </v-content>
 
 
-
-
-
-  <v-dialog v-model="countryDialog" width="400px">
+    <v-dialog v-model="countryDialog" width="400px">
         <v-card>
             <v-card-title class="grey lighten-4 py-4 title">
                 تغيير الدولة الافتراضية 
@@ -118,13 +108,6 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
-
-
-
-
-
-
-
 
     <v-dialog v-model="dialog" width="400px">
         <v-card>
@@ -172,6 +155,16 @@ export default {
         icon: 'list',
         text: 'الطلبات',
         url: '/dashboard/requests'
+      },
+      {
+        icon: 'list',
+        text: 'الأحداث',
+        url: '/events'
+      },
+      {
+        icon: 'list',
+        text: 'الإعلانات',
+        url: '/flash-ads'
       },
       {
         icon: 'content_copy',
@@ -281,10 +274,25 @@ export default {
         })
     },
     logout() {
-        this.$ls.set('token', null)
-        this.$http.get('api/admin/logout');
-        this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + null;
-        this.$router.push('/login')
+        // this.$ls.set('token', null)
+        // this.$ls.set('admin', null)
+        // this.$http.get('api/admin/logout');
+        // this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + null;
+        // this.$router.push('/login')
+        // //////
+        this.$http.post('api/auth/logout')
+            .then( (res) => {
+                this.$ls.remove('token', null);
+                this.$ls.remove('admin', null);
+                this.$http.defaults.headers.common["Authorization"] = 'Bearer ' + null;
+                window.location.href = '/'
+            }).catch(({res}) => {
+                this.$ls.remove('token', null);
+                this.$ls.remove('admin', null);
+                this.$http.defaults.headers.common["Authorization"] = 'Bearer ' + null;
+                window.location.href = '/'
+            }) ;
+        // /////
     },
     resetPassword (){
         if(this.resetting) return;

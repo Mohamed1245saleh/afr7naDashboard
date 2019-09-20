@@ -1,4 +1,5 @@
-// const baseURL = 'http://127.0.0.1:8000/'
+
 const baseURL = 'http://souq24app.com/'
+// const baseURL = 'http://134.209.18.160/api/'
 
 export default baseURL;

@@ -24,7 +24,7 @@
               </v-toolbar>
               <form @submit.prevent="login">
               <v-card-text>
-                  <v-text-field v-model="user.username" prepend-icon="person" name="login" label="اسم المستخدم" type="text"></v-text-field>
+                  <v-text-field v-model="user.email" prepend-icon="person" name="login" label="البريد الإليكتروني" type="email"></v-text-field>
                   <v-text-field v-model="user.password" id="password" prepend-icon="lock" name="password" label="كلمة السر" type="password"></v-text-field>
               </v-card-text>
               <v-card-actions>
@@ -44,7 +44,7 @@
 export default {
   data: () => ({
     user:{
-      username: null,
+      email: null,
       password: null,
     },
     connecting: false,
@@ -57,14 +57,18 @@ export default {
   methods: {
     login() {
       this.connecting = true
-      this.$http.post('api/admin/login', this.user)
+      this.$http.post('admin/adminLogin', this.user)
       .then(res=> { 
-        this.$ls.set('token', res.data.api_token, 24 * 60 * 60 * 1000)
-        this.$ls.set('username', this.user.username, 24 * 60 * 60 * 1000)
-        this.$ls.set('country_id', res.data.admin.default_country, 24 * 60 * 60 * 1000)
-        this.connecting = false
+        console.log('res', res);
+        
+        this.$ls.set('token', res.data.access_token, 24 * 60 * 60 * 1000)
+        this.$ls.set('admin', res.data.admin, 24 * 60 * 60 * 1000)
+
+        //this.$ls.set('admin', this.user.username, 24 * 60 * 60 * 1000)
+        // this.$ls.set('country_id', res.data.admin.default_country, 24 * 60 * 60 * 1000)
+        // this.connecting = false
         this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + this.$ls.get('token', null);
-        this.$router.push('/dashboard/requests')
+        this.$router.push('/events')
       })
       .catch( e => {
         if(e.response.data.error == 'username not found!'){

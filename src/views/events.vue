@@ -1,100 +1,77 @@
 <template>
-<v-container>
-<v-tabs
-    grow
-    dark
-    icons-and-text
-    fixed-tabs
-    style="position:absolute;width:100%;top:0px;left:0;right:0"
-  >
-    <v-tabs-slider color="red darken-2"></v-tabs-slider>
-
-    <v-tab class="tab" @click="fetchRenamingTitles" light href="#tab-1">
-      العناوين 
-      <v-icon>subject</v-icon>
-    </v-tab>
-
-    <v-tab class="tab" @click="fetchRenamingCategories" light href="#tab-2">
-      الاقسام الرئيسية 
-      <v-icon>crop_din</v-icon>
-    </v-tab>
-
-    <v-tab href="#tab-3" @click="fetchRenamingSubCategories">
-      الاقسام الفرعية
-      <v-icon>filter_none</v-icon>
-    </v-tab>
-
-    <v-tab-item
-      id="tab-1"
+  <v-container>
+      <v-tabs
+      grow
+      dark
+      icons-and-text
+      fixed-tabs
+      v-model="model"
+      style="position:absolute;width:100%;top:0px;left:0;right:0"
     >
-      <v-card flat>
-        <v-card-text row >
-            <v-layout justify-center>
-            <v-flex md10>                
-             <renaming-titles-table ref="renamingTitles" tableTitle="تعديل العناوين" icon="subject"/> 
-            </v-flex>
-            </v-layout>
-        </v-card-text>
-      </v-card>
-    </v-tab-item>
+      <v-tabs-slider color="red darken-2"></v-tabs-slider>
 
-    <v-tab-item
-      id="tab-2"
-    >
-      <v-card flat>
-        <v-card-text row >
-            <v-layout justify-center>
-            <v-flex md10>                
-             <renaming-categories-table ref="renamingCategories"  title="تعديل مسميات الاقسام الرئيسية" icon="crop_din"/> 
-            </v-flex>
-            </v-layout>
-        </v-card-text>
-      </v-card>
-    </v-tab-item>
+      <v-tab v-for="(item, index) in categories" :key="index" class="tab" light :href="`#tab-${item.id}`">
+        {{ item.title_ar }} 
+        <v-icon>subject</v-icon>
+      </v-tab>
+      <v-tabs-items v-model="model">
+        <v-tab-item v-for="(item, index) in categories" :key="index" :id="`tab-${item.id}`">
+          <v-card flat>
+            <v-card-text row >
+                <v-layout justify-center>
+                  <v-flex md10>
+                    <weddings-table v-if="item.id == 1" :cat_id="item.id" :title="item.title_ar" icon="link"/> 
 
-    <v-tab-item
-      id="tab-3"
-    >
-      <v-card flat>
-        <v-card-text> 
-          <v-layout justify-center>
-            <v-flex md10> 
-            <renaming-sub-categories-table  ref="renamingSubCategories" title="تعديل مسميات الاقسام الفرعية" icon="filter_none"/> 
-            </v-flex>
-            </v-layout>
-        </v-card-text>
-      </v-card>
-    </v-tab-item>
-  </v-tabs>
-</v-container>
+                    <occasions-table v-else-if="item.id == 2" :cat_id="item.id" :title="item.title_ar" icon="link"/>
+                    
+                    <invetations-table v-else-if="item.id == 3" :cat_id="item.id" :title="item.title_ar" icon="link"/>
+                  </v-flex>
+                </v-layout>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-tabs>
+  </v-container>
 </template>
 
 <script>
-import RenamingTitlesTable from '../components/tables/RenamingTitlesTable'
-import RenamingCategoriesTable from '../components/tables/RenamingCategoriesTable'
-import RenamingSubCategoriesTable from '../components/tables/RenamingSubCategoriesTable'
+import WeddingsTable from '../components/tables/WeddingsTable'
+import OccasionsTable from '../components/tables/OccasionsTable'
+import InvetationsTable from '../components/tables/InvetationsTable'
+
 export default {
-    components: {
-        RenamingTitlesTable,
-        RenamingCategoriesTable,
-        RenamingSubCategoriesTable
-    },
-    methods: {
-      fetchRenamingTitles(){
-        this.$refs.renamingTitles.fetch();
-      },
-      fetchRenamingCategories(){
-        this.$refs.renamingCategories.fetch();
-      },
-      fetchRenamingSubCategories(){
-        this.$refs.renamingSubCategories.fetch();
-      }
+  data() {
+    return {
+      categories: [],
+      model:"tab-1"
     }
+  },
+  components: {
+    WeddingsTable,
+    OccasionsTable,
+    InvetationsTable
+  },
+  created() {
+    this.getMainCategories()
+  },
+  methods: {
+    getMainCategories(){
+      let app = this
+      app.$http.get('admin/main_category')
+        .then( res => {
+            console.log('res => ', res)
+            app.categories = res.data
+          } 
+        )
+        .catch( (er) => {
+            // console.log(res)
+        })
+    }
+  },
 }
 </script>
 
-<style scoped>
-    .active.tab{
-        color:red;
-    }
+<style>
+
 </style>
