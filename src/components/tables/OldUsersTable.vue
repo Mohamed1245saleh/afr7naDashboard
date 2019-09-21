@@ -2,69 +2,15 @@
 <div class="elevation-2">
   <vuetify-alert @message="alert.message = ''" :message="alert.message" :type="alert.type" />
     <v-toolbar flat color="white">
-      <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
-      >
-      </v-text-field>
-      
-      
-      <v-dialog v-model="dialog" max-width="500px">
-        
-        <v-tooltip top slot="activator">
-          <!-- <v-btn slot="activator" dark color="primary">Button</v-btn> -->
-          <v-btn 
-            slot="activator" 
-            color="primary" 
-            dark 
-            class="mb-2" 
-            @click="edit = false"
-          > 
-            <v-icon>add</v-icon>
-          </v-btn>
-          <span>إضافة مدير جديد</span>
-        </v-tooltip>
-        <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn> -->
-        <v-card>
-            <v-card-title>
-                <span class="headline">تصنيف جديد</span>
-            </v-card-title>
-            <v-card-text>
-            <ul>
-                <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                <ul>
-                    <li v-for="err in error" :key="err + Math.random()">
-                    {{err}}
-                    </li>
-                </ul>
-                </li>
-            </ul>
-            </v-card-text>
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-text-field v-model="newUser.name" label=" اسم التصنيف بالعربية" />
-                    <v-text-field v-model="newUser.email"  label="اسم التصنيف بالانجليزية" />
-                    <v-text-field v-model="newUser.phone"  label="اسم التصنيف بالانجليزية" />
-                    <v-text-field v-model="newUser.password"  label="اسم التصنيف بالانجليزية" />
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-            </v-card-actions>
-        </v-card> 
-      </v-dialog>
+        <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="بحث"
+            single-line
+            hide-details
+        ></v-text-field>
     </v-toolbar>
     <v-data-table
         :headers="headers"
@@ -77,13 +23,10 @@
         <template slot="items" slot-scope="props">
             <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-
             <td class="text-xs-right"  v-if="props.item.email">{{ props.item.email }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-
             <td class="text-xs-right"  v-if="props.item.phone">{{ props.item.phone }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-
             <td class="text-xs-right">
               <img v-if="props.item.image"  :src="$root.$data.baseURL+props.item.image" :ref="'user_'+props.item.id" @error="imageFallBack(props.item.id)" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" @click="() => {image = props.item.image;mdialog = true;}">
               
@@ -180,13 +123,6 @@ export default {
     forceDelete:false,
     image: null,
     errors:[],
-    newUser:{
-      id:null,
-      name: null,
-      email: null,
-      phone: null,
-      password: null
-    },
     user: null,
     edit:false,
     dialog:false,
@@ -289,15 +225,14 @@ export default {
           })
         }
         else {
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/users/search/' + this.search :'admin/admins?page=' + page
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/users/search/' + this.search :'api/admin/users?page=' + page
         this.$http.get(endpoint)
         .then( (res) => {
-          console.log('admins', res);
-          
-          let items = res.data.admins.data
-          const total = res.data.admins.total
-          this.pagination.rowsPerPage = res.data.admins.per_page
-          this.pagination.totalItems = res.data.admins.total
+           
+          let items = res.data.data
+          const total = res.data.total
+          this.pagination.rowsPerPage = res.data.per_page
+          this.pagination.totalItems = res.data.total
           setTimeout(() => {
             this.loading = false
           }, 300);

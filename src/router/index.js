@@ -127,6 +127,24 @@ const router = new Router({
       component: loadView('FlashAds'),
       secure: true
     },
+    {
+      path: '/admins',
+      name: 'Admins',
+      component: loadView('Admins'),
+      secure: true
+    },
+    {
+      path: '/main-categories',
+      name: 'MainCategories',
+      component: loadView('MainCategories'),
+      secure: true
+    },
+    {
+      path: '/countries',
+      name: 'Countries',
+      component: loadView('Countries'),
+      secure: true
+    },
   ]
 })
 

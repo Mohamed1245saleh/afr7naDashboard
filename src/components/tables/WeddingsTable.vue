@@ -13,48 +13,48 @@
             ></v-text-field>
             <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
             <v-dialog v-model="dialog" max-width="500px">
-                <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
-                <v-card>
-                    <v-card-title>
-                        <span class="headline">تصنيف جديد</span>
-                    </v-card-title>
-                    <v-card-text>
-                    <ul>
-                        <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                        <ul>
-                            <li v-for="err in error" :key="err + Math.random()">
-                            {{err}}
-                            </li>
-                        </ul>
-                        </li>
-                    </ul>
-                    </v-card-text>
-                    <v-card-text>
-                      <v-container grid-list-md>
-                        <v-layout wrap>
-                          <v-flex>
-                          <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
-                          <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
-                          <v-btn color="info" @click="$refs.image_input.click()">
-                              <v-icon>image</v-icon>
-                              صورة
-                          </v-btn>
-                          <input style="display:none" type="file" ref="image_input">
-                          <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
+              <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
+              <v-card>
+                  <v-card-title>
+                      <span class="headline">تصنيف جديد</span>
+                  </v-card-title>
+                  <v-card-text>
+                  <ul>
+                      <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                      <ul>
+                          <li v-for="err in error" :key="err + Math.random()">
+                          {{err}}
+                          </li>
+                      </ul>
+                      </li>
+                  </ul>
+                  </v-card-text>
+                  <v-card-text>
+                    <v-container grid-list-md>
+                      <v-layout wrap>
+                        <v-flex>
+                        <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
+                        <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
+                        <v-btn color="info" @click="$refs.image_input.click()">
+                            <v-icon>image</v-icon>
+                            صورة
+                        </v-btn>
+                        <input style="display:none" type="file" ref="image_input">
+                        <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
 
-                          <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
-                          
-                          </v-flex>
-                        </v-layout>
-                      </v-container>
-                    </v-card-text>
+                        <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
+                        
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-card-text>
 
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                        <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-                    </v-card-actions>
-                </v-card>
+                  <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+                      <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                  </v-card-actions>
+              </v-card> -->
             </v-dialog>
         </v-toolbar>
         <v-data-table
@@ -67,17 +67,57 @@
           :pagination.sync="pagination"
         >
           <template slot="items" slot-scope="props">
+
             <td class="text-xs-right"  v-if="props.item.title">{{ props.item.title }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+
             <td class="text-xs-right">
               <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
-            <td class="text-xs-right" v-if="props.item.main_category_id">{{ props.item.main_category_id }}</td>
+
+            <!-- <td class="text-xs-right" v-if="props.item.main_category_id">{{ props.item.main_category_id }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مسمى</td> -->
+
+            <td class="text-xs-right"  v-if="props.item.country.title_ar">{{ props.item.country.title_ar }}</td>
+
+            <td class="text-xs-right"  v-if="props.item.region.title_ar">{{ props.item.region.title_ar }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right"  v-if="props.item.country_id">{{ props.item.country_id }}</td>
-            <td class="text-xs-right"  v-if="props.item.region_id">{{ props.item.region_id }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-right"  v-if="props.item.invitation_start_time">{{ props.item.invitation_start_time }}</td>
+            <td class="text-xs-right" v-else>لا يوجد وقت محدد</td>
+
             <td class="justify-right layout px-0">
+
+              <v-btn small flat color="blue" @click="editing(props.item)"> 
+                ارسال الإشعارات
+                <v-icon  class="mr-2 blue--text" >
+                  add_alert
+                </v-icon>
+              </v-btn>
+
+              <!--  -->
+              <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
+                تشغيل
+                <v-icon  class="mr-2 green--text" >
+                  done
+                </v-icon>
+              </v-btn>
+              <v-btn v-else small flat color="red" @click="editing(props.item)"> 
+                تعطيل
+                <v-icon  class="mr-2 red--text" >
+                  clear
+                </v-icon>
+              </v-btn>
+
+              <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
+                مسح
+                <v-icon class="red--text"  >
+                  delete
+                </v-icon>
+              </v-btn>
+            </td>
+
+            <!-- <td class="justify-right layout px-0">
               <v-btn small flat color="blue" @click="editing(props.item)"> 
                 تعديل
                 <v-icon  class="mr-2 blue--text" >
@@ -90,7 +130,8 @@
                   clear
                 </v-icon>
               </v-btn>
-            </td>
+            </td> -->
+
           </template>
           <v-alert slot="no-results" :value="true" color="error" icon="warning">
               لا يوجد نتائج للبحث "{{search}}"
@@ -163,12 +204,12 @@ export default {
         align: 'right',
         sortable: false
       },
-      {
-        text: 'الفئة',
-        align: 'right',
-        value: 'category',
-        sortable: false
-      },
+      // {
+      //   text: 'الفئة',
+      //   align: 'right',
+      //   value: 'category',
+      //   sortable: false
+      // },
       {
         text: 'الدولة',
         align: 'right',
@@ -182,11 +223,23 @@ export default {
         sortable: false
       },
       {
+        text: 'وقت بداية الدعوة',
+        align: 'right',
+        value: 'invitationStartTime',
+        sortable: false
+      },
+      {
         text: 'عمليات',
         align: 'center',
         value: 'actions',
         sortable: false
-      }
+      },
+      // {
+      //   text: 'عمليات',
+      //   align: 'center',
+      //   value: 'oldActions',
+      //   sortable: false
+      // }
     ],
     editedItem: null,
     alert: {
@@ -279,7 +332,7 @@ export default {
         else {
           // const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory
           
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'user/event?title=event&category=1'
+        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'admin/event?title=event&category=1'
         this.$http.get(endpoint)
         .then( (res) => {
           let items = res.data.data

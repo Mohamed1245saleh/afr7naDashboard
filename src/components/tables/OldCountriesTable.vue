@@ -27,14 +27,14 @@
                             <v-flex>
                               <v-text-field v-model="country.title_ar" label=" اسم الدولة بالعربية" />
                               <v-text-field v-model="country.title_en"  label="اسم الدولة بالانجليزية" />
-                               <v-text-field v-model="country.currency"  label=" عملة الدولة بالعربية" />
-                                <!-- <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                              <!-- <v-btn color="info" @click="$refs.image_input.click()">
+                               <v-text-field v-model="country.currency_ar"  label=" عملة الدولة بالعربية" />
+                                <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" />
+                              <v-btn color="info" @click="$refs.image_input.click()">
                                 <v-icon>image</v-icon>
                                 صورة
-                              </v-btn> -->
-                              <!-- <input style="display:none" type="file" ref="image_input" > -->
-                              <v-text-field v-model="country.code"  label="كود الدولة" />
+                              </v-btn>
+                              <input style="display:none" type="file" ref="image_input" >
+                              <v-text-field v-model="country.Phone_key"  label="كود الدولة" />
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -59,24 +59,25 @@
         <template slot="items" slot-scope="props">
             <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
-
             <td class="text-xs-right" v-if="props.item.title_en">{{ props.item.title_en }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
-            <!-- <td class="text-xs-right">
-              <img @click="openDialogue(props.item)" style="cursor:pointer" :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
-            </td> -->
 
-            <td class="text-xs-right"  v-if="props.item.code">{{ props.item.code }}</td>
+           
+
+
+             <td class="text-xs-right">
+              <img @click="openDialogue(props.item)" style="cursor:pointer"  :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
+            </td>
+            <td class="text-xs-right"  v-if="props.item.Phone_key">{{ props.item.Phone_key }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
 
-            <td class="text-xs-right" v-if="props.item.currency">{{ props.item.currency }}</td>
+             <td class="text-xs-right" v-if="props.item.currency_ar">{{ props.item.currency_ar }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
-            <!-- <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td> -->
-
+            <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
+            <td class="text-xs-right" v-else>لم يحدد</td>
             <td class="justify-right layout px-0">
                 <v-btn small flat color="blue" @click="editing(props.item)"> 
                   تعديل
@@ -84,10 +85,10 @@
                       edit
                   </v-icon>
                 </v-btn>
-                <v-btn v-if="props.item.status != 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
-                  مسح
+                <v-btn v-if="props.item.status == 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
+                  تعطيل
                   <v-icon class="red--text"  >
-                      delete
+                      not_interested
                   </v-icon>
                 </v-btn>  
                 <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
@@ -97,7 +98,6 @@
                   </v-icon>
                 </v-btn>
             </td>
-
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
             لا يوجد نتائج للبحث "{{search}}"
@@ -166,17 +166,16 @@ export default {
       id: null,
       title_ar: null,
       title_en: null,
-      currency:"",
-      code: '',
-      // currency_ar:"",
-      // category: {
-      //   id: null,
-      //   title: null
-      // },
-      // rel_category: {
-      //   id: null,
-      //   title: null
-      // }
+      currency_en:"",
+      currency_ar:"",
+      category: {
+        id: null,
+        title: null
+      },
+      rel_category: {
+        id: null,
+        title: null
+      }
     },
     edit: false,
     dialog: false,
@@ -203,12 +202,12 @@ export default {
         value: "userName",
         sortable: false
       },
-      // {
-      //   text: "الصورة",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
+      {
+        text: "الصورة",
+        align: "right",
+        value: "category",
+        sortable: false
+      },
       {
         text: "كود الدولة",
         align: "right",
@@ -216,20 +215,20 @@ export default {
         sortable: false
       },
        {
-        text: "العملة",
+        text: "العملة بالعربي",
         align: "right",
         value: "category",
         sortable: false
       },
-      // {
-      //   text: "العملة بالانجليزية",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
+       {
+        text: "العملة بالانجليزية",
+        align: "right",
+        value: "category",
+        sortable: false
+      },
       {
         text: "عمليات",
-        align: "cneter",
+        align: "right",
         value: "actions",
         sortable: false
       }
@@ -268,7 +267,7 @@ export default {
           id: null,
           title_ar: null,
           title_en: null,
-          code: null
+          Phone_key: null
         };
       }
       val || this.close();
@@ -308,7 +307,7 @@ export default {
             total
           });
         } else {
-          const endpoint = `admin/country?page=${page}`;
+          const endpoint = `api/admin/countries?page=${page}`;
           this.$http.get(endpoint).then(res => {
             let items = res.data.data;
             const total = res.data.total;
@@ -369,45 +368,43 @@ export default {
     editing(item) {
       this.dialog = !this.dialog;
       this.edit = true;
-      this.country.id = item.id;
+      this.country.id = item.country_id;
       this.country.title_ar = item.title_ar;
       this.country.title_en = item.title_en;
-      this.country.code = item.code;
-      this.country.currency = item.currency;
-      // this.country.currency_ar = item.currency_ar;
+      this.country.Phone_key = item.Phone_key;
+       this.country.currency_en = item.currency_en;
+       this.country.currency_ar = item.currency_ar;
 
       this.index = this.requests.indexOf(item)
     },
     save() {
-      // alert('doic')
       const index = this.index
-      // let image = this.$refs.image_input.files[0];
-      // if (typeof image == "undefined") image = null;
-      let newformdata = new FormData();
-      const editformdata = {};
-      // if (image) formdata.append("image", image);
+      let image = this.$refs.image_input.files[0];
+      if (typeof image == "undefined") image = null;
+      let formdata = new FormData();
+      if (image) formdata.append("image", image);
       if (this.country.title_ar)
-        newformdata.append("title_ar", this.country.title_ar);
-        editformdata.title_ar = this.country.title_ar
+        formdata.append("title_ar", this.country.title_ar);
       if (this.country.title_en)
-        newformdata.append("title_en", this.country.title_en);
-        editformdata.title_en = this.country.title_en
-      if (this.country.code)
-        newformdata.append("code", this.country.code);
-        editformdata.code = this.country.code
-      if (this.country.currency)
-        newformdata.append("currency", this.country.currency);
-        editformdata.currency = this.country.currency
-      // if (this.country.currency_en)
-      //   newformdata.append("currency_en", this.country.currency_en);
-      console.log('editformdata', editformdata);
-      
+        formdata.append("title_en", this.country.title_en);
+      if (this.country.Phone_key)
+        formdata.append("Phone_key", this.country.Phone_key);
+         if (this.country.currency_ar)
+        formdata.append("currency_ar", this.country.currency_ar);
+         if (this.country.currency_en)
+        formdata.append("currency_en", this.country.currency_en);
+
       if (this.edit) {
-        this.$http.put(`admin/country/${this.country.id}`, editformdata)
+        this.$http
+          .post(
+            "api/admin/countries/update/" +
+              this.country.id +
+              "?page=" +
+              this.page,
+            formdata
+          )
           .then(res => {
-            console.log(res.data);
-            
-            this.$set(this.requests, index, editformdata)
+            this.$set(this.requests, index, res.data)
             this.alert.type = "warning";
             this.alert.message = "تم تعديل الدولة!";
             this.close();
@@ -416,7 +413,7 @@ export default {
               id: null,
               title_ar: null,
               title_en: null,
-              code: null
+              Phone_key: null
             };
           })
           .catch(({ response }) => {
@@ -424,7 +421,7 @@ export default {
           });
       } else {
         this.$http
-          .post("admin/country" + "?page=" + this.page, newformdata)
+          .post("api/admin/countries" + "?page=" + this.page, formdata)
           .then(res => {
             this.requests.push(res.data)
             this.alert.type = "info";
@@ -435,7 +432,7 @@ export default {
               id: null,
               title_ar: null,
               title_en: null,
-              code: null
+              Phone_key: null
             };
           })
           .catch(({ response }) => {

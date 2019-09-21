@@ -62,11 +62,11 @@
        
         <v-spacer></v-spacer>
     
-         <v-btn icon  @click="countryDialog = !countryDialog">
+         <!-- <v-btn icon  @click="countryDialog = !countryDialog">
             <v-icon >account_balance</v-icon>
-        </v-btn>
+        </v-btn> -->
                     
-      <notifications/>
+      <!-- <notifications/> -->
 
 
         <v-btn icon  @click="dialog = !dialog">
@@ -151,10 +151,15 @@ export default {
       password: null,
     },
     items: [
+    //   {
+    //     icon: 'list',
+    //     text: 'الطلبات',
+    //     url: '/dashboard/requests'
+    //   },
       {
-        icon: 'list',
-        text: 'الطلبات',
-        url: '/dashboard/requests'
+        icon: 'supervisor_account',
+        text: 'المديرين',
+        url: '/admins'
       },
       {
         icon: 'list',
@@ -162,82 +167,92 @@ export default {
         url: '/events'
       },
       {
-        icon: 'list',
+        icon: 'devices_other',
         text: 'الإعلانات',
         url: '/flash-ads'
       },
       {
-        icon: 'content_copy',
-        'icon-alt': 'content_copy',
-        text: 'الاعلانات ',
-        children: [
-          {
-            icon: 'list',
-            text: 'الاعلانات',
-            url: '/dashboard/ads'
-          },
-          {
-            icon: 'star',
-            text: 'طلبات التثبيت',
-            url: '/dashboard/special-products-order'
-          },
-          {
-            icon: 'attach_money',
-            text: 'الباقة',
-            url: '/dashboard/packages'
-          }
-        ]
-      },
-      {
-        icon: 'layers',
-        'icon-alt': 'layers',
-        text: 'تعديل الاقسام',
-        children: [
-            {
-                icon: 'edit',
-                text: 'الاقسام',
-                url: '/dashboard/categories/names'
-            },
-            {
-                icon: 'ballot',
-                text: 'التصنيفات',
-                url: '/dashboard/categories/link'
-            }
-        ]
-      },
-      {
-        icon: 'bar_chart',
-        'icon-alt': 'bar_chart',
-        text: 'الاعلانات التجارية',
-        children: [
-          {
-            icon: 'list',
-            text: 'الطلبات',
-            url: '/dashboard/commerical/requests'
-          },
-          {
-            icon: 'layers',
-            text: 'التصنيفات',
-            url: '/dashboard/commerical/categories'
-          },
-          {
-            icon: 'settings',
-            text: 'الاعدادات',
-            subtext: 'رفع | حذف | تعديل',
-            url: '/dashboard/commerical/settings'
-          }
-        ]
-      },
-      {
-        icon: 'people',
-        text: 'المستخدمين',
-        url: '/dashboard/users'
+        icon: 'list',
+        text: 'الأقسام',
+        url: '/main-categories'
       },
       {
         icon: 'language',
         text: 'الدول',
-        url: '/dashboard/countries'
+        url: '/countries'
       },
+    //   {
+    //     icon: 'content_copy',
+    //     'icon-alt': 'content_copy',
+    //     text: 'الاعلانات ',
+    //     children: [
+    //       {
+    //         icon: 'list',
+    //         text: 'الاعلانات',
+    //         url: '/dashboard/ads'
+    //       },
+    //       {
+    //         icon: 'star',
+    //         text: 'طلبات التثبيت',
+    //         url: '/dashboard/special-products-order'
+    //       },
+    //       {
+    //         icon: 'attach_money',
+    //         text: 'الباقة',
+    //         url: '/dashboard/packages'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     icon: 'layers',
+    //     'icon-alt': 'layers',
+    //     text: 'تعديل الاقسام',
+    //     children: [
+    //         {
+    //             icon: 'edit',
+    //             text: 'الاقسام',
+    //             url: '/dashboard/categories/names'
+    //         },
+    //         {
+    //             icon: 'ballot',
+    //             text: 'التصنيفات',
+    //             url: '/dashboard/categories/link'
+    //         }
+    //     ]
+    //   },
+    //   {
+    //     icon: 'bar_chart',
+    //     'icon-alt': 'bar_chart',
+    //     text: 'الاعلانات التجارية',
+    //     children: [
+    //       {
+    //         icon: 'list',
+    //         text: 'الطلبات',
+    //         url: '/dashboard/commerical/requests'
+    //       },
+    //       {
+    //         icon: 'layers',
+    //         text: 'التصنيفات',
+    //         url: '/dashboard/commerical/categories'
+    //       },
+    //       {
+    //         icon: 'settings',
+    //         text: 'الاعدادات',
+    //         subtext: 'رفع | حذف | تعديل',
+    //         url: '/dashboard/commerical/settings'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     icon: 'people',
+    //     text: 'المستخدمين',
+    //     url: '/dashboard/users'
+    //   },
+    //   {
+    //     icon: 'language',
+    //     text: 'الدول',
+    //     url: '/dashboard/countries'
+    //   },
       {
         icon: 'settings',
         text: 'اعدادات عامة',
