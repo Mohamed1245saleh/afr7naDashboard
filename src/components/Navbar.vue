@@ -10,6 +10,7 @@
         </v-toolbar>
         <v-list>
             <template v-for="item in items">
+
                 <v-layout v-if="item.heading" :key="item.heading" row align-center>
                     <v-flex xs6>
                         <v-subheader v-if="item.heading">
@@ -20,6 +21,7 @@
                         <a href="#!" class="body-2 black--text">EDIT</a>
                     </v-flex>
                 </v-layout>
+
                 <v-list-group v-else-if="item.children" v-model="item.model" :key="item.text" :prepend-icon="item.model ? item.icon : item['icon-alt']" append-icon="">
                     <v-list-tile slot="activator">
                         <v-list-tile-content>
@@ -42,6 +44,7 @@
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
+
                 <v-list-tile v-else :key="item.title" :to="item.url">
                     <v-list-tile-action class=" grey--text  text--darken-2">
                         <v-icon>{{ item.icon }}</v-icon>
@@ -51,6 +54,7 @@
                         <v-list-tile-title class="subheading text-xs-right grey--text  text--darken-2" v-html="item.text"></v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+
             </template>
         </v-list>
     </v-navigation-drawer>
@@ -151,11 +155,6 @@ export default {
       password: null,
     },
     items: [
-    //   {
-    //     icon: 'list',
-    //     text: 'الطلبات',
-    //     url: '/dashboard/requests'
-    //   },
       {
         icon: 'supervisor_account',
         text: 'المديرين',
@@ -181,45 +180,45 @@ export default {
         text: 'الدول',
         url: '/countries'
       },
-    //   {
-    //     icon: 'content_copy',
-    //     'icon-alt': 'content_copy',
-    //     text: 'الاعلانات ',
-    //     children: [
-    //       {
-    //         icon: 'list',
-    //         text: 'الاعلانات',
-    //         url: '/dashboard/ads'
-    //       },
-    //       {
-    //         icon: 'star',
-    //         text: 'طلبات التثبيت',
-    //         url: '/dashboard/special-products-order'
-    //       },
-    //       {
-    //         icon: 'attach_money',
-    //         text: 'الباقة',
-    //         url: '/dashboard/packages'
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     icon: 'layers',
-    //     'icon-alt': 'layers',
-    //     text: 'تعديل الاقسام',
-    //     children: [
-    //         {
-    //             icon: 'edit',
-    //             text: 'الاقسام',
-    //             url: '/dashboard/categories/names'
-    //         },
-    //         {
-    //             icon: 'ballot',
-    //             text: 'التصنيفات',
-    //             url: '/dashboard/categories/link'
-    //         }
-    //     ]
-    //   },
+      {
+        icon: 'content_copy',
+        'icon-alt': 'content_copy',
+        text: 'الاعلانات ',
+        children: [
+          {
+            icon: 'list',
+            text: 'الاعلانات',
+            url: '/dashboard/ads'
+          },
+          {
+            icon: 'star',
+            text: 'طلبات التثبيت',
+            url: '/dashboard/special-products-order'
+          },
+          {
+            icon: 'attach_money',
+            text: 'الباقة',
+            url: '/dashboard/packages'
+          }
+        ]
+      },
+      {
+        icon: 'layers',
+        'icon-alt': 'layers',
+        text: 'تعديل الاقسام',
+        children: [
+            {
+                icon: 'edit',
+                text: 'الاقسام',
+                url: '/dashboard/categories/names'
+            },
+            {
+                icon: 'ballot',
+                text: 'التصنيفات',
+                url: '/dashboard/categories/link'
+            }
+        ]
+      },
     //   {
     //     icon: 'bar_chart',
     //     'icon-alt': 'bar_chart',
@@ -337,3 +336,11 @@ export default {
   }
 }
 </script>
+<style>
+    .v-list__tile__content {
+        text-align: right !important;
+    }
+    .v-list__tile__title {
+        text-align: right !important;
+    }
+</style>

@@ -103,12 +103,12 @@ const router = new Router({
       component: Users,
       secure: true
     },
-    {
-      path: '/dashboard/countries',
-      name: 'Countries',
-      component: Countries,
-      secure: true
-    },
+    // {
+    //   path: '/dashboard/countries',
+    //   name: 'Countries',
+    //   component: Countries,
+    //   secure: true
+    // },
     {
       path: '/dashboard/others',
       name: 'Others',
@@ -162,7 +162,7 @@ router.beforeEach((to, from, next) => {
         next()
     }
     else{
-        next({ name: 'Home'})
+        next({ name: 'Events'})
     }
   }else {
       next() 

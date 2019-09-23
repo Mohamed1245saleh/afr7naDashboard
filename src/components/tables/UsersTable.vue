@@ -1,6 +1,7 @@
 <template>
 <div class="elevation-2">
   <vuetify-alert @message="alert.message = ''" :message="alert.message" :type="alert.type" />
+    
     <v-toolbar flat color="white">
       <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -14,10 +15,9 @@
       </v-text-field>
       
       
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="addEditDialog" max-width="500px">
         
         <v-tooltip top slot="activator">
-          <!-- <v-btn slot="activator" dark color="primary">Button</v-btn> -->
           <v-btn 
             slot="activator" 
             color="primary" 
@@ -32,7 +32,7 @@
         <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn> -->
         <v-card>
             <v-card-title>
-                <span class="headline">تصنيف جديد</span>
+                <span class="headline">{{formTitle}}</span>
             </v-card-title>
             <v-card-text>
             <ul>
@@ -49,10 +49,10 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex>
-                    <v-text-field v-model="newUser.name" label=" اسم التصنيف بالعربية" />
-                    <v-text-field v-model="newUser.email"  label="اسم التصنيف بالانجليزية" />
-                    <v-text-field v-model="newUser.phone"  label="اسم التصنيف بالانجليزية" />
-                    <v-text-field v-model="newUser.password"  label="اسم التصنيف بالانجليزية" />
+                    <v-text-field v-model="newUser.name" label=" الإسم" />
+                    <v-text-field v-model="newUser.email"  label="البريد الإليكتروني" />
+                    <v-text-field v-model="newUser.phone"  label="رقم الهاتف" />
+                    <v-text-field v-model="newUser.password"  label="كلمة السر" />
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -66,6 +66,7 @@
         </v-card> 
       </v-dialog>
     </v-toolbar>
+
     <v-data-table
         :headers="headers"
         :items="requests"
@@ -89,7 +90,29 @@
               
               <img v-else  src="@/assets/avatar.png" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" >
             </td>
+
             <td class="justify-right layout px-0">
+              <v-btn small flat color="blue" @click="editing(props.item)"> 
+                تعديل
+                <v-icon  class="mr-2 blue--text" >
+                    edit
+                </v-icon>
+              </v-btn>
+              <v-btn v-if="props.item.deleted_at == null" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog">
+                مسح
+                <v-icon class="red--text"  >
+                    delete
+                </v-icon>
+              </v-btn>  
+              <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
+                تنشيط
+                <v-icon class="green--text"  >
+                    restore
+                </v-icon>
+              </v-btn>
+          </td>
+
+            <!-- <td class="justify-right layout px-0">
                 <v-btn v-if="props.item.status" :loading="disapprove" small flat color="red" @click="dialog = true;user = props.item" >
                   ايقاف
                   <v-icon class="red--text"  >
@@ -102,8 +125,7 @@
                       restore
                   </v-icon>
                 </v-btn>
-                
-            </td>
+            </td> -->
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
             لا يوجد نتائج للبحث "{{search}}"
@@ -117,21 +139,23 @@
           </v-alert>
         </template>
     </v-data-table>
+    
     <div class="text-xs-center pt-2">
       <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
+    
     <v-dialog
       v-if="image"
       v-model="mdialog"
       width="600"
       style="max-height:400px;overflow:hidden"
     >
-    <v-card v-if="image" :style="'background-image:url(\'http://souq24app.com/'+image+'\');'" id="card-image">
+      <v-card v-if="image" :style="'background-image:url(\'http://souq24app.com/'+image+'\');'" id="card-image">
       </v-card>
     </v-dialog>
 
     <v-dialog
-      v-model="dialog"
+      v-model="askToDeleteDialog"
       max-width="290"
     >
       <v-card>
@@ -146,7 +170,7 @@
           <v-btn
             color="grey darken-1"
             flat="flat"
-            @click="dialog = false"
+            @click="askToDeleteDialog = false"
           >
             لا
           </v-btn>
@@ -161,6 +185,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
 </div>
 </template>
 
@@ -189,7 +214,8 @@ export default {
     },
     user: null,
     edit:false,
-    dialog:false,
+    addEditDialog:false,
+    askToDeleteDialog: false,
     mdialog:false,
     imagesdialog:false,
     requests:[],
@@ -235,6 +261,9 @@ export default {
   }),
 
   computed: {
+    formTitle(){
+      return (this.edit) ? 'تعديل مدير' : 'إضافة مدير';
+    },
     pages () {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
@@ -315,19 +344,22 @@ export default {
     imageFallBack(id){
       this.$refs[`user_${id}`].src = '../assets/avatar.png'
     },
-    deleteItem (item) {
+    deleteItem() {
+      // console.log(this.selectedItem);
+      const item = this.selectedItem
       this.disapprove = true
-      const forceDelete = this.forceDelete == true ? 1:0
-        this.$http.delete('api/admin/users/'+ this.user.id+ '?forceDelete='+ forceDelete+'&page=' + this.page)
+      const endPoint = this.forceDelete == true ? `admin/destroy/${item.id}`:`admin/trached/${item.id}`
+        this.$http.delete(endPoint)
         .then( res => {
-           
           this.getDataFromApi(res)
           .then(data => {
             this.requests = data.items
             this.totalRequests = data.total
           })
           // this.requests.splice(index, 1)
-          this.alert.message = forceDelete == 1 ? 'تم حذف المستخدم!' : 'تم إيقاف المستخدم!ّ'
+          // this.alert.message = forceDelete == 1 ? 'تم حذف المستخدم!' : 'تم إيقاف المستخدم!ّ'
+          this.alert.message = this.forceDelete == true ? 'تم حذف المستخدم!' : 'تم إيقاف المستخدم!ّ'
+          
           this.alert.type = 'info'
           this.dialog = false 
           this.disapprove = false
@@ -358,8 +390,81 @@ export default {
     },
 
     close () {
-      this.dialog = false
-    }
+      this.addEditDialog = false
+    },
+    editing(item) {
+      this.dialog = !this.dialog;
+      this.edit = true;
+      this.newUser.id = item.id;
+      this.newUser.name = item.name;
+      this.newUser.email = item.email;
+      this.newUser.phone = item.phone;
+      this.newUser.password = item.password;
+
+      this.index = this.requests.indexOf(item)
+    },
+    save() {
+      const index = this.index
+      let newformdata = new FormData();
+      const editformdata = {};
+      if (this.newUser.name)
+        newformdata.append("name", this.newUser.name);
+        editformdata.name = this.newUser.name
+      if (this.newUser.email)
+        newformdata.append("email", this.newUser.email);
+        editformdata.email = this.newUser.email
+      if (this.newUser.phone)
+        newformdata.append("phone", this.newUser.phone);
+        editformdata.phone = this.newUser.phone
+      if (this.newUser.password)
+        newformdata.append("password", this.newUser.password);
+        editformdata.password = this.newUser.password
+
+      console.log('editformdata', editformdata);
+      
+      if (this.edit) {
+        this.$http.put(`admin/country/${this.country.id}`, editformdata)
+          .then(res => {
+            console.log(res.data);
+            
+            this.$set(this.requests, index, editformdata)
+            this.alert.type = "warning";
+            this.alert.message = "تم تعديل الدولة!";
+            this.close();
+            this.errors = [];
+            this.country = {
+              id: null,
+              title_ar: null,
+              title_en: null,
+              code: null
+            };
+          })
+          .catch(({ response }) => {
+            this.errors = response.data.errors;
+          });
+      } else {
+        this.$http
+          .post("admin/adminRegister" + "?page=" + this.page, newformdata)
+          .then(res => {
+            this.requests.push(this.newUser)
+            this.alert.type = "info";
+            this.alert.message = "تم اضافة مدير جديد!";
+            this.close();
+            this.errors = [];
+            this.newUser = {
+              id: null,
+              name: null,
+              email: null,
+              phone: null,
+              password: null
+            };
+          })
+          .catch(({ response }) => {
+            this.errors = response.data.errors;
+          });
+      }
+    },
+    
   }
 }
 </script>

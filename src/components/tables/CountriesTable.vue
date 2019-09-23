@@ -5,7 +5,21 @@
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
-            <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn>
+
+          <v-tooltip top slot="activator">
+            <v-btn 
+              slot="activator" 
+              color="primary" 
+              dark 
+              class="mb-2" 
+              @click="edit = false"
+            > 
+              <v-icon>add</v-icon>
+            </v-btn>
+            <span>إضافة دولة جديد</span>
+          </v-tooltip>
+
+            <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn> -->
             <v-card>
                 <v-card-title>
                     <span class="headline">{{formTitle}}</span>
@@ -379,7 +393,6 @@ export default {
       this.index = this.requests.indexOf(item)
     },
     save() {
-      // alert('doic')
       const index = this.index
       // let image = this.$refs.image_input.files[0];
       // if (typeof image == "undefined") image = null;
