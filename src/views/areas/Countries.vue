@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import CountriesTable from '../components/tables/CountriesTable'
+import CountriesTable from '../../components/tables/CountriesTable'
 export default {
     components: {
         CountriesTable

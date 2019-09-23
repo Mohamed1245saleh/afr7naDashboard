@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import WeddingsTable from '../components/tables/WeddingsTable'
-import OccasionsTable from '../components/tables/OccasionsTable'
-import InvetationsTable from '../components/tables/InvetationsTable'
+import WeddingsTable from '../../components/tables/WeddingsTable'
+import OccasionsTable from '../../components/tables/OccasionsTable'
+import InvetationsTable from '../../components/tables/InvetationsTable'
 
 export default {
   data() {

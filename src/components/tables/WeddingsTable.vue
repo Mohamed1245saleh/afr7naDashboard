@@ -75,8 +75,11 @@
               <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
 
-            <!-- <td class="text-xs-right" v-if="props.item.main_category_id">{{ props.item.main_category_id }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td> -->
+            <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user_id }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-right" v-if="props.item.phone">{{ props.item.phone }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
             <td class="text-xs-right"  v-if="props.item.country.title_ar">{{ props.item.country.title_ar }}</td>
 
@@ -96,7 +99,32 @@
               </v-btn>
 
               <!--  -->
-              <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
+                <v-btn 
+                  v-if="props.item.deleted_at == null" 
+                  :loading="disapprove" 
+                  small flat color="red" 
+                  @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
+                >
+                  تعطيل
+                  <v-icon class="red--text"  >
+                      delete
+                  </v-icon>
+                </v-btn>  
+                <v-btn 
+                  v-else 
+                  :loading="approve" 
+                  small flat color="green" 
+                  @click="restoreItem(props.item)"
+                >
+                  تنشيط
+                  <v-icon class="green--text"  >
+                      restore
+                  </v-icon>
+                </v-btn>
+            </td>
+
+
+              <!-- <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
                 تشغيل
                 <v-icon  class="mr-2 green--text" >
                   done
@@ -105,7 +133,7 @@
               <v-btn v-else small flat color="red" @click="editing(props.item)"> 
                 تعطيل
                 <v-icon  class="mr-2 red--text" >
-                  clear
+                  delete
                 </v-icon>
               </v-btn>
 
@@ -113,21 +141,6 @@
                 مسح
                 <v-icon class="red--text"  >
                   delete
-                </v-icon>
-              </v-btn>
-            </td>
-
-            <!-- <td class="justify-right layout px-0">
-              <v-btn small flat color="blue" @click="editing(props.item)"> 
-                تعديل
-                <v-icon  class="mr-2 blue--text" >
-                  edit
-                </v-icon>
-              </v-btn>
-              <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
-                مسح
-                <v-icon class="red--text"  >
-                  clear
                 </v-icon>
               </v-btn>
             </td> -->
@@ -148,6 +161,36 @@
         <div class="text-xs-center pt-2">
           <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
         </div>
+        <!--  -->
+        <v-dialog
+          v-model="askToDeleteDialog"
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
+            <v-card-text>
+              <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="grey darken-1"
+                flat="flat"
+                @click="askToDeleteDialog = false"
+              >
+                لا
+              </v-btn>
+              <v-btn
+                color="red darken-1"
+                flat="flat"
+                @click="deleteItem"
+              >
+                نعم
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!--  -->
     </div>
 </template>
 
@@ -165,19 +208,8 @@ export default {
   },
   data: () => ({
     errors:[],
-    newCategory:{
-      id:null,
-      title_ar: null,
-      title_en: null,
-      category:{
-        id: null,
-        title: null,
-      },
-      rel_category: {
-        id: null,
-        title: null,
-      }
-    },
+    askToDeleteDialog: false,
+    forceDelete: false,
     edit:false,
     dialog:false,
     optionsDialog:false,
@@ -192,6 +224,7 @@ export default {
     search: '',
     loading: false,
     disapprove: false,
+    approve: false,
     headers: [
       {
         text: 'العنوان',
@@ -204,12 +237,18 @@ export default {
         align: 'right',
         sortable: false
       },
-      // {
-      //   text: 'الفئة',
-      //   align: 'right',
-      //   value: 'category',
-      //   sortable: false
-      // },
+      {
+        text: 'المستخدم',
+        align: 'right',
+        value: 'user',
+        sortable: false
+      },
+      {
+        text: 'الهاتف',
+        align: 'right',
+        value: 'phone',
+        sortable: false
+      },
       {
         text: 'الدولة',
         align: 'right',
@@ -282,11 +321,14 @@ export default {
     pagination: {
       handler () {
         this.page = this.pagination.page
-        this.getDataFromApi()
+        if(!this.loading) {
+
+          this.getDataFromApi()
         .then(data => {
           this.requests = data.items
           this.totalRequests = data.total
         })
+        }
       },
       deep: true
     },
@@ -332,9 +374,11 @@ export default {
         else {
           // const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory
           
-        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'admin/event?title=event&category=1'
+        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :`admin/event?category=1&page=${page}`
         this.$http.get(endpoint)
         .then( (res) => {
+          console.log(res);
+          
           let items = res.data.data
           const total = res.data.total
           this.pagination.rowsPerPage = res.data.per_page
@@ -352,21 +396,46 @@ export default {
       document.getElementById('image_choose').click()
     },
 
-    deleteItem (item) {
+    deleteItem() {
+      const item = this.selectedItem
       this.disapprove = true
-      const index = this.requests.indexOf(item)
-      if(confirm('هل انت متأكد من مسح القسم')) {
-
-        this.$http.delete('api/admin/categories/'+ item.id+'?page=' + this.page)
+      const endPoint = this.forceDelete == true ? `admin/event-destroy/${item.id}`:`admin/event-trached/${item.id}`
+        this.$http.delete(endPoint)
         .then( res => {
-          this.getDataFromApi(res);
-          this.requests.splice(index, 1)
-          this.alert.message = 'تم مسح القسم!'
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          this.alert.message = this.forceDelete == true ? 'تم حذف الفرح!' : 'تم إيقاف الفرح!ّ'
+          
           this.alert.type = 'info'
+          this.askToDeleteDialog = false 
+          this.forceDelete = false
           this.disapprove = false
         })
+    },
+
+    restoreItem (item) {
+      this.approve = true
+      // const index = this.requests.indexOf(item)
+      if(confirm('هل تود استرجاع الفرح')) {
+      const forceDelete = this.forceDelete == true ? 1:0
+        this.$http.delete(`admin/event-restore/${item.id}`)
+        .then( res => {
+           
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          // this.requests.splice(index, 1)
+          this.alert.message = 'تم استئناف المستخدم'
+          this.alert.type = 'success'
+          this.approve = false
+        })
       }else{
-        this.disapprove = false
+        this.approve = false
       }
     },
 

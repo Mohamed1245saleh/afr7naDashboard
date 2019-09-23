@@ -109,28 +109,28 @@ const router = new Router({
     //   component: Countries,
     //   secure: true
     // },
+    // {
+    //   path: '/dashboard/others',
+    //   name: 'Others',
+    //   component: Others,
+    //   secure: true
+    // },
     {
-      path: '/dashboard/others',
-      name: 'Others',
-      component: Others,
+      path: '/admins',
+      name: 'Admins',
+      component: loadView('admins/Admins'),
       secure: true
     },
     {
       path: '/events',
       name: 'Events',
-      component: loadView('Events'),
+      component: loadView('events/Events'),
       secure: true
     },
     {
       path: '/flash-ads',
       name: 'FlashAds',
       component: loadView('FlashAds'),
-      secure: true
-    },
-    {
-      path: '/admins',
-      name: 'Admins',
-      component: loadView('Admins'),
       secure: true
     },
     {

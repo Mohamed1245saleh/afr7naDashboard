@@ -155,70 +155,159 @@ export default {
       password: null,
     },
     items: [
-      {
-        icon: 'supervisor_account',
-        text: 'المديرين',
-        url: '/admins'
-      },
-      {
-        icon: 'list',
-        text: 'الأحداث',
-        url: '/events'
-      },
-      {
-        icon: 'devices_other',
-        text: 'الإعلانات',
-        url: '/flash-ads'
-      },
-      {
-        icon: 'list',
-        text: 'الأقسام',
-        url: '/main-categories'
-      },
-      {
-        icon: 'language',
-        text: 'الدول',
-        url: '/countries'
-      },
-      {
-        icon: 'content_copy',
-        'icon-alt': 'content_copy',
-        text: 'الاعلانات ',
-        children: [
-          {
-            icon: 'list',
-            text: 'الاعلانات',
-            url: '/dashboard/ads'
-          },
-          {
-            icon: 'star',
-            text: 'طلبات التثبيت',
-            url: '/dashboard/special-products-order'
-          },
-          {
-            icon: 'attach_money',
-            text: 'الباقة',
-            url: '/dashboard/packages'
-          }
-        ]
-      },
-      {
-        icon: 'layers',
-        'icon-alt': 'layers',
-        text: 'تعديل الاقسام',
-        children: [
-            {
-                icon: 'edit',
-                text: 'الاقسام',
-                url: '/dashboard/categories/names'
-            },
-            {
-                icon: 'ballot',
-                text: 'التصنيفات',
-                url: '/dashboard/categories/link'
-            }
-        ]
-      },
+        {
+            icon: 'supervisor_account',
+            'icon-alt': 'supervisor_account',
+            text: 'المديرين',
+            children: [
+                {
+                    icon: 'supervisor_account',
+                    text: 'المديرين',
+                    url: '/admins',
+                    subtext: 'رفع | حذف | تعديل',
+                },
+                // {
+                //     icon: 'ballot',
+                //     text: 'التصنيفات',
+                //     url: '/dashboard/categories/link'
+                // }
+            ]
+        },
+        {
+            icon: 'supervisor_account',
+            'icon-alt': 'layers',
+            text: 'الأحداث',
+            children: [
+                {
+                    icon: 'list',
+                    text: 'الأحداث',
+                    url: '/events',
+                    subtext: 'رفع | حذف | تعديل',
+                },
+                {
+                    icon: 'ballot',
+                    text: 'التصنيفات',
+                    url: '/dashboard/categories/link',
+                    subtext: 'رفع | حذف | تعديل',
+                }
+            ]
+        },
+        {
+            icon: 'devices_other',
+            'icon-alt': 'layers',
+            text: 'الإعلانات',
+            children: [
+                {
+                    icon: 'devices_other',
+                    text: 'الإعلانات',
+                    url: '/events'
+                },
+                {
+                    icon: 'ballot',
+                    text: 'التصنيفات',
+                    url: '/dashboard/categories/link'
+                }
+            ]
+        },
+        {
+            icon: 'devices_other',
+            text: ' اعلانات الفلاش',
+            url: '/flash-ads'
+        },
+        {
+            icon: 'language',
+            'icon-alt': 'layers',
+            text: 'المناطق',
+            children: [
+                {
+                    icon: 'language',
+                    text: 'الدول',
+                    url: '/countries'
+                },
+                {
+                    icon: 'ballot',
+                    text: 'المناطق',
+                    url: '/dashboard/categories/link'
+                }
+            ]
+        },
+        {
+            icon: 'settings',
+            text: 'اعدادات عامة',
+            url: '/dashboard/others'
+        }
+        
+
+
+
+
+
+
+
+    //   {
+    //     icon: 'supervisor_account',
+    //     text: 'المديرين',
+    //     url: '/admins'
+    //   },
+    //   {
+    //     icon: 'list',
+    //     text: 'الأحداث',
+    //     url: '/events'
+    //   },
+    //   {
+    //     icon: 'devices_other',
+    //     text: 'الإعلانات',
+    //     url: '/flash-ads'
+    //   },
+    //   {
+    //     icon: 'list',
+    //     text: 'الأقسام',
+    //     url: '/main-categories'
+    //   },
+    //   {
+    //     icon: 'language',
+    //     text: 'الدول',
+    //     url: '/countries'
+    //   },
+    //   {
+    //     icon: 'content_copy',
+    //     'icon-alt': 'content_copy',
+    //     text: 'الاعلانات ',
+    //     children: [
+    //       {
+    //         icon: 'list',
+    //         text: 'الاعلانات',
+    //         url: '/dashboard/ads'
+    //       },
+    //       {
+    //         icon: 'star',
+    //         text: 'طلبات التثبيت',
+    //         url: '/dashboard/special-products-order'
+    //       },
+    //       {
+    //         icon: 'attach_money',
+    //         text: 'الباقة',
+    //         url: '/dashboard/packages'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     icon: 'layers',
+    //     'icon-alt': 'layers',
+    //     text: 'تعديل الاقسام',
+    //     children: [
+    //         {
+    //             icon: 'edit',
+    //             text: 'الاقسام',
+    //             url: '/dashboard/categories/names'
+    //         },
+    //         {
+    //             icon: 'ballot',
+    //             text: 'التصنيفات',
+    //             url: '/dashboard/categories/link'
+    //         }
+    //     ]
+    //   },
     //   {
     //     icon: 'bar_chart',
     //     'icon-alt': 'bar_chart',
@@ -252,11 +341,7 @@ export default {
     //     text: 'الدول',
     //     url: '/dashboard/countries'
     //   },
-      {
-        icon: 'settings',
-        text: 'اعدادات عامة',
-        url: '/dashboard/others'
-      }
+    
     ]
   }),
   props: {
