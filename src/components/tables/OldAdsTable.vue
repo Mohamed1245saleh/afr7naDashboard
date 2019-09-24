@@ -1,102 +1,48 @@
 <template>
 <div >
   <vuetify-alert @message="alert.message = ''" :message="alert.message" :type="alert.type" />
-
     <v-toolbar flat color="white">
-      <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
-        <v-tooltip top slot="activator">
-          <v-btn 
-            slot="activator" 
-            color="primary" 
-            dark 
-            class="mb-2" 
-            @click="edit = false"
-          > 
-            <v-icon>add</v-icon>
-          </v-btn>
-          <span>إضافة إعلان جديد</span>
-        </v-tooltip>
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{formTitle}}</span>
-            </v-card-title>
-            <v-card-text>
-              <ul>
-                <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                  <ul>
-                    <li v-for="err in error" :key="err + Math.random()">
-                      {{err}}
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </v-card-text>
-            <v-card-text>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex>
-                          <v-text-field v-model="ad.title_ar" label=" اسم الدولة بالعربية" />
-                          <v-text-field v-model="ad.title_en"  label="اسم الدولة بالانجليزية" />
-                            <v-text-field v-model="ad.currency"  label=" عملة الدولة بالعربية" />
-                            <!-- <v-text-field v-model="ad.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                          <!-- <v-btn color="info" @click="$refs.image_input.click()">
-                            <v-icon>image</v-icon>
-                            صورة
-                          </v-btn> -->
-                          <!-- <input style="display:none" type="file" ref="image_input" > -->
-                          <v-text-field v-model="ad.code"  label="كود الدولة" />
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </v-card-text>
+        <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-dialog v-model="paginationDialog" max-width="500px">
+          <v-btn slot="activator" color="primary" dark class="mb-2" > <v-icon>add</v-icon>تغيير العدد</v-btn>
+          <v-card>
+              <v-card-title>
+                  <span class="headline">تغيير عدد الاعلانات الظاهرة</span>
+              </v-card-title>
+              <v-card-text>
+                <ul>
+                  <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                    <ul>
+                      <li v-for="err in error" :key="err + Math.random()">
+                        {{err}}
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </v-card-text>
+              <v-card-text>
+                  <v-container grid-list-md>
+                      <v-layout wrap>
+                          <v-flex>
+                            <!-- <v-text-field v-model="packageItem.title" label="الاسم" />
+                            <v-text-field v-model="packageItem.price"  label="السعر" />
+                            <v-text-field v-model="packageItem.duration"  label="المدة" /> -->
+                              <v-text-field v-model="productNumbers"  label="العدد"/>
+                          </v-flex>
+                      </v-layout>
+                  </v-container>
+              </v-card-text>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-            </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="paginationDialog" max-width="500px">
-        <v-btn slot="activator" color="primary" dark class="mb-2" > <v-icon>add</v-icon>تغيير العدد</v-btn>
-        <v-card>
-            <v-card-title>
-                <span class="headline">تغيير عدد الاعلانات الظاهرة</span>
-            </v-card-title>
-            <v-card-text>
-              <ul>
-                <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                  <ul>
-                    <li v-for="err in error" :key="err + Math.random()">
-                      {{err}}
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </v-card-text>
-            <v-card-text>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex>
-                          <!-- <v-text-field v-model="packageItem.title" label="الاسم" />
-                          <v-text-field v-model="packageItem.price"  label="السعر" />
-                          <v-text-field v-model="packageItem.duration"  label="المدة" /> -->
-                            <v-text-field v-model="productNumbers"  label="العدد"/>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </v-card-text>
+              <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" flat @click.native="paginationDialog = false">الغاء</v-btn>
+                  <v-btn color="blue darken-1" flat @click.native="changeProductNumbers">حفظ</v-btn>
+              </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-spacer></v-spacer>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="paginationDialog = false">الغاء</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="changeProductNumbers">حفظ</v-btn>
-            </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-spacer></v-spacer>
 
       <v-spacer></v-spacer>
       <v-dialog v-model="CountProductDialog" max-width="500px">
@@ -137,6 +83,8 @@
         </v-card>
       </v-dialog>
       <v-spacer></v-spacer>
+
+
 
       <!-- reschedule -->
       <v-dialog v-model="rescheduleDialog" max-width="500px">
@@ -210,124 +158,141 @@
         </v-card>
       </v-dialog>
 
-      <v-spacer></v-spacer>
-      <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
-      >
-      </v-text-field>
-      <v-select style="max-width:150px;height:32px" 
-        v-model="filterCategory" 
-        flat dense 
-        :items="[{title_ar:'الاقسام', category_id:null},...categories]" 
-        item-text="title_ar" item-value="category_id" 
-        />
+        <v-spacer></v-spacer>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="بحث"
+            single-line
+            hide-details
+        ></v-text-field>
+            <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الاقسام', category_id:null},...categories]" item-text="title_ar" item-value="category_id" />
 
     </v-toolbar>
-
-
     <v-data-table
-      v-model="selected"
-      :headers="headers"
-      :items="requests"
-      :total-items="totalRequests"
-      :loading="loading"
-      item-key="product_id"
-      :search="search"
-      hide-actions
-      :pagination.sync="pagination"
-      
-      class="elevation-1"
-    >
-      <template v-if="requests" slot="items" slot-scope="props">
+        v-model="selected"
+        :headers="headers"
+        :items="requests"
+        select-all
+
+        :total-items="totalRequests"
+        :loading="loading"
+        item-key="product_id"
+        :search="search"
+        hide-actions
+        :pagination.sync="pagination"
         
-        <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
-        <td class="text-xs-right" v-else>لا يوجد اسم</td>
-
-        <td class="text-xs-right"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
-        <td class="text-xs-right" v-else>لا يوجد اسم</td>
-
-        <td class="text-xs-right" v-if="props.item.ads_category">{{ props.item.ads_category.title_ar }}</td>
-        <td class="text-xs-right" v-else>لا يوجد قسم</td>
-
-        <td class="text-xs-right">
-          <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="`http://134.209.18.160/${props.item.image}`" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
-        </td>
-
-        <td class="justify-right layout px-0">
-          <!-- <v-btn icon :loading="approve"  flat color="blue" @click="watchers(props.item)"> 
-            <v-icon  class="mr-2 blue--text" >
-                remove_red_eye
-            </v-icon>
-          </v-btn> -->
-          <v-tooltip top>
-            <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
-              <v-icon  class="mr-2 blue--text" >
-                  edit
-              </v-icon>
-            </v-btn>
-            <span>تعديل الإعلان</span>
-          </v-tooltip>
-
-          <v-tooltip top>
-            <v-btn slot="activator" icon flat color="red" @click="deleteItem(props.item)">
-              <v-icon class="red--text"  >
-                  delete
-              </v-icon>
-            </v-btn>
-            <span>مسح الإعلان</span>
-          </v-tooltip>
+        class="elevation-1"
+      >
+        <template v-if="requests" slot="items" slot-scope="props">
+          <td>
+          <v-checkbox
+            
+           v-model="props.selected"
           
+            primary
+            hide-details
+          ></v-checkbox>
         </td>
+            <td class="text-xs-right"  v-if="props.item.product_id">{{ props.item.product_id }}</td>
+            <td class="text-xs-right" v-else>لا يوجد اسم</td>
+            <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
+            <td class="text-xs-right" v-else>لا يوجد اسم</td>
+            <td class="text-xs-right"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
+            <td class="text-xs-right" v-else>لا يوجد اسم</td>
+            <td class="text-xs-right"  v-if="props.item.user">{{ props.item.user.name }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مستخدم</td>
+            <td class="text-xs-right"  v-if="props.item.country">{{ props.item.country.title_ar }}</td>
+            <td class="text-xs-right" v-else>لا يوجد بلد</td>
+            <td class="text-xs-right" v-if="props.item.category">{{ props.item.category.title_ar }}</td>
+            <td class="text-xs-right" v-else>لا يوجد قسم</td>
+            <td class="text-xs-right"  v-if="props.item.views">{{ props.item.views }}</td>
+            <td class="text-xs-right" v-else>لا يوجد </td>
+             <td class="text-xs-right"  v-if="props.item.schedule_start">{{ (new Date(`${props.item.schedule_start} UTC`)).toLocaleString()  }}</td>
+            <td class="text-xs-right" v-else>لا يوجد </td>
+            <td class="text-xs-right">
+              <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="$root.$data.baseURL+props.item.spec_image" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
+            </td>
+            <td class="justify-right layout px-0">
+                <v-btn icon :loading="approve"  flat color="blue" @click="watchers(props.item)"> 
+                  <v-icon  class="mr-2 blue--text" >
+                      remove_red_eye
+                  </v-icon>
+                </v-btn>
+                                 <v-btn icon v-if="props.item.status == 1"  flat color="red" :loading="reshare" @click="reshareItem(props.item)">
+                  <v-icon class="green--text"  >
+                      redo
+                  </v-icon>
+                </v-btn>
 
-      </template>
+                <v-btn icon :loading="approve"  flat color="orange" @click="specialBtn(props.item)"> 
+                  <v-icon  class="mr-2 orange--text" >
+                      star
+                  </v-icon>
+                </v-btn>
+                <v-btn icon v-if="props.item.status == 1" :loading="disapprove"  flat color="red" @click="stopItem(props.item)">
+                  <v-icon class="red--text"  >
+                      not_interested
+                  </v-icon>
+                </v-btn>
+                <v-btn icon v-if="props.item.status == 2" :loading="disapprove"  flat color="green" @click="resumeItem(props.item)">
+                  <v-icon class="green--text"  >
+                      play_circle_outline
+                  </v-icon>
+                </v-btn>
 
-      <v-alert slot="no-results" :value="true" color="error" icon="warning">
-          لا يوجد نتائج للبحث "{{search}}"
-      </v-alert>
-
-      <template slot="pageText" slot-scope="props">
-        الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
-      </template>
-
-      <template slot="no-data">
-        <v-alert :value="true" color="success" icon="warning" outline>
-          لا يوجد تسجيلات
+                <v-btn icon flat color="green" @click="selectedItem = props.item;detailsDialog = true">
+                  <v-icon class="green--text"  >
+                      error_outline
+                  </v-icon>
+                </v-btn>
+                <v-btn icon flat color="red" @click="deleteItem(props.item)">
+                  <v-icon class="red--text"  >
+                      delete
+                  </v-icon>
+                </v-btn>
+            </td>
+        </template>
+        <v-alert slot="no-results" :value="true" color="error" icon="warning">
+            لا يوجد نتائج للبحث "{{search}}"
         </v-alert>
-      </template>
-
+        <template slot="pageText" slot-scope="props">
+          الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
+        </template>
+        <template slot="no-data">
+          <v-alert :value="true" color="success" icon="warning" outline>
+            لا يوجد تسجيلات
+          </v-alert>
+        </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
       <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-dialog
-      v-if="media.length"
-        v-model="dialog"
-        width="600"
-        style="max-height:400px"
+    v-if="media.length"
+      v-model="dialog"
+      width="600"
+      style="max-height:400px"
     >
-      <v-card>
-        <v-carousel
-          :circle="false"
-          interval="600000"
-        >
-          <v-carousel-item
-            v-for="item in media"
-            :key="item.id"
-            color="primary"
+    <v-card>
+          <v-carousel
+            :circle="false"
+            interval="600000"
           >
-            <img v-if="item.image" :src="$root.$data.baseURL+item.image" alt="" srcset="" style="margin:0 auto; width:100%;height:100%">
-            <img v-if="item.vedio" :src="$root.$data.baseURL+item.vedio" alt="" srcset="" style="margin:0 auto; width:100%;height:100%">
-            <video width="600" height="80%" controls>
-              <source :src="$root.$data.baseURL+item.vedio" type="video/mp4">
-              <source :src="$root.$data.baseURL+item.vedio" type="video/ogg">
-            Your browser does not support the video tag.
-            </video>
-          </v-carousel-item>
-        </v-carousel>
+            <v-carousel-item
+              v-for="item in media"
+              :key="item.id"
+              color="primary"
+            >
+              <img v-if="item.image" :src="$root.$data.baseURL+item.image" alt="" srcset="" style="margin:0 auto; width:100%;height:100%">
+              <img v-if="item.vedio" :src="$root.$data.baseURL+item.vedio" alt="" srcset="" style="margin:0 auto; width:100%;height:100%">
+              <video width="600" height="80%" controls>
+                <source :src="$root.$data.baseURL+item.vedio" type="video/mp4">
+                <source :src="$root.$data.baseURL+item.vedio" type="video/ogg">
+              Your browser does not support the video tag.
+              </video>
+            </v-carousel-item>
+          </v-carousel>
       </v-card>
     </v-dialog>
     <v-dialog v-if="selectedItem" v-model="watchersDialog" max-width="500px" persistent>
@@ -427,47 +392,48 @@
       </v-card>
     </v-dialog>
     <v-dialog
-      v-model="detailsDialog"
-      width="500"
-      v-if="selectedItem"
-    >
-      <v-card>
-        <v-card-title
-          class="headline grey lighten-2"
-          primary-title
+          v-model="detailsDialog"
+          width="500"
+          v-if="selectedItem"
         >
-          بيانات اضافية
-        </v-card-title>
 
-        <v-card-text>
-          <h3 v-if="selectedItem.description">
-            التفاصيل
-            <small>
-              {{selectedItem.description}}
-            </small>
-          </h3>
-          <h3 v-if="selectedItem.address">
-            العنوان
-            <small>
-              {{selectedItem.address}}
-            </small>
-          </h3>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green"
-            flat
-            @click="detailsDialog = false"
+        <v-card>
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title
           >
-            اغلاق
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+            بيانات اضافية
+          </v-card-title>
+
+          <v-card-text>
+            <h3 v-if="selectedItem.description">
+              التفاصيل
+              <small>
+                {{selectedItem.description}}
+              </small>
+            </h3>
+            <h3 v-if="selectedItem.address">
+              العنوان
+              <small>
+                {{selectedItem.address}}
+              </small>
+            </h3>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green"
+              flat
+              @click="detailsDialog = false"
+            >
+              اغلاق
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 </div>
 </template>
 
@@ -487,8 +453,6 @@ export default {
     selected:[],
     selectedItem: null,
     dialog:false,
-    addEditDialog: false,
-    edit: false,
     deleting:false,
     menu1:false,
     menu2:false,
@@ -519,14 +483,13 @@ export default {
     specializing: false,
     approve: false,
     disapprove: false,
-    ad: {
-      id: null,
-      title_ar: null,
-      title_en: null,
-      image:"",
-      ads_category_id: '',
-    },
     headers: [
+      {
+        text: 'id',
+        align: 'right',
+        value: 'country',
+        sortable: false
+      },
       {
         text: 'الاسم بالعربية',
         align: 'right',
@@ -540,7 +503,31 @@ export default {
         sortable: false
       },
       {
+        text: 'العميل',
+        align: 'right',
+        value: 'userName',
+        sortable: false
+      },
+      {
+        text: 'البلد',
+        align: 'right',
+        value: 'country',
+        sortable: false
+      },
+      {
         text: 'القسم',
+        align: 'right',
+        value: 'category',
+        sortable: false
+      },
+      {
+        text: 'المشاهدات',
+        align: 'right',
+        value: 'category',
+        sortable: false
+      },
+      {
+        text: 'اعادة النشر',
         align: 'right',
         value: 'category',
         sortable: false
@@ -664,28 +651,34 @@ export default {
       
       })
     },
+
+
+
     reschedule(){
-      let schedule =  this.formatDateWithZone(this.schedule_start+' '+this.picker,'from');
-      console.log(schedule)
+     
+        let schedule =  this.formatDateWithZone(this.schedule_start+' '+this.picker,'from');
+        console.log(schedule)
       this.$http.post('http://souq24app.com/api/admin/reschedule-product/' , {schedule_start : schedule,'product_id':this.selected})
       .then(res => {
-        this.alert.message = 'تم اعادة نشر الاعلان'
-        this.alert.type = 'info'
-        this.schedule_start=null
+        
+          this.alert.message = 'تم اعادة نشر الاعلان'
+          this.alert.type = 'info'
+           this.schedule_start=null
+        
         this.selected=[]
         this.rescheduleDialog = false
-        this.getDataFromApi()
-      .then(data => {
-        this.requests = data.items
-        this.totalRequests = data.total
-      })
+      this.getDataFromApi()
+    .then(data => {
+      this.requests = data.items
+      this.totalRequests = data.total
+    })
               
       })
       .catch(({response}) => {
        
       })
     },
-    formatDateWithZone(given_date, formOrTo) {
+  formatDateWithZone(given_date, formOrTo) {
       // first to get user diffrence from UTC + or - and minutes amount
       var offset = new Date().getTimezoneOffset().toString();; // exampel -120 for EG
       var opreator = offset.slice(0, 1);
@@ -711,13 +704,14 @@ export default {
         return formatted_date
 
     },
+
     changeProductNumbers(){
       this.getDataFromApi()
-      .then(data => {
-        this.requests = data.items
-        this.totalRequests = data.total
-      })
-      this.dialog==false
+    .then(data => {
+      this.requests = data.items
+      this.totalRequests = data.total
+    })
+    this.dialog==false
     },
     fetchCountries () {
       this.$http.get('api/countries')
@@ -733,19 +727,19 @@ export default {
       })
     },
     specialize() {
-      this.specializing = true
+        this.specializing = true
       if(this.date)
-        this.$http.post('/api/admin/specialize/' + this.selectedItem.product_id, {day : this.date,'day_end':this.end_date})
-          .then(res => {
-              this.alert.message = 'تم تمييز الاعلان'
-              this.alert.type = 'info'
-            this.specializing = false
-            this.optionsDialog = false
-          })
-          .catch(({response}) => {
-            this.specializing = false
-            this.optionsDialog = false
-          })
+      this.$http.post('/api/admin/specialize/' + this.selectedItem.product_id, {day : this.date,'day_end':this.end_date})
+      .then(res => {
+          this.alert.message = 'تم تمييز الاعلان'
+          this.alert.type = 'info'
+        this.specializing = false
+        this.optionsDialog = false
+      })
+      .catch(({response}) => {
+        this.specializing = false
+        this.optionsDialog = false
+      })
     },
     specialBtn(item) {
       this.optionsDialog = !this.optionsDialog
@@ -796,12 +790,9 @@ export default {
           })
         }
         else {
-          // const endpoint = (this.search.replace(/\s/g, '').length>0)?
-          // 'api/admin/approvedproducts/search/' + this.search+ '?category='+this.filterCategory + '&country='+this.$ls.get('country_id') + '&pagination='+this.productNumbers:
-          // 'api/admin/approvedproducts?page=' + page + '&category='+this.filterCategory + '&country='+this.$ls.get('country_id') + '&pagination='+this.productNumbers
           const endpoint = (this.search.replace(/\s/g, '').length>0)?
           'api/admin/approvedproducts/search/' + this.search+ '?category='+this.filterCategory + '&country='+this.$ls.get('country_id') + '&pagination='+this.productNumbers:
-          `admin/ads?page=${page}`
+          'api/admin/approvedproducts?page=' + page + '&category='+this.filterCategory + '&country='+this.$ls.get('country_id') + '&pagination='+this.productNumbers
           this.$http.get(endpoint)
           .then( (res) => {
             console.log(this.selected)
@@ -924,18 +915,7 @@ export default {
         this.editedIndex = -1
       }, 300)
     },
-    editing(item) {
-      this.addEditDialog = !this.addEditDialog;
-      this.edit = true;
-      this.country.id = item.id;
-      this.country.title_ar = item.title_ar;
-      this.country.title_en = item.title_en;
-      this.country.code = item.code;
-      this.country.currency = item.currency;
-      // this.country.currency_ar = item.currency_ar;
 
-      this.index = this.requests.indexOf(item)
-    },
     save () {
       if (this.editedIndex > -1) {
         Object.assign(this.requests[this.editedIndex], this.editedItem)

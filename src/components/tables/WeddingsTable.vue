@@ -374,7 +374,7 @@ export default {
         else {
           // const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory
           
-        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :`admin/event?category=1&page=${page}`
+        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory : `admin/event?category=1&page=${page}`
         this.$http.get(endpoint)
         .then( (res) => {
           console.log(res);

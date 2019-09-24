@@ -128,9 +128,21 @@ const router = new Router({
       secure: true
     },
     {
+      path: '/ads',
+      name: 'Ads',
+      component: loadView('ads/Ads'),
+      secure: true
+    },
+    {
+      path: '/ads-categories',
+      name: 'AdsCategories',
+      component: loadView('ads/AdsCategories'),
+      secure: true
+    },
+    {
       path: '/flash-ads',
       name: 'FlashAds',
-      component: loadView('FlashAds'),
+      component: loadView('ads/FlashAds'),
       secure: true
     },
     {
@@ -142,7 +154,13 @@ const router = new Router({
     {
       path: '/countries',
       name: 'Countries',
-      component: loadView('Countries'),
+      component: loadView('areas/Countries'),
+      secure: true
+    },
+    {
+      path: '/regions',
+      name: 'Regions',
+      component: loadView('areas/Regions'),
       secure: true
     },
   ]

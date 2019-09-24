@@ -1,165 +1,165 @@
 <template>
-<div class="elevation-2">
-  <vuetify-alert @message="alert.message = ''" :message="alert.message" />
-    <v-toolbar flat color="white">
-        <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-
-          <v-tooltip top slot="activator">
-            <v-btn 
-              slot="activator" 
-              color="primary" 
-              dark 
-              class="mb-2" 
-              @click="edit = false"
-            > 
-              <v-icon>add</v-icon>
-            </v-btn>
-            <span>إضافة دولة جديد</span>
-          </v-tooltip>
-
-            <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn> -->
-            <v-card>
-                <v-card-title>
-                    <span class="headline">{{formTitle}}</span>
-                </v-card-title>
-                <v-card-text>
-                  <ul>
-                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                      <ul>
-                        <li v-for="err in error" :key="err + Math.random()">
-                          {{err}}
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </v-card-text>
-                <v-card-text>
-                    <v-container grid-list-md>
-                        <v-layout wrap>
-                            <v-flex>
-                              <v-text-field v-model="country.title_ar" label=" اسم الدولة بالعربية" />
-                              <v-text-field v-model="country.title_en"  label="اسم الدولة بالانجليزية" />
-                               <v-text-field v-model="country.currency"  label=" عملة الدولة بالعربية" />
-                                <!-- <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                              <!-- <v-btn color="info" @click="$refs.image_input.click()">
-                                <v-icon>image</v-icon>
-                                صورة
-                              </v-btn> -->
-                              <!-- <input style="display:none" type="file" ref="image_input" > -->
-                              <v-text-field v-model="country.code"  label="كود الدولة" />
-                            </v-flex>
-                        </v-layout>
-                    </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </v-toolbar>
-    <v-data-table
-        :headers="headers"
-        :items="requests"
-        :total-items="totalRequests"
-        :loading="loading"
-        :search="search"
-        hide-actions
-        :pagination.sync="pagination">
-        <template slot="items" slot-scope="props">
-            <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td>
-
-            <td class="text-xs-right" v-if="props.item.title_en">{{ props.item.title_en }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td>
-
-            <!-- <td class="text-xs-right">
-              <img @click="openDialogue(props.item)" style="cursor:pointer" :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
-            </td> -->
-
-            <td class="text-xs-right"  v-if="props.item.code">{{ props.item.code }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td>
-
-
-            <td class="text-xs-right" v-if="props.item.currency">{{ props.item.currency }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td>
-
-            <!-- <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td> -->
-
-            <td class="justify-right layout px-0">
-                <v-btn small flat color="blue" @click="editing(props.item)"> 
-                  تعديل
-                  <v-icon  class="mr-2 blue--text" >
-                      edit
-                  </v-icon>
-                </v-btn>
-                <v-btn v-if="props.item.status != 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
-                  مسح
-                  <v-icon class="red--text"  >
-                      delete
-                  </v-icon>
-                </v-btn>  
-                <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
-                  تنشيط
-                  <v-icon class="green--text"  >
-                      restore
-                  </v-icon>
-                </v-btn>
-            </td>
-
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-            لا يوجد نتائج للبحث "{{search}}"
-        </v-alert>
-        <template slot="pageText" slot-scope="props">
-          الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
-        </template>
-        <template slot="no-data">
-          <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد اعلانات بهذا القسم
-          </v-alert>
-        </template>
-    </v-data-table>
-    <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
-    </div>
-    <v-dialog
-      v-model="deleteDialog"
-      max-width="290"
-    >
-      <v-card>
-        <v-card-title  class="title red--text">هل تريد تعطيل الدولة؟</v-card-title>
-
-        <v-card-text>
-          <v-checkbox color="red" label="حذف الدولة نهائيا" v-model="forceDelete"></v-checkbox>        
-        </v-card-text>
-        <v-card-actions>
+  <div class="elevation-2">
+    <vuetify-alert @message="alert.message = ''" :message="alert.message" />
+      <v-toolbar flat color="white">
+          <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="500px">
 
-          <v-btn
-            color="grey darken-1"
-            flat="flat"
-            @click="dialog = false"
-          >
-            لا
-          </v-btn>
+            <v-tooltip top slot="activator">
+              <v-btn 
+                slot="activator" 
+                color="primary" 
+                dark 
+                class="mb-2" 
+                @click="edit = false"
+              > 
+                <v-icon>add</v-icon>
+              </v-btn>
+              <span>إضافة دولة جديد</span>
+            </v-tooltip>
 
-          <v-btn
-            color="red darken-1"
-            flat="flat"
-            @click="deleteItem"
-          >
-            نعم
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-</div>
+              <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn> -->
+              <v-card>
+                  <v-card-title>
+                      <span class="headline">{{formTitle}}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <ul>
+                      <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                        <ul>
+                          <li v-for="err in error" :key="err + Math.random()">
+                            {{err}}
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </v-card-text>
+                  <v-card-text>
+                      <v-container grid-list-md>
+                          <v-layout wrap>
+                              <v-flex>
+                                <v-text-field v-model="country.title_ar" label=" اسم الدولة بالعربية" />
+                                <v-text-field v-model="country.title_en"  label="اسم الدولة بالانجليزية" />
+                                <v-text-field v-model="country.currency"  label=" عملة الدولة بالعربية" />
+                                  <!-- <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" /> -->
+                                <!-- <v-btn color="info" @click="$refs.image_input.click()">
+                                  <v-icon>image</v-icon>
+                                  صورة
+                                </v-btn> -->
+                                <!-- <input style="display:none" type="file" ref="image_input" > -->
+                                <v-text-field v-model="country.code"  label="كود الدولة" />
+                              </v-flex>
+                          </v-layout>
+                      </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+                      <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                  </v-card-actions>
+              </v-card>
+          </v-dialog>
+      </v-toolbar>
+      <v-data-table
+          :headers="headers"
+          :items="requests"
+          :total-items="totalRequests"
+          :loading="loading"
+          :search="search"
+          hide-actions
+          :pagination.sync="pagination">
+          <template slot="items" slot-scope="props">
+              <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
+              <td class="text-xs-right" v-else>لم يحدد</td>
+
+              <td class="text-xs-right" v-if="props.item.title_en">{{ props.item.title_en }}</td>
+              <td class="text-xs-right" v-else>لم يحدد</td>
+
+              <!-- <td class="text-xs-right">
+                <img @click="openDialogue(props.item)" style="cursor:pointer" :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
+              </td> -->
+
+              <td class="text-xs-right"  v-if="props.item.code">{{ props.item.code }}</td>
+              <td class="text-xs-right" v-else>لم يحدد</td>
+
+
+              <td class="text-xs-right" v-if="props.item.currency">{{ props.item.currency }}</td>
+              <td class="text-xs-right" v-else>لم يحدد</td>
+
+              <!-- <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
+              <td class="text-xs-right" v-else>لم يحدد</td> -->
+
+              <td class="justify-right layout px-0">
+                  <v-btn small flat color="blue" @click="editing(props.item)"> 
+                    تعديل
+                    <v-icon  class="mr-2 blue--text" >
+                        edit
+                    </v-icon>
+                  </v-btn>
+                  <v-btn v-if="props.item.status != 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
+                    مسح
+                    <v-icon class="red--text"  >
+                        delete
+                    </v-icon>
+                  </v-btn>  
+                  <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
+                    تنشيط
+                    <v-icon class="green--text"  >
+                        restore
+                    </v-icon>
+                  </v-btn>
+              </td>
+
+          </template>
+          <v-alert slot="no-results" :value="true" color="error" icon="warning">
+              لا يوجد نتائج للبحث "{{search}}"
+          </v-alert>
+          <template slot="pageText" slot-scope="props">
+            الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
+          </template>
+          <template slot="no-data">
+            <v-alert :value="true" color="success" icon="warning" outline>
+              لا يوجد اعلانات بهذا القسم
+            </v-alert>
+          </template>
+      </v-data-table>
+      <div class="text-xs-center pt-2">
+        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      </div>
+      <v-dialog
+        v-model="deleteDialog"
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title  class="title red--text">هل تريد تعطيل الدولة؟</v-card-title>
+
+          <v-card-text>
+            <v-checkbox color="red" label="حذف الدولة نهائيا" v-model="forceDelete"></v-checkbox>        
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              color="grey darken-1"
+              flat="flat"
+              @click="dialog = false"
+            >
+              لا
+            </v-btn>
+
+            <v-btn
+              color="red darken-1"
+              flat="flat"
+              @click="deleteItem"
+            >
+              نعم
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -182,6 +182,15 @@ export default {
       title_en: null,
       currency:"",
       code: '',
+      // currency_ar:"",
+      // category: {
+      //   id: null,
+      //   title: null
+      // },
+      // rel_category: {
+      //   id: null,
+      //   title: null
+      // }
     },
     edit: false,
     dialog: false,
@@ -252,7 +261,7 @@ export default {
 
   computed: {
     formTitle(){
-      return (this.edit) ? 'تعديل الدولة' : 'إضافة دولة';
+      return (this.edit) ? 'تعديل منطقة' : 'إضافة منطقة';
     },
     pages() {
       if (
@@ -313,7 +322,7 @@ export default {
             total
           });
         } else {
-          const endpoint = `admin/country?page=${page}`;
+          const endpoint = `admin/region?country_id=1&page=${page}`;
           this.$http.get(endpoint).then(res => {
             let items = res.data.data;
             const total = res.data.total;

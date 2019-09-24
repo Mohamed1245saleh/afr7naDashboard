@@ -200,12 +200,12 @@ export default {
                 {
                     icon: 'devices_other',
                     text: 'الإعلانات',
-                    url: '/events'
+                    url: '/ads'
                 },
                 {
                     icon: 'ballot',
                     text: 'التصنيفات',
-                    url: '/dashboard/categories/link'
+                    url: '/ads-categories'
                 }
             ]
         },
@@ -227,7 +227,7 @@ export default {
                 {
                     icon: 'ballot',
                     text: 'المناطق',
-                    url: '/dashboard/categories/link'
+                    url: '/regions'
                 }
             ]
         },
