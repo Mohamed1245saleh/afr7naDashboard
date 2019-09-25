@@ -372,8 +372,8 @@ export default {
       this.country.title_ar = item.title_ar;
       this.country.title_en = item.title_en;
       this.country.Phone_key = item.Phone_key;
-       this.country.currency_en = item.currency_en;
-       this.country.currency_ar = item.currency_ar;
+      this.country.currency_en = item.currency_en;
+      this.country.currency_ar = item.currency_ar;
 
       this.index = this.requests.indexOf(item)
     },

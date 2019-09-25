@@ -3,9 +3,11 @@
   <vuetify-alert @message="alert.message = ''" :message="alert.message" :type="alert.type" />
 
     <v-toolbar flat color="white">
-      <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+      <v-toolbar-title class="">
+        <v-icon medium>{{icon}}</v-icon> {{title}}
+      </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="addEditDialog" max-width="500px">
         <v-tooltip top slot="activator">
           <v-btn 
             slot="activator" 
@@ -34,27 +36,31 @@
               </ul>
             </v-card-text>
             <v-card-text>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex>
-                          <v-text-field v-model="ad.title_ar" label=" اسم الدولة بالعربية" />
-                          <v-text-field v-model="ad.title_en"  label="اسم الدولة بالانجليزية" />
-                            <v-text-field v-model="ad.currency"  label=" عملة الدولة بالعربية" />
-                            <!-- <v-text-field v-model="ad.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                          <!-- <v-btn color="info" @click="$refs.image_input.click()">
-                            <v-icon>image</v-icon>
-                            صورة
-                          </v-btn> -->
-                          <!-- <input style="display:none" type="file" ref="image_input" > -->
-                          <v-text-field v-model="ad.code"  label="كود الدولة" />
-                        </v-flex>
-                    </v-layout>
-                </v-container>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                    <v-flex>
+                      <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
+                      <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
+                      <!-- <v-text-field v-model="ad.currency"  label=" عملة الدولة بالعربية" /> -->
+                      <v-select style="max-width:150px;height:32px" 
+                        v-model="ad.ads_category_id" 
+                        flat dense 
+                        :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
+                        item-text="title_ar" item-value="id" 
+                      />
+                      <v-btn color="info" @click="$refs.image_input.click()">
+                        <v-icon>image</v-icon>
+                        صورة
+                      </v-btn>
+                      <input style="display:none" type="file" ref="image_input" >
+                    </v-flex>
+                </v-layout>
+              </v-container>
             </v-card-text>
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+                <v-btn color="blue darken-1" flat @click.native="closeAddEditDialog">الغاء</v-btn>
                 <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
             </v-card-actions>
         </v-card>
@@ -222,9 +228,9 @@
       <v-select style="max-width:150px;height:32px" 
         v-model="filterCategory" 
         flat dense 
-        :items="[{title_ar:'الاقسام', category_id:null},...categories]" 
-        item-text="title_ar" item-value="category_id" 
-        />
+        :items="[{title_ar:'الاقسام', id:null},...searchCategories]" 
+        item-text="title_ar" item-value="id" 
+      />
 
     </v-toolbar>
 
@@ -588,10 +594,15 @@ export default {
     filterCountry:null,
     countries:[],
     categories:[],
+    searchCategories:[],
+    addEditCategories:[],
     index:null
   }),
 
   computed: {
+    formTitle(){
+      return (this.edit) ? 'تعديل اعلان' : 'إضافة اعلان';
+    },
     pages () {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
@@ -726,10 +737,10 @@ export default {
       })
     },
     fetchCategories() {
-      this.$http.get('api/admin/categories/main/get/all')
+      this.$http.get('admin/ads-category?paginate=1')
       .then( (res) => {
-        
-        this.categories = res.data.data
+        this.searchCategories = res.data
+        this.addEditCategories = res.data
       })
     },
     specialize() {
@@ -924,25 +935,67 @@ export default {
         this.editedIndex = -1
       }, 300)
     },
+    closeAddEditDialog () {
+      this.addEditDialog = false
+      this.ad = {
+          id: null,
+          title_ar: null,
+          title_en: null,
+          ads_category_id: null
+        };
+    },
     editing(item) {
       this.addEditDialog = !this.addEditDialog;
       this.edit = true;
-      this.country.id = item.id;
-      this.country.title_ar = item.title_ar;
-      this.country.title_en = item.title_en;
-      this.country.code = item.code;
-      this.country.currency = item.currency;
-      // this.country.currency_ar = item.currency_ar;
+      this.ad.id = item.id;
+      this.ad.title_ar = item.title_ar;
+      this.ad.title_en = item.title_en;
+      this.ad.ads_category_id = item.ads_category_id;
 
       this.index = this.requests.indexOf(item)
     },
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.requests[this.editedIndex], this.editedItem)
-      } else {
-        this.requests.push(this.editedItem)
-      }
-      this.close()
+    save() {
+      const index = this.index
+      let image = this.$refs.image_input.files[0];
+      if (typeof image == "undefined") image = null;
+      let newformdata = new FormData();
+      if (image) newformdata.append("image", image);
+      if (this.ad.title_ar)
+        newformdata.append("title_ar", this.ad.title_ar);
+      if (this.ad.title_en)
+        newformdata.append("title_en", this.ad.title_en);
+      if (this.ad.ads_category_id)
+        newformdata.append("ads_category_id", this.ad.ads_category_id);
+      // if (this.ad.currency)
+      //   newformdata.append("currency", this.ad.currency);
+      console.log('editformdata', newformdata);
+      const endpoint = this.edit ? `admin/ads/${this.ad.id}` : `admin/ads`
+      this.$http.post(endpoint, newformdata)
+          .then(res => {            
+            this.$set(this.requests, index, newformdata)
+            this.alert.type = "warning";
+            this.alert.message = this.edit ? `تم تعديل الإعلان` : `تم حفظ الإعلان`
+            this.close();
+            this.errors = [];
+            this.ad = {
+              id: null,
+              title_ar: null,
+              title_en: null,
+              ads_category_id: null
+            };
+            setTimeout(() => {
+              this.addEditDialog = false
+            }, 300);
+            this.edit = false
+            this.getDataFromApi()
+            .then(data => {
+              this.requests = data.items
+              this.totalRequests = data.total
+            });
+          })
+          .catch(({ response }) => {
+            this.errors = response.data.error;
+          });
     },
     parseDate (date) {
         if (!date) return null

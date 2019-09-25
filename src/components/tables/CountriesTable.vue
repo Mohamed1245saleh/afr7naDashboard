@@ -5,7 +5,6 @@
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
-
           <v-tooltip top slot="activator">
             <v-btn 
               slot="activator" 
