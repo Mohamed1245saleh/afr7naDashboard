@@ -217,7 +217,7 @@ export default {
     newUser:{
       id:null,
       name: '',
-      email: null,
+      email: '',
       phone: null,
       password: null
     },
@@ -272,10 +272,18 @@ export default {
   computed: {
     isDisabled: function(){
       let disabled = true
+      let errors = 0
       if (this.newUser.name.replace(/\s/g, '').length>3) {
-        disabled = false
+        errors =+ 1
+      }else {
+        errors =- 1
       }
-    	return disabled;
+      if (this.newUser.email.replace(/\s/g, '').length>3) {
+        errors =+ 1
+      }else {
+        errors =- 1
+      }
+    	return disabled = errors > 0 ? false : true;
     },
     formTitle(){
       return (this.edit) ? 'تعديل مدير' : 'إضافة مدير';
