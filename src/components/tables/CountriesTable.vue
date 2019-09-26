@@ -9,7 +9,7 @@
             <v-btn 
               slot="activator" 
               color="primary" 
-              dark 
+              fab dark small 
               class="mb-2" 
               @click="edit = false"
             > 

@@ -5,23 +5,13 @@
     <v-toolbar flat color="white">
       <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
-      >
-      </v-text-field>
-      
-      
       <v-dialog v-model="addEditDialog" max-width="500px">
         
         <v-tooltip top slot="activator">
           <v-btn 
             slot="activator" 
             color="primary" 
-            dark 
+            fab dark small
             class="mb-2" 
             @click="edit = false"
           > 
@@ -60,11 +50,23 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                <v-btn color="primary" class="ma-2" dark small @click.native="close">الغاء</v-btn>
+                <v-btn color="primary" class="ma-2" depressed small :disabled="isDisabled" @click.native="save">حفظ</v-btn>
             </v-card-actions>
         </v-card> 
       </v-dialog>
+      <v-spacer></v-spacer>
+      <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="بحث"
+          single-line
+          hide-details
+      >
+      </v-text-field>
+      
+      
+      
     </v-toolbar>
 
     <v-data-table
@@ -214,7 +216,7 @@ export default {
     errors:[],
     newUser:{
       id:null,
-      name: null,
+      name: '',
       email: null,
       phone: null,
       password: null
@@ -268,6 +270,13 @@ export default {
   }),
 
   computed: {
+    isDisabled: function(){
+      let disabled = true
+      if (this.newUser.name.replace(/\s/g, '').length>3) {
+        disabled = false
+      }
+    	return disabled;
+    },
     formTitle(){
       return (this.edit) ? 'تعديل مدير' : 'إضافة مدير';
     },

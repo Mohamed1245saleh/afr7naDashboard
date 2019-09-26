@@ -1,4 +1,4 @@
-# souq24admin
+#  afrahna admin-panel 
 
 > A Vue.js project
 

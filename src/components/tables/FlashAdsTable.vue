@@ -47,13 +47,13 @@
                     <v-flex>
                       <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
                       <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
-                      <!-- <v-text-field v-model="ad.currency"  label=" عملة الدولة بالعربية" /> -->
-                      <v-select style="max-width:150px;height:32px" 
+                      <v-text-field v-model="ad.link"  label=" عرابط الإعلان" />
+                      <!-- <v-select style="max-width:150px;height:32px" 
                         v-model="ad.ads_category_id" 
                         flat dense 
                         :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
                         item-text="title_ar" item-value="id" 
-                      />
+                      /> -->
                       <v-btn color="info" @click="$refs.image_input.click()">
                         <v-icon>image</v-icon>
                         صورة
@@ -80,12 +80,12 @@
           hide-details
       >
       </v-text-field> -->
-      <v-select style="max-width:150px;height:32px" 
+      <!-- <v-select style="max-width:150px;height:32px" 
         v-model="filterCategory" 
         flat dense 
         :items="[{title_ar:'الاقسام', id:null},...searchCategories]" 
         item-text="title_ar" item-value="id" 
-      />
+      /> -->
 
     </v-toolbar>
 
@@ -111,8 +111,8 @@
         <td class="text-xs-right"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
         <td class="text-xs-right" v-else>لا يوجد اسم</td>
 
-        <td class="text-xs-right" v-if="props.item.ads_category">{{ props.item.ads_category.title_ar }}</td>
-        <td class="text-xs-right" v-else>لا يوجد قسم</td>
+        <td class="text-xs-right" v-if="props.item.link">{{ props.item.link }}</td>
+        <td class="text-xs-right" v-else>لا يوجد رابط</td>
 
         <td class="text-xs-right">
           <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="`http://134.209.18.160/${props.item.image}`" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
@@ -232,8 +232,8 @@ export default {
       id: null,
       title_ar: null,
       title_en: null,
-      image:"",
-      ads_category_id: '',
+      link: null,
+      image:""
     },
     headers: [
       {
@@ -249,13 +249,13 @@ export default {
         sortable: false
       },
       {
-        text: 'القسم',
+        text: 'الرابط',
         align: 'right',
-        value: 'category',
+        value: 'link',
         sortable: false
       },
       {
-        text: 'صور',
+        text: 'صوره',
         align: 'right',
         value: 'image',
         sortable: false
@@ -299,8 +299,8 @@ export default {
           id: null,
           title_ar: null,
           title_en: null,
+          link: null,
           image:"",
-          ads_category_id: '',
         };
       }
       val || this.close();
@@ -324,17 +324,17 @@ export default {
     },
     filterCategory(val){
       this.getDataFromApi()
-      .then(data => {
-      this.requests = data.items
-      this.totalRequests = data.total
-    });
+        .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+        });
     },
     filterCountry(val){
       this.getDataFromApi()
-      .then(data => {
-      this.requests = data.items
-      this.totalRequests = data.total
-    });
+        .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+        });
     },
     optionsDialog (val) {
       if(val == false){
@@ -356,39 +356,39 @@ export default {
     
   },
   methods: {
-    changeProductCount(item) {
-      this.$http.post('/api/admin/editCountProducts' , {productCount : this.productCount})
-      .then(res => {
-          this.alert.message = 'تم تعديل عدد المنتجات بنجاح'
-          this.alert.type = 'info'
-        this.CountProductDialog = false
+    // changeProductCount(item) {
+    //   this.$http.post('/api/admin/editCountProducts' , {productCount : this.productCount})
+    //   .then(res => {
+    //       this.alert.message = 'تم تعديل عدد المنتجات بنجاح'
+    //       this.alert.type = 'info'
+    //     this.CountProductDialog = false
       
-      })
-      .catch(({response}) => {
+    //   })
+    //   .catch(({response}) => {
       
-      })
-    },
-    reschedule(){
-      let schedule =  this.formatDateWithZone(this.schedule_start+' '+this.picker,'from');
-      console.log(schedule)
-      this.$http.post('http://souq24app.com/api/admin/reschedule-product/' , {schedule_start : schedule,'product_id':this.selected})
-      .then(res => {
-        this.alert.message = 'تم اعادة نشر الاعلان'
-        this.alert.type = 'info'
-        this.schedule_start=null
-        this.selected=[]
-        this.rescheduleDialog = false
-        this.getDataFromApi()
-      .then(data => {
-        this.requests = data.items
-        this.totalRequests = data.total
-      })
+    //   })
+    // },
+    // reschedule(){
+    //   let schedule =  this.formatDateWithZone(this.schedule_start+' '+this.picker,'from');
+    //   console.log(schedule)
+    //   this.$http.post('http://souq24app.com/api/admin/reschedule-product/' , {schedule_start : schedule,'product_id':this.selected})
+    //   .then(res => {
+    //     this.alert.message = 'تم اعادة نشر الاعلان'
+    //     this.alert.type = 'info'
+    //     this.schedule_start=null
+    //     this.selected=[]
+    //     this.rescheduleDialog = false
+    //     this.getDataFromApi()
+    //   .then(data => {
+    //     this.requests = data.items
+    //     this.totalRequests = data.total
+    //   })
               
-      })
-      .catch(({response}) => {
+    //   })
+    //   .catch(({response}) => {
        
-      })
-    },
+    //   })
+    // },
     formatDateWithZone(given_date, formOrTo) {
       // first to get user diffrence from UTC + or - and minutes amount
       var offset = new Date().getTimezoneOffset().toString();; // exampel -120 for EG
@@ -415,73 +415,73 @@ export default {
         return formatted_date
 
     },
-    changeProductNumbers(){
-      this.getDataFromApi()
-      .then(data => {
-        this.requests = data.items
-        this.totalRequests = data.total
-      })
-      this.dialog==false
-    },
-    fetchCountries () {
-      this.$http.get('api/countries')
-      .then( (res) => {
-        this.countries = res.data
-      })
-    },
-    fetchCategories() {
-      this.$http.get('admin/ads-category?paginate=1')
-      .then( (res) => {
-        this.searchCategories = res.data
-        this.addEditCategories = res.data
-      })
-    },
-    specialize() {
-      this.specializing = true
-      if(this.date)
-        this.$http.post('/api/admin/specialize/' + this.selectedItem.product_id, {day : this.date,'day_end':this.end_date})
-          .then(res => {
-              this.alert.message = 'تم تمييز الاعلان'
-              this.alert.type = 'info'
-            this.specializing = false
-            this.optionsDialog = false
-          })
-          .catch(({response}) => {
-            this.specializing = false
-            this.optionsDialog = false
-          })
-    },
-    specialBtn(item) {
-      this.optionsDialog = !this.optionsDialog
-      this.selectedItem = item
-      this.index = this.requests.indexOf(item)
-      if(item.spec_products_day != null) {
-        this.discrimint[0].value = true
-        this.date = item.spec_products_day.day
-         this.end_date = item.spec_products_day.end_date
-      }
-    },
-    watchers(item) {
-      this.selectedItem = Object.assign({} ,item);
-      this.index = this.requests.indexOf(item);
-      this.watchersDialog = true
-    },
-    updateWatchers(item) {
-      this.updatingWatchers = true
-      this.$http.put('/api/admin/update-product-view/' + this.selectedItem.product_id+'?page=' + this.page, {views : this.selectedItem.views})
-      .then(res => {
-        this.$set(this.requests, this.index, this.selectedItem)
-        this.$set(this.requests, index, res.data.data[0])
-          this.alert.message = 'تم بنجاح'
-          this.alert.type = 'info'
-        this.updatingWatchers = false
-        this.watchersDialog = false
-      })
-      .catch(({response}) => {
-        this.updatingWatchers = false
-        this.watchersDialog = false
-      })
-    },
+    // changeProductNumbers(){
+    //   this.getDataFromApi()
+    //   .then(data => {
+    //     this.requests = data.items
+    //     this.totalRequests = data.total
+    //   })
+    //   this.dialog==false
+    // },
+    // fetchCountries () {
+    //   this.$http.get('api/countries')
+    //   .then( (res) => {
+    //     this.countries = res.data
+    //   })
+    // },
+    // fetchCategories() {
+    //   this.$http.get('admin/ads-category?paginate=1')
+    //   .then( (res) => {
+    //     this.searchCategories = res.data
+    //     this.addEditCategories = res.data
+    //   })
+    // },
+    // specialize() {
+    //   this.specializing = true
+    //   if(this.date)
+    //     this.$http.post('/api/admin/specialize/' + this.selectedItem.product_id, {day : this.date,'day_end':this.end_date})
+    //       .then(res => {
+    //           this.alert.message = 'تم تمييز الاعلان'
+    //           this.alert.type = 'info'
+    //         this.specializing = false
+    //         this.optionsDialog = false
+    //       })
+    //       .catch(({response}) => {
+    //         this.specializing = false
+    //         this.optionsDialog = false
+    //       })
+    // },
+    // specialBtn(item) {
+    //   this.optionsDialog = !this.optionsDialog
+    //   this.selectedItem = item
+    //   this.index = this.requests.indexOf(item)
+    //   if(item.spec_products_day != null) {
+    //     this.discrimint[0].value = true
+    //     this.date = item.spec_products_day.day
+    //      this.end_date = item.spec_products_day.end_date
+    //   }
+    // },
+    // watchers(item) {
+    //   this.selectedItem = Object.assign({} ,item);
+    //   this.index = this.requests.indexOf(item);
+    //   this.watchersDialog = true
+    // },
+    // updateWatchers(item) {
+    //   this.updatingWatchers = true
+    //   this.$http.put('/api/admin/update-product-view/' + this.selectedItem.product_id+'?page=' + this.page, {views : this.selectedItem.views})
+    //   .then(res => {
+    //     this.$set(this.requests, this.index, this.selectedItem)
+    //     this.$set(this.requests, index, res.data.data[0])
+    //       this.alert.message = 'تم بنجاح'
+    //       this.alert.type = 'info'
+    //     this.updatingWatchers = false
+    //     this.watchersDialog = false
+    //   })
+    //   .catch(({response}) => {
+    //     this.updatingWatchers = false
+    //     this.watchersDialog = false
+    //   })
+    // },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -502,7 +502,7 @@ export default {
         else {
           const endpoint = (this.filterCategory != null)?
           `admin/ads?ads_category_id=${this.filterCategory}&page=${page}`:
-          `admin/ads?page=${page}`
+          `admin/flash-ads?page=${page}`
           this.$http.get(endpoint)
           .then( (res) => {
             console.log(this.selected)
@@ -540,73 +540,73 @@ export default {
       this.dialog = true;
     },
 
-    stopItem (item) {
-      this.disapprove = true
-      const index = this.requests.indexOf(item)
-      if(confirm('هل انت متأكد من إيقاف الاعلان')) {
+    // stopItem (item) {
+    //   this.disapprove = true
+    //   const index = this.requests.indexOf(item)
+    //   if(confirm('هل انت متأكد من إيقاف الاعلان')) {
 
-        this.$http.post('api/admin/products/stop/'+ item.product_id+'?page=' + this.page)
-        .then( res => {
-          this.getDataFromApi(res)
-          .then(data => {
-            this.requests = data.items
-            this.totalRequests = data.total
-          });
-          // this.requests.indexOf(index). = 
-          this.alert.message = 'تم إيقاف الاعلان!'
-          this.alert.type = 'warning'
-          this.disapprove = false
-        })
-      }else{
-        this.disapprove = false
-      }
-    },
-    reshareItem(item){
-    this.reshare = true
+    //     this.$http.post('api/admin/products/stop/'+ item.product_id+'?page=' + this.page)
+    //     .then( res => {
+    //       this.getDataFromApi(res)
+    //       .then(data => {
+    //         this.requests = data.items
+    //         this.totalRequests = data.total
+    //       });
+    //       // this.requests.indexOf(index). = 
+    //       this.alert.message = 'تم إيقاف الاعلان!'
+    //       this.alert.type = 'warning'
+    //       this.disapprove = false
+    //     })
+    //   }else{
+    //     this.disapprove = false
+    //   }
+    // },
+    // reshareItem(item){
+    // this.reshare = true
       
-      if(confirm('هل تريد اعادة مشاركة الاعلان ؟؟')) {
+    //   if(confirm('هل تريد اعادة مشاركة الاعلان ؟؟')) {
 
-        this.$http.put('api/admin/repost-product/'+ item.product_id+'?page=' + this.page)
-        .then( res => {
-          this.getDataFromApi()
-          .then(data => {
-            this.requests = data.items
-            this.totalRequests = data.total
-          });
-          this.alert.message = 'تم اعادة مشاركة الاعلان!'
-          this.alert.type = 'success'
-          this.reshare = false
-        })
-      }else{
-        this.reshare = false
-      }
-    },
-    resumeItem (item) {
-      this.disapprove = true
-      const index = this.requests.indexOf(item)
-      if(confirm('هل تريد استئناف الاعلان؟')) {
+    //     this.$http.put('api/admin/repost-product/'+ item.product_id+'?page=' + this.page)
+    //     .then( res => {
+    //       this.getDataFromApi()
+    //       .then(data => {
+    //         this.requests = data.items
+    //         this.totalRequests = data.total
+    //       });
+    //       this.alert.message = 'تم اعادة مشاركة الاعلان!'
+    //       this.alert.type = 'success'
+    //       this.reshare = false
+    //     })
+    //   }else{
+    //     this.reshare = false
+    //   }
+    // },
+    // resumeItem (item) {
+    //   this.disapprove = true
+    //   const index = this.requests.indexOf(item)
+    //   if(confirm('هل تريد استئناف الاعلان؟')) {
 
-        this.$http.post('api/admin/products/resume/'+ item.product_id+'?page=' + this.page)
-        .then( res => {
-          this.getDataFromApi(res)
-          .then(data => {
-            this.requests = data.items
-            this.totalRequests = data.total
-          });
-          this.alert.message = 'تم استئناف الاعلان!'
-          this.alert.type = 'success'
-          this.disapprove = false
-        })
-      }else{
-        this.disapprove = false
-      }
-    },
+    //     this.$http.post('api/admin/products/resume/'+ item.product_id+'?page=' + this.page)
+    //     .then( res => {
+    //       this.getDataFromApi(res)
+    //       .then(data => {
+    //         this.requests = data.items
+    //         this.totalRequests = data.total
+    //       });
+    //       this.alert.message = 'تم استئناف الاعلان!'
+    //       this.alert.type = 'success'
+    //       this.disapprove = false
+    //     })
+    //   }else{
+    //     this.disapprove = false
+    //   }
+    // },
     deleteItem (item) {
       this.deleting = true
       const index = this.requests.indexOf(item)
       if(confirm('هل تريد مسح الاعلان؟')) {
 
-        this.$http.delete(`admin/ads/${item.id}`)
+        this.$http.delete(`admin/flash-ads/${item.id}`)
         .then( res => {
           this.requests.splice(index, 1)
           this.alert.message = 'تم مسح الاعلان!'
@@ -640,7 +640,7 @@ export default {
       this.ad.id = item.id;
       this.ad.title_ar = item.title_ar;
       this.ad.title_en = item.title_en;
-      this.ad.ads_category_id = item.ads_category_id;
+      this.ad.link = item.link;
 
       this.index = this.requests.indexOf(item)
     },
@@ -654,10 +654,10 @@ export default {
         newformdata.append("title_ar", this.ad.title_ar);
       if (this.ad.title_en)
         newformdata.append("title_en", this.ad.title_en);
-      if (this.ad.ads_category_id)
-        newformdata.append("ads_category_id", this.ad.ads_category_id);
+      if (this.ad.link)
+        newformdata.append("link", this.ad.link);
 
-      const endpoint = this.edit ? `admin/ads/${this.ad.id}` : `admin/ads`
+      const endpoint = this.edit ? `admin/flash-ads/${this.ad.id}` : `admin/flash-ads`
       this.$http.post(endpoint, newformdata)
         .then(res => {            
           this.$set(this.requests, index, newformdata)
@@ -669,7 +669,7 @@ export default {
             id: null,
             title_ar: null,
             title_en: null,
-            ads_category_id: null
+            link: null
           };
           setTimeout(() => {
             this.addEditDialog = false
@@ -683,6 +683,14 @@ export default {
         })
         .catch(({ response }) => {
           this.errors = response.data.error;
+          setTimeout(() => {
+              this.ad = {
+                    id: null,
+                    title_ar: null,
+                    title_en: null,
+                    link: null
+                };
+          }, 5000);
         });
     },
     parseDate (date) {
