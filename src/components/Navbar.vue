@@ -10,7 +10,6 @@
         </v-toolbar>
         <v-list>
             <template v-for="item in items">
-
                 <v-layout v-if="item.heading" :key="item.heading" row align-center>
                     <v-flex xs6>
                         <v-subheader v-if="item.heading">
@@ -72,13 +71,19 @@
                     
       <!-- <notifications/> -->
 
+        <v-tooltip bottom>
+            <v-btn icon slot="activator" @click="changePasswordDialog = !changePasswordDialog">
+                <v-icon >lock</v-icon>
+            </v-btn>
+            <span>تغيير كلمة السر</span>
+        </v-tooltip>
 
-        <v-btn icon  @click="dialog = !dialog">
-            <v-icon >lock</v-icon>
-        </v-btn>
-        <v-btn icon  @click="logout">
-            <v-icon >logout</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+            <v-btn icon slot="activator" @click="logout">
+                <v-icon >logout</v-icon>
+            </v-btn>
+            <span>تسجيل الخروج</span>
+        </v-tooltip>
                     
     </v-toolbar>
 
@@ -113,18 +118,40 @@
         </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialog" width="400px">
+    <v-dialog v-model="changePasswordDialog" width="400px">
         <v-card>
             <v-card-title class="grey lighten-4 py-4 title">
                 تغيير كلمة المرور 
             </v-card-title>
+            <v-alert v-if="newPassSuccess" :value="true" outline color="success" icon="check_circle">
+                تم تغيير كلمة السر بنجاح
+            </v-alert>
             <v-container grid-list-sm class="pa-4">
                 <v-layout row wrap>
+                    <!-- <v-flex xs12>
+                        <v-text-field v-model="user.old_password" prepend-icon="account_box" placeholder="اسم المستخدم"></v-text-field>
+                    </v-flex> -->
                     <v-flex xs12>
-                        <v-text-field v-model="user.username" prepend-icon="account_box" placeholder="اسم المستخدم"></v-text-field>
+                        <v-text-field 
+                        v-model="user.old_password" 
+                        :append-icon="showOldPassword ? 'visibility_off' : 'visibility'" 
+                        :type="showOldPassword ? 'text' : 'password'" 
+                        @click:append="showOldPassword = !showOldPassword" 
+                        prepend-icon="lock" 
+                        placeholder="كلمة المرور القديمة" 
+                    >
+                    </v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                        <v-text-field v-model="user.password" :append-icon="show1 ? 'visibility_off' : 'visibility'" :type="show1 ? 'text' : 'password'" @click:append="show1 = !show1" prepend-icon="lock" placeholder="كلمة المرور الجديدة" ></v-text-field>
+                        <v-text-field 
+                        v-model="user.new_password" 
+                        :append-icon="showNewPassword ? 'visibility_off' : 'visibility'" 
+                        :type="showNewPassword ? 'text' : 'password'" 
+                        @click:append="showNewPassword = !showNewPassword" 
+                        prepend-icon="lock" 
+                        placeholder="كلمة المرور الجديدة" 
+                    >
+                    </v-text-field>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -141,18 +168,20 @@
 <script>
 export default {
   data: () => ({
-    dialog: false,
+    changePasswordDialog: false,
+    newPassSuccess: false,
     drawer: null,
-    show1: false,
+    showOldPassword: false,
+    showNewPassword: false,
     resetting: false,
-     radioGroup: "",
+    radioGroup: "",
     countryDialog:false,
     default_country:0,
     countries:[],
     errors: [],
     user:{
-      username: null,
-      password: null,
+      old_password: null,
+      new_password: null,
     },
     items: [
         {
@@ -164,7 +193,7 @@ export default {
                     icon: 'supervisor_account',
                     text: 'المديرين',
                     url: '/admins',
-                    subtext: 'رفع | حذف | تعديل',
+                    subtext: 'إضافة | حذف | تعديل',
                 },
                 // {
                 //     icon: 'ballot',
@@ -182,7 +211,7 @@ export default {
                     icon: 'list',
                     text: 'الأحداث',
                     url: '/events',
-                    subtext: 'رفع | حذف | تعديل',
+                    subtext: 'تنشيط | تعطيل | حذف',
                 },
                 {
                     icon: 'ballot',
@@ -216,7 +245,7 @@ export default {
         },
         {
             icon: 'language',
-            'icon-alt': 'layers',
+            'icon-alt': 'my_location',
             text: 'المناطق',
             children: [
                 {
@@ -225,7 +254,7 @@ export default {
                     url: '/countries'
                 },
                 {
-                    icon: 'ballot',
+                    icon: 'my_location',
                     text: 'المناطق',
                     url: '/regions'
                 }
@@ -235,113 +264,7 @@ export default {
             icon: 'settings',
             text: 'اعدادات عامة',
             url: '/dashboard/others'
-        }
-        
-
-
-
-
-
-
-
-    //   {
-    //     icon: 'supervisor_account',
-    //     text: 'المديرين',
-    //     url: '/admins'
-    //   },
-    //   {
-    //     icon: 'list',
-    //     text: 'الأحداث',
-    //     url: '/events'
-    //   },
-    //   {
-    //     icon: 'devices_other',
-    //     text: 'الإعلانات',
-    //     url: '/flash-ads'
-    //   },
-    //   {
-    //     icon: 'list',
-    //     text: 'الأقسام',
-    //     url: '/main-categories'
-    //   },
-    //   {
-    //     icon: 'language',
-    //     text: 'الدول',
-    //     url: '/countries'
-    //   },
-    //   {
-    //     icon: 'content_copy',
-    //     'icon-alt': 'content_copy',
-    //     text: 'الاعلانات ',
-    //     children: [
-    //       {
-    //         icon: 'list',
-    //         text: 'الاعلانات',
-    //         url: '/dashboard/ads'
-    //       },
-    //       {
-    //         icon: 'star',
-    //         text: 'طلبات التثبيت',
-    //         url: '/dashboard/special-products-order'
-    //       },
-    //       {
-    //         icon: 'attach_money',
-    //         text: 'الباقة',
-    //         url: '/dashboard/packages'
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     icon: 'layers',
-    //     'icon-alt': 'layers',
-    //     text: 'تعديل الاقسام',
-    //     children: [
-    //         {
-    //             icon: 'edit',
-    //             text: 'الاقسام',
-    //             url: '/dashboard/categories/names'
-    //         },
-    //         {
-    //             icon: 'ballot',
-    //             text: 'التصنيفات',
-    //             url: '/dashboard/categories/link'
-    //         }
-    //     ]
-    //   },
-    //   {
-    //     icon: 'bar_chart',
-    //     'icon-alt': 'bar_chart',
-    //     text: 'الاعلانات التجارية',
-    //     children: [
-    //       {
-    //         icon: 'list',
-    //         text: 'الطلبات',
-    //         url: '/dashboard/commerical/requests'
-    //       },
-    //       {
-    //         icon: 'layers',
-    //         text: 'التصنيفات',
-    //         url: '/dashboard/commerical/categories'
-    //       },
-    //       {
-    //         icon: 'settings',
-    //         text: 'الاعدادات',
-    //         subtext: 'رفع | حذف | تعديل',
-    //         url: '/dashboard/commerical/settings'
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     icon: 'people',
-    //     text: 'المستخدمين',
-    //     url: '/dashboard/users'
-    //   },
-    //   {
-    //     icon: 'language',
-    //     text: 'الدول',
-    //     url: '/dashboard/countries'
-    //   },
-    
+        }    
     ]
   }),
   props: {
@@ -349,18 +272,18 @@ export default {
   },
   
   created(){
-      this.user.username = this.$ls.get('username');
-      this.radioGroup = this.$ls.get('country_id')
-      this.fetchCountries()
+    //   this.user.username = this.$ls.get('username');
+    //   this.radioGroup = this.$ls.get('country_id')
+    //   this.fetchCountries()
   },
   methods: {
-       fetchCountries() {
-      this.$http.get('api/countries')
-      .then( (res) => {
+    // fetchCountries() {
+    //   this.$http.get('api/countries')
+    //   .then( (res) => {
        
-       this.countries=res.data
-      })
-    },
+    //    this.countries=res.data
+    //   })
+    // },
     updateDefaultCountry(){
         if(this.resetting) return;
         this.resetting=true
@@ -369,6 +292,7 @@ export default {
         .then( (res) => {
             this.$ls.set('country_id', this.radioGroup, 24 * 60 * 60 * 1000);
             this.countryDialog = false
+
             this.resetting=false
         })
     },
@@ -396,14 +320,18 @@ export default {
     resetPassword (){
         if(this.resetting) return;
         this.resetting=true
-        this.$http.put('api/admin/reset', this.user)
+        this.$http.post('admin/reset_password', this.user)
         .then( (res) => {
             const token = res.data;
             this.$ls.set('token', token, 24 * 60 * 60 * 1000);
             this.$ls.set('username', this.user.username, 24 * 60 * 60 * 1000);
             this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-            this.dialog = false
-            this.resetting=false
+            this.changePasswordDialog = false
+            this.newPassSuccess = true
+            setTimeout(() => {
+                this.resetting=false
+            }, 300);
+            this.newPassSuccess = false
         })
         .catch( e => {
             if(e.response.data.errors.username){

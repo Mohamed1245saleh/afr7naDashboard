@@ -11,7 +11,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
+            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
             <v-dialog v-model="dialog" max-width="500px">
               <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
               <v-card>
@@ -91,36 +91,42 @@
 
             <td class="justify-right layout px-0">
 
-              <v-btn small flat color="blue" @click="editing(props.item)"> 
-                ارسال الإشعارات
-                <v-icon  class="mr-2 blue--text" >
-                  add_alert
-                </v-icon>
-              </v-btn>
+              <v-tooltip top>
+                <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
+                  <v-icon  class="mr-2 blue--text" >
+                    add_alert
+                  </v-icon>
+                </v-btn>
+                <span>ارسال الإشعارات</span>
+              </v-tooltip>
 
               <!--  -->
+              <v-tooltip v-if="props.item.deleted_at == null" top>
                 <v-btn 
-                  v-if="props.item.deleted_at == null" 
+                  slot="activator"
                   :loading="disapprove" 
-                  small flat color="red" 
+                  icon small flat color="red" 
                   @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
                 >
-                  تعطيل
                   <v-icon class="red--text"  >
                       delete
                   </v-icon>
-                </v-btn>  
+                </v-btn> 
+                <span>تعطيل</span>
+              </v-tooltip> 
+              <v-tooltip v-else top>
                 <v-btn 
-                  v-else 
+                  slot="activator" 
                   :loading="approve" 
-                  small flat color="green" 
+                  icon small flat color="green" 
                   @click="restoreItem(props.item)"
                 >
-                  تنشيط
                   <v-icon class="green--text"  >
                       restore
                   </v-icon>
                 </v-btn>
+                <span>تنشيط</span>
+              </v-tooltip>
             </td>
 
 
@@ -154,7 +160,7 @@
           </template>
           <template slot="no-data">
             <v-alert :value="true" color="success" icon="warning" outline>
-                لا يوجد اعلانات بهذا القسم
+                لا يوجد أحداث بهذا القسم
             </v-alert>
           </template>
         </v-data-table>
@@ -286,7 +292,7 @@ export default {
       type: 'success'
     },
     page:1,
-    filterCategory:null,
+    filterCountry:null,
     categories: []
   }),
 
@@ -332,7 +338,7 @@ export default {
       },
       deep: true
     },
-    filterCategory(val){
+    filterCountry(val){
       this.getDataFromApi()
       .then(data => {
       this.requests = data.items
@@ -372,22 +378,22 @@ export default {
           })
         }
         else {
-          // const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory
-          
-        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory : `admin/event?category=1&page=${page}`
-        this.$http.get(endpoint)
-        .then( (res) => {
-          console.log(res);
-          
-          let items = res.data.data
-          const total = res.data.total
-          this.pagination.rowsPerPage = res.data.per_page
-          this.pagination.totalItems = res.data.total
-          this.loading = false
-          resolve({
-            items,
-            total
-          })
+          let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=1&page=${page}`
+          : `admin/event?category=1${filterByCountry}&page=${page}`
+          this.$http.get(endpoint)
+            .then( (res) => {
+              console.log(res);
+              
+              let items = res.data.data
+              const total = res.data.total
+              this.pagination.rowsPerPage = res.data.per_page
+              this.pagination.totalItems = res.data.total
+              this.loading = false
+              resolve({
+                items,
+                total
+              })
         })
       }
       })

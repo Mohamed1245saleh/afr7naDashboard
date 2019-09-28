@@ -11,7 +11,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
+            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
             <v-dialog v-model="dialog" max-width="500px">
               <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
               <v-card>
@@ -75,8 +75,11 @@
               <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
 
-            <!-- <td class="text-xs-right" v-if="props.item.main_category_id">{{ props.item.main_category_id }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td> -->
+            <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user_id }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-right" v-if="props.item.phone">{{ props.item.phone }}</td>
+            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
             <td class="text-xs-right"  v-if="props.item.country.title_ar">{{ props.item.country.title_ar }}</td>
 
@@ -88,15 +91,46 @@
 
             <td class="justify-right layout px-0">
 
-              <v-btn small flat color="blue" @click="editing(props.item)"> 
-                ارسال الإشعارات
-                <v-icon  class="mr-2 blue--text" >
-                  add_alert
-                </v-icon>
-              </v-btn>
+              <v-tooltip top>
+                <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
+                  <v-icon  class="mr-2 blue--text" >
+                    add_alert
+                  </v-icon>
+                </v-btn>
+                <span>ارسال الإشعارات</span>
+              </v-tooltip>
 
               <!--  -->
-              <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
+              <v-tooltip v-if="props.item.deleted_at == null" top>
+                <v-btn 
+                  slot="activator"
+                  :loading="disapprove" 
+                  icon small flat color="red" 
+                  @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
+                >
+                  <v-icon class="red--text"  >
+                      delete
+                  </v-icon>
+                </v-btn> 
+                <span>تعطيل</span>
+              </v-tooltip> 
+              <v-tooltip v-else top>
+                <v-btn 
+                  slot="activator" 
+                  :loading="approve" 
+                  icon small flat color="green" 
+                  @click="restoreItem(props.item)"
+                >
+                  <v-icon class="green--text"  >
+                      restore
+                  </v-icon>
+                </v-btn>
+                <span>تنشيط</span>
+              </v-tooltip>
+            </td>
+
+
+              <!-- <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
                 تشغيل
                 <v-icon  class="mr-2 green--text" >
                   done
@@ -105,7 +139,7 @@
               <v-btn v-else small flat color="red" @click="editing(props.item)"> 
                 تعطيل
                 <v-icon  class="mr-2 red--text" >
-                  clear
+                  delete
                 </v-icon>
               </v-btn>
 
@@ -113,21 +147,6 @@
                 مسح
                 <v-icon class="red--text"  >
                   delete
-                </v-icon>
-              </v-btn>
-            </td>
-
-            <!-- <td class="justify-right layout px-0">
-              <v-btn small flat color="blue" @click="editing(props.item)"> 
-                تعديل
-                <v-icon  class="mr-2 blue--text" >
-                  edit
-                </v-icon>
-              </v-btn>
-              <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
-                مسح
-                <v-icon class="red--text"  >
-                  clear
                 </v-icon>
               </v-btn>
             </td> -->
@@ -141,13 +160,43 @@
           </template>
           <template slot="no-data">
             <v-alert :value="true" color="success" icon="warning" outline>
-                لا يوجد اعلانات بهذا القسم
+                لا يوجد أحداث بهذا القسم
             </v-alert>
           </template>
         </v-data-table>
         <div class="text-xs-center pt-2">
           <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
         </div>
+        <!--  -->
+        <v-dialog
+          v-model="askToDeleteDialog"
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
+            <v-card-text>
+              <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="grey darken-1"
+                flat="flat"
+                @click="askToDeleteDialog = false"
+              >
+                لا
+              </v-btn>
+              <v-btn
+                color="red darken-1"
+                flat="flat"
+                @click="deleteItem"
+              >
+                نعم
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!--  -->
     </div>
 </template>
 
@@ -165,19 +214,8 @@ export default {
   },
   data: () => ({
     errors:[],
-    newCategory:{
-      id:null,
-      title_ar: null,
-      title_en: null,
-      category:{
-        id: null,
-        title: null,
-      },
-      rel_category: {
-        id: null,
-        title: null,
-      }
-    },
+    askToDeleteDialog: false,
+    forceDelete: false,
     edit:false,
     dialog:false,
     optionsDialog:false,
@@ -192,6 +230,7 @@ export default {
     search: '',
     loading: false,
     disapprove: false,
+    approve: false,
     headers: [
       {
         text: 'العنوان',
@@ -204,12 +243,18 @@ export default {
         align: 'right',
         sortable: false
       },
-      // {
-      //   text: 'الفئة',
-      //   align: 'right',
-      //   value: 'category',
-      //   sortable: false
-      // },
+      {
+        text: 'المستخدم',
+        align: 'right',
+        value: 'user',
+        sortable: false
+      },
+      {
+        text: 'الهاتف',
+        align: 'right',
+        value: 'phone',
+        sortable: false
+      },
       {
         text: 'الدولة',
         align: 'right',
@@ -247,7 +292,7 @@ export default {
       type: 'success'
     },
     page:1,
-    filterCategory:null,
+    filterCountry:null,
     categories: []
   }),
 
@@ -282,15 +327,18 @@ export default {
     pagination: {
       handler () {
         this.page = this.pagination.page
-        this.getDataFromApi()
+        if(!this.loading) {
+
+          this.getDataFromApi()
         .then(data => {
           this.requests = data.items
           this.totalRequests = data.total
         })
+        }
       },
       deep: true
     },
-    filterCategory(val){
+    filterCountry(val){
       this.getDataFromApi()
       .then(data => {
       this.requests = data.items
@@ -330,20 +378,22 @@ export default {
           })
         }
         else {
-          // const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory
-          
-        const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'admin/event?title=event&category=3'
-        this.$http.get(endpoint)
-        .then( (res) => {
-          let items = res.data.data
-          const total = res.data.total
-          this.pagination.rowsPerPage = res.data.per_page
-          this.pagination.totalItems = res.data.total
-          this.loading = false
-          resolve({
-            items,
-            total
-          })
+          let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=2&page=${page}`
+          : `admin/event?category=2${filterByCountry}&page=${page}`
+          this.$http.get(endpoint)
+            .then( (res) => {
+              console.log(res);
+              
+              let items = res.data.data
+              const total = res.data.total
+              this.pagination.rowsPerPage = res.data.per_page
+              this.pagination.totalItems = res.data.total
+              this.loading = false
+              resolve({
+                items,
+                total
+              })
         })
       }
       })
@@ -352,21 +402,46 @@ export default {
       document.getElementById('image_choose').click()
     },
 
-    deleteItem (item) {
+    deleteItem() {
+      const item = this.selectedItem
       this.disapprove = true
-      const index = this.requests.indexOf(item)
-      if(confirm('هل انت متأكد من مسح القسم')) {
-
-        this.$http.delete('api/admin/categories/'+ item.id+'?page=' + this.page)
+      const endPoint = this.forceDelete == true ? `admin/event-destroy/${item.id}`:`admin/event-trached/${item.id}`
+        this.$http.delete(endPoint)
         .then( res => {
-          this.getDataFromApi(res);
-          this.requests.splice(index, 1)
-          this.alert.message = 'تم مسح القسم!'
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          this.alert.message = this.forceDelete == true ? 'تم حذف المناسبة!' : 'تم إيقاف المناسبة!ّ'
+          
           this.alert.type = 'info'
+          this.askToDeleteDialog = false 
+          this.forceDelete = false
           this.disapprove = false
         })
+    },
+
+    restoreItem (item) {
+      this.approve = true
+      // const index = this.requests.indexOf(item)
+      if(confirm('هل تود استرجاع المناسبة')) {
+      const forceDelete = this.forceDelete == true ? 1:0
+        this.$http.delete(`admin/event-restore/${item.id}`)
+        .then( res => {
+           
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          // this.requests.splice(index, 1)
+          this.alert.message = 'تم استئناف المناسبة'
+          this.alert.type = 'success'
+          this.approve = false
+        })
       }else{
-        this.disapprove = false
+        this.approve = false
       }
     },
 
@@ -408,7 +483,7 @@ export default {
       formdata.append('rel_category_id', this.newCategory.rel_category.id)
 
       if(this.edit){
-        this.$http.post('api/admin/categories/update/category/'+ this.newCategory.id+'?page=' + this.page, formdata)
+        this.$http.post(`api/admin/categories/update/category/${this.newCategory.id}?page=${this.page}`, formdata)
           .then( res => {
              
             this.getDataFromApi(res)
@@ -439,7 +514,7 @@ export default {
           })
       }
       else{
-        this.$http.post('api/admin/categories/add/category'+'?page=' + this.page, formdata)
+        this.$http.post(`api/admin/categories/add/category?page=${this.page}`, formdata)
           .then( res => {
              
             this.getDataFromApi(res)

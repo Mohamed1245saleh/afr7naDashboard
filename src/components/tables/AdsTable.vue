@@ -151,7 +151,7 @@
 
       <template slot="no-data">
         <v-alert :value="true" color="success" icon="warning" outline>
-          لا يوجد تسجيلات
+          لا يوجد اعلانات
         </v-alert>
       </template>
 

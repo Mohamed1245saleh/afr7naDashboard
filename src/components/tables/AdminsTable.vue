@@ -70,13 +70,14 @@
     </v-toolbar>
 
     <v-data-table
-        :headers="headers"
-        :items="requests"
-        :total-items="totalRequests"
-        :loading="loading"
-        :search="search"
-        hide-actions
-        :pagination.sync="pagination">
+      :headers="headers"
+      :items="requests"
+      :total-items="totalRequests"
+      :loading="loading"
+      :search="search"
+      hide-actions
+      :pagination.sync="pagination"
+    >
         <template slot="items" slot-scope="props">
             <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
@@ -100,29 +101,34 @@
                     edit
                 </v-icon>
               </v-btn> -->
-              <v-btn 
-                v-if="props.item.deleted_at == null" 
-                :loading="disapprove" 
-                small flat color="red" 
-                @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
-              >
-                تعطيل
-                <v-icon class="red--text"  >
-                    delete
-                </v-icon>
-              </v-btn>  
-              <v-btn 
-                v-else 
-                :loading="approve" 
-                small flat color="green" 
-                @click="restoreItem(props.item)"
-              >
-                تنشيط
-                <v-icon class="green--text"  >
-                    restore
-                </v-icon>
-              </v-btn>
-          </td>
+              <v-tooltip v-if="props.item.deleted_at == null" top>
+                <v-btn
+                  slot="activator" 
+                  :loading="disapprove" 
+                  small flat icon color="red" 
+                  @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
+                >
+                  <v-icon class="red--text"  >
+                      delete
+                  </v-icon>
+                </v-btn> 
+                <span>تعطيل</span>
+              </v-tooltip>
+
+              <v-tooltip v-else top>
+                <v-btn
+                  slot="activator"  
+                  :loading="approve" 
+                  small flat color="green" 
+                  @click="restoreItem(props.item)"
+                >
+                  <v-icon class="green--text"  >
+                      restore
+                  </v-icon>
+                </v-btn>
+                <span>تنشيط</span>
+              </v-tooltip>
+            </td>
 
             <!-- <td class="justify-right layout px-0">
                 <v-btn v-if="props.item.status" :loading="disapprove" small flat color="red" @click="dialog = true;user = props.item" >

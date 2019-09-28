@@ -210,9 +210,11 @@
             <td class="text-xs-right" v-else>لا يوجد </td>
              <td class="text-xs-right"  v-if="props.item.schedule_start">{{ (new Date(`${props.item.schedule_start} UTC`)).toLocaleString()  }}</td>
             <td class="text-xs-right" v-else>لا يوجد </td>
+
             <td class="text-xs-right">
               <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="$root.$data.baseURL+props.item.spec_image" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
             </td>
+            
             <td class="justify-right layout px-0">
                 <v-btn icon :loading="approve"  flat color="blue" @click="watchers(props.item)"> 
                   <v-icon  class="mr-2 blue--text" >
