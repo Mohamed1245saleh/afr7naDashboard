@@ -424,7 +424,7 @@ export default {
       this.dialog==false
     },
     fetchCountries () {
-      this.$http.get('api/countries')
+      this.$http.get('countries')
       .then( (res) => {
         this.countries = res.data
       })

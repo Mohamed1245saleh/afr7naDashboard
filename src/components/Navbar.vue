@@ -213,12 +213,12 @@ export default {
                     url: '/events',
                     subtext: 'تنشيط | تعطيل | حذف',
                 },
-                {
-                    icon: 'ballot',
-                    text: 'التصنيفات',
-                    url: '/dashboard/categories/link',
-                    subtext: 'رفع | حذف | تعديل',
-                }
+                // {
+                //     icon: 'ballot',
+                //     text: 'التصنيفات',
+                //     url: '/dashboard/categories/link',
+                //     subtext: 'رفع | حذف | تعديل',
+                // }
             ]
         },
         {

@@ -4,6 +4,15 @@
       <v-toolbar flat color="white">
           <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="بحث"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" />
+            
           <v-dialog v-model="dialog" max-width="500px">
 
             <v-tooltip top slot="activator">
@@ -16,7 +25,7 @@
               > 
                 <v-icon>add</v-icon>
               </v-btn>
-              <span>إضافة دولة جديد</span>
+              <span>إضافة منطقة جديد</span>
             </v-tooltip>
 
               <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn> -->
@@ -39,16 +48,14 @@
                       <v-container grid-list-md>
                           <v-layout wrap>
                               <v-flex>
-                                <v-text-field v-model="country.title_ar" label=" اسم الدولة بالعربية" />
-                                <v-text-field v-model="country.title_en"  label="اسم الدولة بالانجليزية" />
-                                <v-text-field v-model="country.currency"  label=" عملة الدولة بالعربية" />
-                                  <!-- <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                                <!-- <v-btn color="info" @click="$refs.image_input.click()">
-                                  <v-icon>image</v-icon>
-                                  صورة
-                                </v-btn> -->
-                                <!-- <input style="display:none" type="file" ref="image_input" > -->
-                                <v-text-field v-model="country.code"  label="كود الدولة" />
+                                <v-text-field v-model="region.title_ar" label=" اسم المنطقة بالعربية" />
+                                <v-text-field v-model="region.title_en"  label="اسم المنطقة بالانجليزية" />
+                                <v-select style="max-width:150px;height:32px" 
+                                  v-model="region.country_id" 
+                                  flat dense 
+                                  :items="[{title_ar:'الاقسام', id:null},...addEditCountries]" 
+                                  item-text="title_ar" item-value="id" 
+                                />
                               </v-flex>
                           </v-layout>
                       </v-container>
@@ -77,39 +84,26 @@
               <td class="text-xs-right" v-if="props.item.title_en">{{ props.item.title_en }}</td>
               <td class="text-xs-right" v-else>لم يحدد</td>
 
-              <!-- <td class="text-xs-right">
-                <img @click="openDialogue(props.item)" style="cursor:pointer" :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
-              </td> -->
-
-              <td class="text-xs-right"  v-if="props.item.code">{{ props.item.code }}</td>
+              <td class="text-xs-right" v-if="props.item.country">{{ props.item.country.title_ar }}</td>
               <td class="text-xs-right" v-else>لم يحدد</td>
-
-
-              <td class="text-xs-right" v-if="props.item.currency">{{ props.item.currency }}</td>
-              <td class="text-xs-right" v-else>لم يحدد</td>
-
-              <!-- <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
-              <td class="text-xs-right" v-else>لم يحدد</td> -->
 
               <td class="justify-right layout px-0">
-                  <v-btn small flat color="blue" @click="editing(props.item)"> 
-                    تعديل
+                <v-tooltip top>
+                  <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
                     <v-icon  class="mr-2 blue--text" >
                         edit
                     </v-icon>
                   </v-btn>
-                  <v-btn v-if="props.item.status != 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
-                    مسح
+                  <span>تعديل المنطقة</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <v-btn slot="activator" :loading="disapprove" icon small flat color="red" @click="deleteItem(props.item)">
                     <v-icon class="red--text"  >
                         delete
                     </v-icon>
                   </v-btn>  
-                  <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
-                    تنشيط
-                    <v-icon class="green--text"  >
-                        restore
-                    </v-icon>
-                  </v-btn>
+                  <span>مسح المنطقة</span>
+                </v-tooltip>
               </td>
 
           </template>
@@ -133,10 +127,10 @@
         max-width="290"
       >
         <v-card>
-          <v-card-title  class="title red--text">هل تريد تعطيل الدولة؟</v-card-title>
+          <v-card-title  class="title red--text">هل تريد تعطيل المنطقة؟</v-card-title>
 
           <v-card-text>
-            <v-checkbox color="red" label="حذف الدولة نهائيا" v-model="forceDelete"></v-checkbox>        
+            <v-checkbox color="red" label="حذف المنطقة نهائيا" v-model="forceDelete"></v-checkbox>        
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -176,21 +170,11 @@ export default {
   },
   data: () => ({
     errors: [],
-    country: {
+    region: {
       id: null,
       title_ar: null,
       title_en: null,
-      currency:"",
-      code: '',
-      // currency_ar:"",
-      // category: {
-      //   id: null,
-      //   title: null
-      // },
-      // rel_category: {
-      //   id: null,
-      //   title: null
-      // }
+      country_id: '',
     },
     edit: false,
     dialog: false,
@@ -224,17 +208,17 @@ export default {
       //   sortable: false
       // },
       {
-        text: "كود الدولة",
+        text: "المنطقة",
         align: "right",
-        value: "category",
+        value: "country",
         sortable: false
       },
-       {
-        text: "العملة",
-        align: "right",
-        value: "category",
-        sortable: false
-      },
+      // {
+      //   text: "العملة",
+      //   align: "right",
+      //   value: "category",
+      //   sortable: false
+      // },
       // {
       //   text: "العملة بالانجليزية",
       //   align: "right",
@@ -255,8 +239,9 @@ export default {
     },
     page: 1,
     index: null,
-    filterCategory: null,
-    categories: []
+    filterCountry:null,
+    searchCountries: [],
+    addEditCountries: []
   }),
 
   computed: {
@@ -297,10 +282,18 @@ export default {
         });
       },
       deep: true
-    }
+    },
+    filterCountry(val){
+      this.getDataFromApi()
+      .then(data => {
+        this.requests = data.items
+        this.totalRequests = data.total
+      });
+    },
   },
   created() {
     if (this.loading) return;
+    this.fetchCountries()
     this.getDataFromApi().then(data => {
       this.requests = data.items;
       this.totalRequests = data.total;
@@ -322,7 +315,9 @@ export default {
             total
           });
         } else {
-          const endpoint = `admin/region?country_id=1&page=${page}`;
+          let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/region?title=${this.search}${filterByCountry}&page=${page}`
+          : `admin/region?page=${page}${filterByCountry}`
           this.$http.get(endpoint).then(res => {
             let items = res.data.data;
             const total = res.data.total;
@@ -337,41 +332,27 @@ export default {
         }
       });
     },
-    deleteItem() {
-      const item = this.selectedItem;
-      const index = this.requests.indexOf(item)
-      this.disapprove = true;
-      const forceDelete = this.forceDelete == true ? 1:0
-      this.$http
-        .delete("api/admin/countries/" + item.country_id + "?page=" + this.page + '&forceDelete=' + forceDelete)
-        .then(res => {
-          if(forceDelete)
-            this.requests.splice(index, 1)
-          else
-            this.$set(this.requests, index, res.data)
-          this.alert.message = forceDelete == 1 ? "تم حذف الدولة!" : 'تم تعطيل الدولة!ّ'
-          this.alert.type = "info";
-          this.forceDelete = false;
-        })
-        .finally(() => {
-          this.disapprove = false;
-          this.deleteDialog = false;
-        });
+    fetchCountries() {
+      this.$http.get('admin/country')
+      .then( (res) => {
+        this.searchCountries = res.data.data
+        this.addEditCountries = res.data.data
+      })
     },
-    restoreItem (item) {
-      this.approve = true
+    deleteItem (item) {
+      this.deleting = true
       const index = this.requests.indexOf(item)
-      if(confirm('هل تود تنشيط الدولة')) {
-      const forceDelete = this.forceDelete == true ? 1:0
-        this.$http.put('api/admin/countries/restore/' + item.country_id +'?page=' + this.page)
+      if(confirm('هل تريد مسح المنطقة')) {
+
+        this.$http.delete(`admin/region/${item.id}`)
         .then( res => {
-          this.$set(this.requests, index, res.data)
-          this.alert.message = 'تم تنشيط الدولة'
+          this.requests.splice(index, 1)
+          this.alert.message = 'تم مسح المنطقة!'
           this.alert.type = 'success'
-          this.approve = false
+          this.deleting = false
         })
       }else{
-        this.approve = false
+        this.deleting = false
       }
     },
     close() {
@@ -383,53 +364,45 @@ export default {
     editing(item) {
       this.dialog = !this.dialog;
       this.edit = true;
-      this.country.id = item.id;
-      this.country.title_ar = item.title_ar;
-      this.country.title_en = item.title_en;
-      this.country.code = item.code;
-      this.country.currency = item.currency;
-      // this.country.currency_ar = item.currency_ar;
+      this.region.id = item.id;
+      this.region.title_ar = item.title_ar;
+      this.region.title_en = item.title_en;
+      this.region.country_id = item.country_id;
 
       this.index = this.requests.indexOf(item)
     },
     save() {
       const index = this.index
-      // let image = this.$refs.image_input.files[0];
-      // if (typeof image == "undefined") image = null;
+
       let newformdata = new FormData();
       const editformdata = {};
-      // if (image) formdata.append("image", image);
-      if (this.country.title_ar)
-        newformdata.append("title_ar", this.country.title_ar);
-        editformdata.title_ar = this.country.title_ar
-      if (this.country.title_en)
-        newformdata.append("title_en", this.country.title_en);
-        editformdata.title_en = this.country.title_en
-      if (this.country.code)
-        newformdata.append("code", this.country.code);
-        editformdata.code = this.country.code
-      if (this.country.currency)
-        newformdata.append("currency", this.country.currency);
-        editformdata.currency = this.country.currency
-      // if (this.country.currency_en)
-      //   newformdata.append("currency_en", this.country.currency_en);
+      if (this.region.title_ar)
+        newformdata.append("title_ar", this.region.title_ar);
+        editformdata.title_ar = this.region.title_ar
+      if (this.region.title_en)
+        newformdata.append("title_en", this.region.title_en);
+        editformdata.title_en = this.region.title_en
+      if (this.region.country_id)
+        newformdata.append("country_id", this.region.country_id);
+        editformdata.country_id = this.region.country_id
+
       console.log('editformdata', editformdata);
       
       if (this.edit) {
-        this.$http.put(`admin/country/${this.country.id}`, editformdata)
+        this.$http.put(`admin/region/${this.region.id}`, editformdata)
           .then(res => {
             console.log(res.data);
             
             this.$set(this.requests, index, editformdata)
             this.alert.type = "warning";
-            this.alert.message = "تم تعديل الدولة!";
+            this.alert.message = "تم تعديل المنطقة!";
             this.close();
             this.errors = [];
-            this.country = {
+            this.region = {
               id: null,
               title_ar: null,
               title_en: null,
-              code: null
+              country_id: null
             };
           })
           .catch(({ response }) => {
@@ -437,19 +410,20 @@ export default {
           });
       } else {
         this.$http
-          .post("admin/country" + "?page=" + this.page, newformdata)
+          .post("admin/region" + "?page=" + this.page, newformdata)
           .then(res => {
             this.requests.push(res.data)
             this.alert.type = "info";
-            this.alert.message = "تم اضافة الدولة!";
+            this.alert.message = "تم اضافة المنطقة!";
             this.close();
             this.errors = [];
-            this.country = {
+            this.region = {
               id: null,
               title_ar: null,
               title_en: null,
-              code: null
+              country_id: null
             };
+            this.getDataFromApi()
           })
           .catch(({ response }) => {
             this.errors = response.data.errors;

@@ -1,6 +1,6 @@
 <template>
 <v-container>
-    <regions-table title="الدول" icon="language"/>
+    <regions-table title="المناطق" icon="my_location"/>
 </v-container>
 </template>
 

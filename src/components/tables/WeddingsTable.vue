@@ -11,7 +11,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
+            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
             <v-dialog v-model="dialog" max-width="500px">
               <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
               <v-card>
@@ -293,7 +293,7 @@ export default {
     },
     page:1,
     filterCountry:null,
-    categories: []
+    countries: []
   }),
 
   computed: {
@@ -341,9 +341,9 @@ export default {
     filterCountry(val){
       this.getDataFromApi()
       .then(data => {
-      this.requests = data.items
-      this.totalRequests = data.total
-    });
+        this.requests = data.items
+        this.totalRequests = data.total
+      });
     },
   },
   created () {
@@ -358,8 +358,7 @@ export default {
     fetchCountries() {
       this.$http.get('admin/country')
       .then( (res) => {
-        
-        this.categories = res.data.data
+        this.countries = res.data.data
       })
     },
     getDataFromApi (res = null) {
