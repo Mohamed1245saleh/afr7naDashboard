@@ -10,6 +10,7 @@
         </v-toolbar>
         <v-list>
             <template v-for="item in items">
+                
                 <v-layout v-if="item.heading" :key="item.heading" row align-center>
                     <v-flex xs6>
                         <v-subheader v-if="item.heading">
@@ -261,10 +262,22 @@ export default {
             ]
         },
         {
-            icon: 'settings',
-            text: 'اعدادات عامة',
-            url: '/dashboard/others'
-        }    
+            icon: 'settings_applications',
+            'icon-alt': 'settings_applications',
+            text: 'التحكم',
+            children: [
+                {
+                    icon: 'phone',
+                    text: 'خدمة العملاء',
+                    url: '/customer_service'
+                },
+                {
+                    icon: 'phone_android',
+                    text: 'الصفحات',
+                    url: '/pages'
+                }  
+            ]
+        },  
     ]
   }),
   props: {
@@ -322,10 +335,10 @@ export default {
         this.resetting=true
         this.$http.post('admin/reset_password', this.user)
         .then( (res) => {
-            const token = res.data;
-            this.$ls.set('token', token, 24 * 60 * 60 * 1000);
-            this.$ls.set('username', this.user.username, 24 * 60 * 60 * 1000);
-            this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+            // const token = res.data;
+            // this.$ls.set('token', token, 24 * 60 * 60 * 1000);
+            // this.$ls.set('username', this.user.username, 24 * 60 * 60 * 1000);
+            // this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token;
             this.changePasswordDialog = false
             this.newPassSuccess = true
             setTimeout(() => {
@@ -334,10 +347,12 @@ export default {
             this.newPassSuccess = false
         })
         .catch( e => {
-            if(e.response.data.errors.username){
+            console.log(e);
+            
+            if(e.response.data.error.username){
                 alert('اسم المستخدم مطلوب')
             }
-            else if(e.response.data.errors.password){
+            else if(e.response.data.error.password){
                 alert('الرقم السرى مطلوب')
             }
             else {
@@ -355,5 +370,8 @@ export default {
     }
     .v-list__tile__title {
         text-align: right !important;
+    }
+    .active{
+        color: blue
     }
 </style>

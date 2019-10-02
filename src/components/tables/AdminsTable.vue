@@ -312,10 +312,10 @@ export default {
         if(!this.loading) {
 
           this.getDataFromApi()
-        .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
         }
       },
       deep: true

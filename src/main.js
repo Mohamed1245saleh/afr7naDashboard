@@ -1,5 +1,4 @@
-//Produced from Alexapps (Alexandria for programming) amr@alexforprog.com
-//developed by tahamostafa588@gmail.com
+// developed by tahamostafa588@gmail.com
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import 'babel-polyfill'
@@ -24,9 +23,11 @@ import './stylus/main.styl'
 
 import baseURL from './components/config/baseurl'
 import Notifications from "./components/pages/Notifications";
+import ReadMore from 'vue-read-more';
 
 Vue.use(VueLocalStorage);
 Vue.use(Datetime)
+Vue.use(ReadMore);
 
 Vue.use(Vuetify, {
   rtl: true

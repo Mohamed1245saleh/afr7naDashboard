@@ -30,14 +30,14 @@ const router = new Router({
       path: '/',
       redirect: '/login'
     },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login,
-      meta: {
-        guest: true,
-      }
-    },
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //   component: Login,
+    //   meta: {
+    //     guest: true,
+    //   }
+    // },
     {
       path: '/dashboard',
       redirect: '/dashboard/requests',
@@ -116,6 +116,14 @@ const router = new Router({
     //   secure: true
     // },
     {
+      path: '/login',
+      name: 'Login',
+      component: loadView('admins/Login'),
+      meta: {
+        guest: true,
+      }
+    },
+    {
       path: '/admins',
       name: 'Admins',
       component: loadView('admins/Admins'),
@@ -161,6 +169,18 @@ const router = new Router({
       path: '/regions',
       name: 'Regions',
       component: loadView('areas/Regions'),
+      secure: true
+    },
+    {
+      path: '/customer_service',
+      name: 'CustomerService',
+      component: loadView('settings/CustomerService'),
+      secure: true
+    },
+    {
+      path: '/pages',
+      name: 'Pages',
+      component: loadView('settings/Pages'),
       secure: true
     },
   ]

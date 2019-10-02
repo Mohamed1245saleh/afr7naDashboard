@@ -47,7 +47,7 @@
                     <v-flex>
                       <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
                       <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
-                      <v-text-field v-model="ad.link"  label=" عرابط الإعلان" />
+                      <v-text-field v-model="ad.link"  label=" رابط الإعلان" />
                       <!-- <v-select style="max-width:150px;height:32px" 
                         v-model="ad.ads_category_id" 
                         flat dense 
