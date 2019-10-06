@@ -4,6 +4,11 @@
         <v-toolbar flat color="white">
             <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-checkbox
+              class="mt-4"
+              label="متميز"
+              v-model="specialEvent"
+            ></v-checkbox>
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -75,7 +80,7 @@
               <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
 
-            <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user_id }}</td>
+            <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user.name }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
             <td class="text-xs-right" v-if="props.item.phone">{{ props.item.phone }}</td>
@@ -91,14 +96,14 @@
 
             <td class="justify-right layout px-0">
 
-              <v-tooltip top>
+              <!-- <v-tooltip top>
                 <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
                   <v-icon  class="mr-2 blue--text" >
                     add_alert
                   </v-icon>
                 </v-btn>
                 <span>ارسال الإشعارات</span>
-              </v-tooltip>
+              </v-tooltip> -->
 
               <!--  -->
               <v-tooltip v-if="props.item.deleted_at == null" top>
@@ -293,6 +298,7 @@ export default {
     },
     page:1,
     filterCountry:null,
+    specialEvent:false,
     categories: []
   }),
 
@@ -309,18 +315,18 @@ export default {
     dialog (val) {
       if(!val){
         this.newCategory = {
-      id:null,
-      title_ar: null,
-      title_en: null,
-      category:{
-        id: null,
-        title: null,
-      },
-      rel_category: {
-        id: null,
-        title: null,
-      }
-    }
+          id:null,
+          title_ar: null,
+          title_en: null,
+          category:{
+            id: null,
+            title: null,
+          },
+          rel_category: {
+            id: null,
+            title: null,
+          }
+        }
       }
       val || this.close()
     },
@@ -340,10 +346,17 @@ export default {
     },
     filterCountry(val){
       this.getDataFromApi()
-      .then(data => {
-      this.requests = data.items
-      this.totalRequests = data.total
-    });
+        .then(data => {
+          this.requests = data.items
+          this.totalRequests = data.total
+        });
+    },
+    specialEvent(val){
+      this.getDataFromApi()
+        .then(data => {
+          this.requests = data.items
+          this.totalRequests = data.total
+        });
     },
   },
   created () {
@@ -378,9 +391,10 @@ export default {
           })
         }
         else {
+          let bySpecialEvent = this.specialEvent == false ? '' : `&special_for_admin`
           let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=2&page=${page}`
-          : `admin/event?category=2${filterByCountry}&page=${page}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=2&page=${page}${bySpecialEvent}`
+          : `admin/event?category=2${filterByCountry}&page=${page}${bySpecialEvent}`
           this.$http.get(endpoint)
             .then( (res) => {
               console.log(res);

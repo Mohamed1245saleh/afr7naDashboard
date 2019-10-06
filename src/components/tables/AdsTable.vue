@@ -44,22 +44,21 @@
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
-                    <v-flex>
-                      <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
-                      <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
-                      <!-- <v-text-field v-model="ad.currency"  label=" عملة الدولة بالعربية" /> -->
-                      <v-select style="max-width:150px;height:32px" 
-                        v-model="ad.ads_category_id" 
-                        flat dense 
-                        :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
-                        item-text="title_ar" item-value="id" 
-                      />
-                      <v-btn color="info" @click="$refs.image_input.click()">
-                        <v-icon>image</v-icon>
-                        صورة
-                      </v-btn>
-                      <input style="display:none" type="file" ref="image_input" >
-                    </v-flex>
+                  <v-flex>
+                    <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
+                    <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" /> 
+                    <v-select style="max-width:150px;height:32px" 
+                      v-model="ad.ads_category_id" 
+                      flat dense 
+                      :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
+                      item-text="title_ar" item-value="id" 
+                    />
+                    <v-btn color="info" @click="$refs.image_input.click()">
+                      <v-icon>image</v-icon>
+                      صورة
+                    </v-btn>
+                    <input style="display:none" type="file" ref="image_input" >
+                  </v-flex>
                 </v-layout>
               </v-container>
             </v-card-text>

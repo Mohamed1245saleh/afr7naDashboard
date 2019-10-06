@@ -214,6 +214,12 @@ export default {
                     url: '/events',
                     subtext: 'تنشيط | تعطيل | حذف',
                 },
+                {
+                    icon: 'list',
+                    text: 'طلبات الأحداث الخاص',
+                    url: '/ask-special-event',
+                    subtext: 'طلبات الموافقه على الأحداث الخاصة',
+                },
                 // {
                 //     icon: 'ballot',
                 //     text: 'التصنيفات',

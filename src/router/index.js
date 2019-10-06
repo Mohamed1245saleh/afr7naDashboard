@@ -49,12 +49,12 @@ const router = new Router({
       component: Requests,
       secure: true
     },
-    {
-      path: '/dashboard/ads',
-      name: 'Ads',
-      component: Ads,
-      secure: true
-    },
+    // {
+    //   path: '/dashboard/ads',
+    //   name: 'Ads',
+    //   component: Ads,
+    //   secure: true
+    // },
     {
       path: '/dashboard/special-products-order',
       name: 'SpecialProductsOrders',
@@ -133,6 +133,12 @@ const router = new Router({
       path: '/events',
       name: 'Events',
       component: loadView('events/Events'),
+      secure: true
+    },
+    {
+      path: '/ask-special-event',
+      name: 'AskSpecialEvents',
+      component: loadView('events/AskSpecialEvents'),
       secure: true
     },
     {

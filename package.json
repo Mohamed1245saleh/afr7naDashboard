@@ -24,7 +24,8 @@
     "vue-ls": "^3.1.0",
     "vue-read-more": "^1.1.1",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.1.12",
+    "vuetify": "^1.5.5",
+    "vuetify-datetime-picker": "^1.0.13",
     "weekstart": "^1.0.0"
   },
   "devDependencies": {

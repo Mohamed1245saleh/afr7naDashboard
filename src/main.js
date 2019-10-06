@@ -20,10 +20,16 @@ import SearchSelect from './components/helpers/SearchSelect'
 
 import 'vuetify/dist/vuetify.min.css'
 import './stylus/main.styl'
+import DatetimePicker from 'vuetify-datetime-picker'
+import 'vuetify-datetime-picker/src/stylus/main.styl'
 
 import baseURL from './components/config/baseurl'
 import Notifications from "./components/pages/Notifications";
 import ReadMore from 'vue-read-more';
+import moment from 'moment';
+
+Vue.prototype.moment = moment
+// moment.locale('ar');
 
 Vue.use(VueLocalStorage);
 Vue.use(Datetime)
@@ -60,6 +66,8 @@ const http = axios.create({
 http.defaults.headers.common['Authorization'] = 'Bearer ' + Vue.ls.get('token', null);
 
 Vue.prototype.$http = http
+
+Vue.use(DatetimePicker)
 
 /* eslint-disable no-new */
 new Vue({

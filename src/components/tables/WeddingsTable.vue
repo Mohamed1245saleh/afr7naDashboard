@@ -1,203 +1,268 @@
 <template>
-    <div class="elevation-2">
-        <vuetify-alert @message="alert.message = ''" :message="alert.message" />
-        <v-toolbar flat color="white">
-            <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="بحث"
-              single-line
-              hide-details
-            ></v-text-field>
-            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
-            <v-dialog v-model="dialog" max-width="500px">
-              <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
-              <v-card>
-                  <v-card-title>
-                      <span class="headline">تصنيف جديد</span>
-                  </v-card-title>
-                  <v-card-text>
-                  <ul>
-                      <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                      <ul>
-                          <li v-for="err in error" :key="err + Math.random()">
-                          {{err}}
-                          </li>
-                      </ul>
-                      </li>
-                  </ul>
-                  </v-card-text>
-                  <v-card-text>
-                    <v-container grid-list-md>
-                      <v-layout wrap>
-                        <v-flex>
-                        <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
-                        <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
-                        <v-btn color="info" @click="$refs.image_input.click()">
-                            <v-icon>image</v-icon>
-                            صورة
-                        </v-btn>
-                        <input style="display:none" type="file" ref="image_input">
-                        <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
+  <div class="elevation-2">
+      <vuetify-alert @message="alert.message = ''" :message="alert.message" />
+      <v-toolbar flat color="white">
+          <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-checkbox
+            class="mt-4"
+            label="متميز"
+            v-model="specialEvent"
+          ></v-checkbox>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="بحث"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
+          <v-dialog v-model="dialog" max-width="500px">
+            <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
+            <v-card>
+                <v-card-title>
+                    <span class="headline">تصنيف جديد</span>
+                </v-card-title>
+                <v-card-text>
+                <ul>
+                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                    <ul>
+                        <li v-for="err in error" :key="err + Math.random()">
+                        {{err}}
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </v-card-text>
+                <v-card-text>
+                  <v-container grid-list-md>
+                    <v-layout wrap>
+                      <v-flex>
+                      <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
+                      <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
+                      <v-btn color="info" @click="$refs.image_input.click()">
+                          <v-icon>image</v-icon>
+                          صورة
+                      </v-btn>
+                      <input style="display:none" type="file" ref="image_input">
+                      <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
 
-                        <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
-                        
-                        </v-flex>
-                      </v-layout>
-                    </v-container>
-                  </v-card-text>
+                      <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
+                      
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
 
-                  <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                      <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-                  </v-card-actions>
-              </v-card> -->
-            </v-dialog>
-        </v-toolbar>
-        <v-data-table
-          :headers="headers"
-          :items="requests"
-          :total-items="totalRequests"
-          :loading="loading"
-          :search="search"
-          hide-actions
-          :pagination.sync="pagination"
-        >
-          <template slot="items" slot-scope="props">
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                </v-card-actions>
+            </v-card> -->
+          </v-dialog>
+      </v-toolbar>
+      <v-data-table
+        :headers="headers"
+        :items="requests"
+        :total-items="totalRequests"
+        :loading="loading"
+        :search="search"
+        hide-actions
+        :pagination.sync="pagination"
+      >
+        <template slot="items" slot-scope="props">
 
-            <td class="text-xs-right"  v-if="props.item.title">{{ props.item.title }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+          <td class="text-xs-right"  v-if="props.item.title">{{ props.item.title }}</td>
+          <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right">
-              <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
-            </td>
+          <td class="text-xs-right">
+            <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
+          </td>
 
-            <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user_id }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+          <td class="text-xs-center" v-if="props.item.user_id">{{ props.item.user.name }}</td>
+          <td class="text-xs-center" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right" v-if="props.item.phone">{{ props.item.phone }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+          <td class="text-xs-center" v-if="props.item.phone">{{ props.item.phone }}</td>
+          <td class="text-xs-center" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right"  v-if="props.item.country.title_ar">{{ props.item.country.title_ar }}</td>
+          <td class="text-xs-center"  v-if="props.item.country.title_ar">{{ props.item.country.title_ar }}</td>
 
-            <td class="text-xs-right"  v-if="props.item.region.title_ar">{{ props.item.region.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+          <td class="text-xs-center"  v-if="props.item.region.title_ar">{{ props.item.region.title_ar }}</td>
+          <td class="text-xs-center" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right"  v-if="props.item.invitation_start_time">{{ props.item.invitation_start_time }}</td>
-            <td class="text-xs-right" v-else>لا يوجد وقت محدد</td>
+          <td class="text-xs-center"  v-if="props.item.invitation_start_time">{{ props.item.invitation_start_time }}</td>
+          <td class="text-xs-center" v-else>لا يوجد وقت محدد</td>
 
-            <td class="justify-right layout px-0">
+          <td class="justify-center layout px-0">
 
-              <v-tooltip top>
-                <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
-                  <v-icon  class="mr-2 blue--text" >
-                    add_alert
-                  </v-icon>
-                </v-btn>
-                <span>ارسال الإشعارات</span>
-              </v-tooltip>
-
-              <!--  -->
-              <v-tooltip v-if="props.item.deleted_at == null" top>
-                <v-btn 
-                  slot="activator"
-                  :loading="disapprove" 
-                  icon small flat color="red" 
-                  @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
-                >
-                  <v-icon class="red--text"  >
-                      delete
-                  </v-icon>
-                </v-btn> 
-                <span>تعطيل</span>
-              </v-tooltip> 
-              <v-tooltip v-else top>
-                <v-btn 
-                  slot="activator" 
-                  :loading="approve" 
-                  icon small flat color="green" 
-                  @click="restoreItem(props.item)"
-                >
-                  <v-icon class="green--text"  >
-                      restore
-                  </v-icon>
-                </v-btn>
-                <span>تنشيط</span>
-              </v-tooltip>
-            </td>
-
-
-              <!-- <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
-                تشغيل
-                <v-icon  class="mr-2 green--text" >
-                  done
+            <v-tooltip v-if="specialEvent === true" top>
+              <v-btn slot="activator" icon small flat color="blue" @click="showSpecialEventTimes(props.item)"> 
+                <v-icon  class="mr-2 blue--text" >
+                  access_time
                 </v-icon>
               </v-btn>
-              <v-btn v-else small flat color="red" @click="editing(props.item)"> 
-                تعطيل
-                <v-icon  class="mr-2 red--text" >
-                  delete
-                </v-icon>
-              </v-btn>
+              <span>عرض الأوقات</span>
+            </v-tooltip>
 
-              <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
-                مسح
+            <!--  -->
+            <v-tooltip v-if="props.item.deleted_at == null" top>
+              <v-btn 
+                slot="activator"
+                :loading="disapprove" 
+                icon small flat color="red" 
+                @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
+              >
                 <v-icon class="red--text"  >
-                  delete
+                    delete
+                </v-icon>
+              </v-btn> 
+              <span>تعطيل</span>
+            </v-tooltip> 
+            <v-tooltip v-else top>
+              <v-btn 
+                slot="activator" 
+                :loading="approve" 
+                icon small flat color="green" 
+                @click="restoreItem(props.item)"
+              >
+                <v-icon class="green--text"  >
+                    restore
                 </v-icon>
               </v-btn>
-            </td> -->
+              <span>تنشيط</span>
+            </v-tooltip>
+          </td>
 
-          </template>
-          <v-alert slot="no-results" :value="true" color="error" icon="warning">
-              لا يوجد نتائج للبحث "{{search}}"
+
+        </template>
+        <v-alert slot="no-results" :value="true" color="error" icon="warning">
+            لا يوجد نتائج للبحث "{{search}}"
+        </v-alert>
+        <template slot="pageText" slot-scope="props">
+        الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
+        </template>
+        <template slot="no-data">
+          <v-alert :value="true" color="success" icon="warning" outline>
+              لا يوجد أحداث بهذا القسم
           </v-alert>
-          <template slot="pageText" slot-scope="props">
-          الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
-          </template>
-          <template slot="no-data">
-            <v-alert :value="true" color="success" icon="warning" outline>
-                لا يوجد أحداث بهذا القسم
-            </v-alert>
-          </template>
-        </v-data-table>
-        <div class="text-xs-center pt-2">
-          <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
-        </div>
-        <!--  -->
-        <v-dialog
-          v-model="askToDeleteDialog"
-          max-width="290"
-        >
-          <v-card>
-            <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
-            <v-card-text>
-              <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="grey darken-1"
-                flat="flat"
-                @click="askToDeleteDialog = false"
+        </template>
+      </v-data-table>
+      <div class="text-xs-center pt-2">
+        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      </div>
+      <!--  -->
+      <v-dialog
+        v-model="askToDeleteDialog"
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
+          <v-card-text>
+            <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="grey darken-1"
+              flat="flat"
+              @click="askToDeleteDialog = false"
+            >
+              لا
+            </v-btn>
+            <v-btn
+              color="red darken-1"
+              flat="flat"
+              @click="deleteItem"
+            >
+              نعم
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--  -->
+      
+      <!--user answers -->
+      <v-dialog v-model="specialEventTimesDialog" max-width="500px" >
+        <v-card>
+          <v-card-title>
+            <span class="headline">الأوقات</span>
+          </v-card-title>
+          <v-card-text>
+            <ul>
+              <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                <ul>
+                  <li v-for="err in error" :key="err + Math.random()">
+                    {{err}}
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </v-card-text>
+                
+          <v-card-text class="py-0">
+            <!--  -->
+            <!-- <v-card> -->
+              <v-container
+                fluid
+                grid-list-md
               >
-                لا
-              </v-btn>
-              <v-btn
-                color="red darken-1"
-                flat="flat"
-                @click="deleteItem"
-              >
-                نعم
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <!--  -->
-    </div>
+                <v-layout row wrap>
+                  <v-flex
+                    v-for="time in specialEventTimes"
+                    :key="time.id"
+                    v-bind="{ [`xs12`]: true }"
+                  >
+                    <v-card>
+                        <v-container
+                          fill-height
+                          fluid
+                          pa-2
+                        >
+                          <v-layout fill-height>
+                            <v-flex xs5 align-end flexbox class="text-xs-center">
+                              <span class=" primary--text" >{{ moment(time.start_date).calendar() }}</span>
+                            </v-flex>
+
+                            <v-flex xs2 class="text-xs-center"><v-icon>keyboard_backspace</v-icon></v-flex>
+                            
+                            <v-flex xs5 align-end flexbox class="text-xs-center">
+                              <span class=" primary--text">{{ moment(time.end_date).calendar() }}</span>
+                            </v-flex>
+                          </v-layout>
+                        </v-container>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <!--  -->
+                        <v-tooltip top>
+                          <v-btn 
+                            slot="activator"
+                            :loading="loadingDeleteTime" 
+                            icon small flat color="red" 
+                            @click="deleteEventTime(time)"
+                          >
+                            <v-icon class="red--text"  >
+                                delete
+                            </v-icon>
+                          </v-btn> 
+                          <span>مسح هذا الوقت</span>
+                        </v-tooltip> 
+                      </v-card-actions>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            <!-- </v-card> -->
+            <!--  -->
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--  -->
+  </div>
 </template>
 
 <script>
@@ -215,6 +280,7 @@ export default {
   data: () => ({
     errors:[],
     askToDeleteDialog: false,
+    specialEventTimesDialog: false,
     forceDelete: false,
     edit:false,
     dialog:false,
@@ -293,6 +359,9 @@ export default {
     },
     page:1,
     filterCountry:null,
+    specialEvent:false,
+    specialEventTimes: [],
+    loadingDeleteTime: false,
     countries: []
   }),
 
@@ -309,18 +378,18 @@ export default {
     dialog (val) {
       if(!val){
         this.newCategory = {
-      id:null,
-      title_ar: null,
-      title_en: null,
-      category:{
-        id: null,
-        title: null,
-      },
-      rel_category: {
-        id: null,
-        title: null,
-      }
-    }
+          id:null,
+          title_ar: null,
+          title_en: null,
+          category:{
+            id: null,
+            title: null,
+          },
+          rel_category: {
+            id: null,
+            title: null,
+          }
+        }
       }
       val || this.close()
     },
@@ -344,6 +413,13 @@ export default {
         this.requests = data.items
         this.totalRequests = data.total
       });
+    },
+    specialEvent(val){
+      this.getDataFromApi()
+        .then(data => {
+          this.requests = data.items
+          this.totalRequests = data.total
+        });
     },
   },
   created () {
@@ -377,9 +453,10 @@ export default {
           })
         }
         else {
+          let bySpecialEvent = this.specialEvent == false ? '' : `&special_for_admin`
           let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=1&page=${page}`
-          : `admin/event?category=1${filterByCountry}&page=${page}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=1&page=${page}${bySpecialEvent}`
+          : `admin/event?category=1${filterByCountry}&page=${page}${bySpecialEvent}`
           this.$http.get(endpoint)
             .then( (res) => {
               console.log(res);
@@ -443,7 +520,6 @@ export default {
         this.approve = false
       }
     },
-
     close () {
       this.dialog = false
       setTimeout(() => {
@@ -544,6 +620,28 @@ export default {
           })
       }
     },
+    showSpecialEventTimes(item){
+      this.specialEventTimesDialog = !this.specialEventTimesDialog;
+      this.$http.get(`admin/special-events/${item.id}`)
+      .then( (res) => {
+        console.log(res)
+        this.specialEventTimes = res.data
+      })
+    },
+    deleteEventTime(time){
+      // alert(time.id)
+      this.loadingDeleteTime = true
+        this.$http.delete(`admin/special-events/${time.id}`)
+        .then( res => {
+            this.specialEventTimes.splice(time, 1);
+            this.loadingDeleteTime = false
+          },
+          err => {
+            alert('حدث خطأ غير متوقع . يرجى المحاولة مرة اخري') 
+            this.loadingDeleteTime = false
+          },
+        )
+    },
     parseDate (date) {
         if (!date) return null
         const [month, day, year] = date.split('/')
@@ -556,5 +654,9 @@ export default {
 <style scoped>
   ul{
     list-style: none;
+  }
+  .v-timeline-item__body{
+    text-align: unset !important;
+        margin-left: 25px !important;
   }
 </style>
