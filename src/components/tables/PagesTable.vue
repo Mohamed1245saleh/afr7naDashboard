@@ -6,19 +6,7 @@
           <v-icon medium>{{icon}}</v-icon> {{title}}
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-dialog v-model="addEditDialog" max-width="500px">
-          <!-- <v-tooltip top slot="activator">
-            <v-btn 
-              slot="activator" 
-              color="primary" 
-              fab dark small
-              class="mb-2" 
-              @click="edit = false"
-            > 
-              <v-icon>add</v-icon>
-            </v-btn>
-            <span>إضافة إعلان جديد</span>
-          </v-tooltip> -->
+        <v-dialog v-model="addEditDialog" max-width="700px">
           <v-card>
               <v-card-title>
                   <span class="headline">{{formTitle}}</span>
@@ -55,8 +43,8 @@
 
               <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" flat @click.native="closeAddEditDialog">الغاء</v-btn>
-                  <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                  <v-btn color="" class="ma-2" small @click.native="closeAddEditDialog">الغاء</v-btn>
+                  <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
               </v-card-actions>
           </v-card>
         </v-dialog>
@@ -130,7 +118,7 @@
 
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
       </div>
       <v-dialog
         v-if="media.length"
@@ -389,12 +377,12 @@ export default {
     deleteItem (item) {
       this.deleting = true
       const index = this.requests.indexOf(item)
-      if(confirm('هل تريد مسح الاعلان؟')) {
+      if(confirm('هل تريد مسح الصفحة؟')) {
 
         this.$http.delete(`admin/flash-ads/${item.id}`)
         .then( res => {
           this.requests.splice(index, 1)
-          this.alert.message = 'تم مسح الاعلان!'
+          this.alert.message = 'تم مسح الصفحة!'
           this.alert.type = 'success'
           this.deleting = false
         })

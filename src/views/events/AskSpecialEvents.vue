@@ -2,20 +2,20 @@
   <div class="elevation-2">
       <vuetify-alert @message="alert.message = ''" :message="alert.message" />
       <v-toolbar flat color="white">
-          <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+          <v-toolbar-title class=""><v-icon medium>stars</v-icon> طلبات التمييز</v-toolbar-title>
           <v-spacer></v-spacer>
           <!-- <v-checkbox
             class="mt-4"
             label="متميز"
             v-model="specialEvent"
           ></v-checkbox> -->
-          <v-text-field
+          <!-- <v-text-field
             v-model="search"
             append-icon="search"
             label="بحث"
             single-line
             hide-details
-          ></v-text-field>
+          ></v-text-field> -->
       </v-toolbar>
       <v-data-table
         :headers="headers"
@@ -32,7 +32,7 @@
           <td class="text-xs-center" v-else>لا يوجد مسمى</td>
 
           <td class="text-xs-center">
-            <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.event.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
+            <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.event.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
           </td>
 
           <td class="text-xs-center" v-if="props.item.event.user">{{ props.item.event.user.name }}</td>
@@ -109,7 +109,7 @@
         </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
       </div>
       <!--  -->
       <v-dialog

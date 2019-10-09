@@ -14,7 +14,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false"
+            @click="edit = false;errors=[];ad={}"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -47,7 +47,7 @@
                   <v-flex>
                     <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
                     <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" /> 
-                    <v-select style="max-width:150px;height:32px" 
+                    <v-select style="" 
                       v-model="ad.ads_category_id" 
                       flat dense 
                       :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
@@ -65,20 +65,12 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="closeAddEditDialog">الغاء</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                <v-btn color="" class="ma-2" small @click.native="closeAddEditDialog">الغاء</v-btn>
+                <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
             </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <!-- <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
-      >
-      </v-text-field> -->
       <v-select style="max-width:150px;height:32px" 
         v-model="filterCategory" 
         flat dense 
@@ -114,7 +106,7 @@
         <td class="text-xs-right" v-else>لا يوجد قسم</td>
 
         <td class="text-xs-right">
-          <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="`http://134.209.18.160/${props.item.image}`" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
+          <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="`http://afr7na.com/${props.item.image}`" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
         </td>
 
         <td class="justify-right layout px-0">
@@ -156,7 +148,7 @@
 
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-if="media.length"
@@ -616,7 +608,6 @@ export default {
         this.deleting = false
       }
     },
-
     close () {
       this.dialog = false
       setTimeout(() => {
@@ -634,6 +625,7 @@ export default {
         };
     },
     editing(item) {
+      this.errors=[];
       this.addEditDialog = !this.addEditDialog;
       this.edit = true;
       this.ad.id = item.id;

@@ -24,15 +24,21 @@
                     <span class="headline">{{formTitle}}</span>
                 </v-card-title>
                 <v-card-text>
-                  <ul>
-                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                      <ul>
-                        <li v-for="err in error" :key="err + Math.random()">
-                          {{err}}
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
+                  <!--  -->
+                  <v-list>
+                    <template v-for="error in errors" >
+                      <v-list-tile :key="error[0] + Math.random()">
+                        <v-list-tile-content>
+                          <v-list-tile-title class="text-xs-center">
+                            <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                              {{err}} <v-icon color="red">error</v-icon>
+                            </span>
+                          </v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </template>
+                  </v-list>
+                  <!--  -->
                 </v-card-text>
                 <v-card-text>
                     <v-container grid-list-md>
@@ -55,8 +61,8 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                    <v-btn color="" class="ma-2" small @click.native="close">الغاء</v-btn>
+                    <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -91,24 +97,25 @@
             <td class="text-xs-right" v-else>لم يحدد</td> -->
 
             <td class="justify-right layout px-0">
-                <v-btn small flat color="blue" @click="editing(props.item)"> 
-                  تعديل
+
+              <v-tooltip top>
+                <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
                   <v-icon  class="mr-2 blue--text" >
                       edit
                   </v-icon>
                 </v-btn>
-                <v-btn v-if="props.item.status != 1" :loading="disapprove" small flat color="red" @click="selectedItem = props.item;deleteDialog = !deleteDialog">
-                  مسح
-                  <v-icon class="red--text"  >
+                <span>تعديل الدولة</span>
+              </v-tooltip>
+
+              <v-tooltip top>
+                <v-btn slot="activator" icon :loading="disapprove" flat color="red" @click="deleteItem(props.item)"> 
+                  <v-icon  class="mr-2 red--text" >
                       delete
                   </v-icon>
-                </v-btn>  
-                <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)">
-                  تنشيط
-                  <v-icon class="green--text"  >
-                      restore
-                  </v-icon>
                 </v-btn>
+                <span>مسح الدولة</span>
+              </v-tooltip>
+
             </td>
 
         </template>
@@ -120,12 +127,12 @@
         </template>
         <template slot="no-data">
           <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد اعلانات بهذا القسم
+            لا يوجد دول
           </v-alert>
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-model="deleteDialog"
@@ -327,41 +334,20 @@ export default {
         }
       });
     },
-    deleteItem() {
-      const item = this.selectedItem;
+    deleteItem(item) {
+      this.deleting = true
       const index = this.requests.indexOf(item)
-      this.disapprove = true;
-      const forceDelete = this.forceDelete == true ? 1:0
-      this.$http
-        .delete("api/admin/countries/" + item.country_id + "?page=" + this.page + '&forceDelete=' + forceDelete)
-        .then(res => {
-          if(forceDelete)
-            this.requests.splice(index, 1)
-          else
-            this.$set(this.requests, index, res.data)
-          this.alert.message = forceDelete == 1 ? "تم حذف الدولة!" : 'تم تعطيل الدولة!ّ'
-          this.alert.type = "info";
-          this.forceDelete = false;
-        })
-        .finally(() => {
-          this.disapprove = false;
-          this.deleteDialog = false;
-        });
-    },
-    restoreItem (item) {
-      this.approve = true
-      const index = this.requests.indexOf(item)
-      if(confirm('هل تود تنشيط الدولة')) {
-      const forceDelete = this.forceDelete == true ? 1:0
-        this.$http.put('api/admin/countries/restore/' + item.country_id +'?page=' + this.page)
+      if(confirm('هل تريد مسح الدولة؟')) {
+
+        this.$http.delete(`admin/country/${item.id}`)
         .then( res => {
-          this.$set(this.requests, index, res.data)
-          this.alert.message = 'تم تنشيط الدولة'
+          this.requests.splice(index, 1)
+          this.alert.message = 'تم مسح الدولة!'
           this.alert.type = 'success'
-          this.approve = false
+          this.deleting = false
         })
       }else{
-        this.approve = false
+        this.deleting = false
       }
     },
     close() {
@@ -423,7 +409,7 @@ export default {
             };
           })
           .catch(({ response }) => {
-            this.errors = response.data.errors;
+            this.errors = response.data.error;
           });
       } else {
         this.$http
@@ -440,9 +426,10 @@ export default {
               title_en: null,
               code: null
             };
+            this.getDataFromApi()
           })
           .catch(({ response }) => {
-            this.errors = response.data.errors;
+            this.errors = response.data.error;
           });
       }
     },

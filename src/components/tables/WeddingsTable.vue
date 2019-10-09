@@ -73,11 +73,11 @@
       >
         <template slot="items" slot-scope="props">
 
-          <td class="text-xs-right"  v-if="props.item.title">{{ props.item.title }}</td>
-          <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+          <td class="text-xs-center"  v-if="props.item.title">{{ props.item.title }}</td>
+          <td class="text-xs-center" v-else>لا يوجد مسمى</td>
 
-          <td class="text-xs-right">
-            <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
+          <td class="text-xs-center">
+            <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
           </td>
 
           <td class="text-xs-center" v-if="props.item.user_id">{{ props.item.user.name }}</td>
@@ -90,10 +90,7 @@
 
           <td class="text-xs-center"  v-if="props.item.region.title_ar">{{ props.item.region.title_ar }}</td>
           <td class="text-xs-center" v-else>لا يوجد مسمى</td>
-
-          <td class="text-xs-center"  v-if="props.item.invitation_start_time">{{ props.item.invitation_start_time }}</td>
-          <td class="text-xs-center" v-else>لا يوجد وقت محدد</td>
-
+\
           <td class="justify-center layout px-0">
 
             <v-tooltip v-if="specialEvent === true" top>
@@ -149,7 +146,7 @@
         </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
       </div>
       <!--  -->
       <v-dialog
@@ -300,43 +297,37 @@ export default {
     headers: [
       {
         text: 'العنوان',
-        align: 'right',
+        align: 'center',
         value: 'title',
         sortable: false
       },
       {
         text: 'صورة',
-        align: 'right',
+        align: 'center',
         sortable: false
       },
       {
         text: 'المستخدم',
-        align: 'right',
+        align: 'center',
         value: 'user',
         sortable: false
       },
       {
         text: 'الهاتف',
-        align: 'right',
+        align: 'center',
         value: 'phone',
         sortable: false
       },
       {
         text: 'الدولة',
-        align: 'right',
+        align: 'center',
         value: 'country',
         sortable: false
       },
       {
         text: 'المنطقة',
-        align: 'right',
+        align: 'center',
         value: 'region',
-        sortable: false
-      },
-      {
-        text: 'وقت بداية الدعوة',
-        align: 'right',
-        value: 'invitationStartTime',
         sortable: false
       },
       {
@@ -345,12 +336,6 @@ export default {
         value: 'actions',
         sortable: false
       },
-      // {
-      //   text: 'عمليات',
-      //   align: 'center',
-      //   value: 'oldActions',
-      //   sortable: false
-      // }
     ],
     editedItem: null,
     alert: {

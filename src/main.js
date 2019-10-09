@@ -36,7 +36,12 @@ Vue.use(Datetime)
 Vue.use(ReadMore);
 
 Vue.use(Vuetify, {
-  rtl: true
+  rtl: true,
+  theme: {
+    primary: '#EF6C00',
+    secondary: '#FFCDD2',
+    accent: '#3F51B5',
+  }
 })
 
 Vue.component('nav-bar', Navbar)

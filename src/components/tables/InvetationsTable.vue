@@ -77,7 +77,7 @@
           <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
           <td class="text-xs-right">
-            <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
+            <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.special_image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
           </td>
 
           <td class="text-xs-right" v-if="props.item.user_id">{{ props.item.user.name }}</td>
@@ -97,7 +97,7 @@
           <td class="justify-right layout px-0">
 
             <v-tooltip v-if="specialEvent === true" top>
-              <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
+              <v-btn slot="activator" icon small flat color="blue" @click="sendNotifications(props.item)"> 
                 <v-icon  class="mr-2 blue--text" >
                   add_alert
                 </v-icon>
@@ -106,7 +106,7 @@
             </v-tooltip>
 
             <v-tooltip top>
-              <v-btn slot="activator" icon small flat color="blue" @click="editing(props.item)"> 
+              <v-btn slot="activator" icon small flat color="blue" @click="sendNotifications(props.item)"> 
                 <v-icon  class="mr-2 blue--text" >
                   add_alert
                 </v-icon>
@@ -144,27 +144,6 @@
           </td>
 
 
-            <!-- <v-btn v-if="props.item.delete_at" small flat color="green" @click="editing(props.item)"> 
-              تشغيل
-              <v-icon  class="mr-2 green--text" >
-                done
-              </v-icon>
-            </v-btn>
-            <v-btn v-else small flat color="red" @click="editing(props.item)"> 
-              تعطيل
-              <v-icon  class="mr-2 red--text" >
-                delete
-              </v-icon>
-            </v-btn>
-
-            <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
-              مسح
-              <v-icon class="red--text"  >
-                delete
-              </v-icon>
-            </v-btn>
-          </td> -->
-
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
             لا يوجد نتائج للبحث "{{search}}"
@@ -179,7 +158,7 @@
         </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
       </div>
       <!--  -->
       <v-dialog
@@ -444,10 +423,8 @@ export default {
           this.disapprove = false
         })
     },
-
     restoreItem (item) {
       this.approve = true
-      // const index = this.requests.indexOf(item)
       if(confirm('هل تود استرجاع المناسبة')) {
       const forceDelete = this.forceDelete == true ? 1:0
         this.$http.delete(`admin/event-restore/${item.id}`)
@@ -467,7 +444,6 @@ export default {
         this.approve = false
       }
     },
-
     close () {
       this.dialog = false
       setTimeout(() => {
@@ -488,6 +464,28 @@ export default {
 
       this.newCategory.rel_category.id = item.sub_category.category.category_id;
       this.newCategory.rel_category.title = item.sub_category.title_ar;
+    },
+    sendNotifications(item){
+      console.log(item);
+      
+      this.approve = true
+      if(confirm('هل تود ارسال الإشعارت لهذه المناسبة')) {
+        this.$http.post(`admin/send-notification/${item.id}`)
+        .then( res => {
+           
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          // this.requests.splice(index, 1)
+          this.alert.message = 'تم ارسال الإشعارت'
+          this.alert.type = 'success'
+          this.approve = false
+        })
+      }else{
+        this.approve = false
+      }
     },
     save () {
       let image =this.$refs.image_input.files[0]

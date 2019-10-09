@@ -51,8 +51,8 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                    <v-btn color="" class="ma-2" small @click.native="close">الغاء</v-btn>
+                    <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -103,7 +103,7 @@
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
 </div>
 </template>

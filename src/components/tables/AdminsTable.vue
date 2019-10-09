@@ -13,7 +13,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false"
+            @click="edit = false;newUser={}"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -50,23 +50,20 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" class="ma-2" dark small @click.native="close">الغاء</v-btn>
-                <v-btn color="primary" class="ma-2" depressed small :disabled="isDisabled" @click.native="save">حفظ</v-btn>
+                <v-btn color="" class="ma-2" dark small @click.native="close">الغاء</v-btn>
+                <v-btn color="primary" class="ma-2" depressed small @click.native="save">حفظ</v-btn>
             </v-card-actions>
         </v-card> 
       </v-dialog>
       <v-spacer></v-spacer>
       <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
+        v-model="search"
+        append-icon="search"
+        label="بحث"
+        single-line
+        hide-details
       >
       </v-text-field>
-      
-      
-      
     </v-toolbar>
 
     <v-data-table
@@ -119,7 +116,7 @@
                 <v-btn
                   slot="activator"  
                   :loading="approve" 
-                  small flat color="green" 
+                  small flat icon color="green" 
                   @click="restoreItem(props.item)"
                 >
                   <v-icon class="green--text"  >
@@ -159,7 +156,7 @@
     </v-data-table>
     
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     
     <v-dialog
@@ -276,21 +273,6 @@ export default {
   }),
 
   computed: {
-    isDisabled: function(){
-      let disabled = true
-      let errors = 0
-      if (this.newUser.name.replace(/\s/g, '').length>3) {
-        errors =+ 1
-      }else {
-        errors =- 1
-      }
-      if (this.newUser.email.replace(/\s/g, '').length>3) {
-        errors =+ 1
-      }else {
-        errors =- 1
-      }
-    	return disabled = errors > 0 ? false : true;
-    },
     formTitle(){
       return (this.edit) ? 'تعديل مدير' : 'إضافة مدير';
     },
@@ -301,7 +283,6 @@ export default {
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
-
   watch: {
     dialog (val) {
       val || this.close()

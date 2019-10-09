@@ -64,8 +64,8 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                    <v-btn color="" class="ma-2" small @click.native="close">الغاء</v-btn>
+                    <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -82,7 +82,7 @@
             <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
             <td class="text-xs-right">
-              <img style="cursor:pointer" :src="`http://134.209.18.160/${props.item.image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
+              <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
             <td class="text-xs-right" v-if="props.item.sub_category">{{ props.item.sub_category.category.title_ar }}</td>
             <td class="text-xs-right" v-else>لا يوجد مسمى</td>
@@ -126,7 +126,7 @@
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
 </div>
 </template>

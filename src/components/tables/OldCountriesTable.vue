@@ -112,7 +112,7 @@
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-model="deleteDialog"

@@ -1,16 +1,16 @@
 <template>
 <v-app id="inspire" style="overlay:hidden">
-    <v-navigation-drawer color="blue" right v-model="drawer" app temporary fixed>
+    <v-navigation-drawer color="primary" right v-model="drawer" app temporary fixed>
         <v-toolbar flat class="transparent">
             <v-list class="pa-0">
                 <v-list-tile avatar>
-                    <img src="../assets/logo.jpeg" style="width: 100px">
+                    <img src="../assets/logo.png" style="width: 100px">
                 </v-list-tile>
             </v-list>
         </v-toolbar>
         <v-list>
             <template v-for="item in items">
-                
+
                 <v-layout v-if="item.heading" :key="item.heading" row align-center>
                     <v-flex xs6>
                         <v-subheader v-if="item.heading">
@@ -58,19 +58,13 @@
             </template>
         </v-list>
     </v-navigation-drawer>
-    <v-toolbar :clipped-left="$vuetify.breakpoint.lgAndUp" color="blue darken-3" dark app fixed>
+    <v-toolbar :clipped-left="$vuetify.breakpoint.lgAndUp" color="primary" dark app fixed>
         <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <span class="hidden-sm-and-down">لوحة التحكم</span>
         </v-toolbar-title>
        
         <v-spacer></v-spacer>
-    
-         <!-- <v-btn icon  @click="countryDialog = !countryDialog">
-            <v-icon >account_balance</v-icon>
-        </v-btn> -->
-                    
-      <!-- <notifications/> -->
 
         <v-tooltip bottom>
             <v-btn icon slot="activator" @click="changePasswordDialog = !changePasswordDialog">
@@ -88,11 +82,9 @@
                     
     </v-toolbar>
 
-    
     <v-content>
         <slot></slot>
     </v-content>
-
 
     <v-dialog v-model="countryDialog" width="400px">
         <v-card>
@@ -103,12 +95,12 @@
                 <v-layout row wrap>
                     <v-radio-group v-model="radioGroup">
         <v-radio
-          v-for="country in countries"
-          :key="country.country_id"
-          :label="country.title_ar"
-          :value="country.country_id"
+            v-for="country in countries"
+            :key="country.country_id"
+            :label="country.title_ar"
+            :value="country.country_id"
         ></v-radio>
-      </v-radio-group>
+        </v-radio-group>
                 </v-layout>
             </v-container>
             <v-card-actions>
@@ -158,8 +150,8 @@
             </v-container>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn flat color="primary" @click="dialog = false">اغلاق</v-btn>
-                <v-btn flat @click="resetPassword" :loading="resetting">حفظ</v-btn>
+                <v-btn color="" class="ma-2" small @click="changePasswordDialog = false">اغلاق</v-btn>
+                <v-btn color="primary" class="ma-2" dark small @click="resetPassword" :loading="resetting">حفظ</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -215,10 +207,10 @@ export default {
                     subtext: 'تنشيط | تعطيل | حذف',
                 },
                 {
-                    icon: 'list',
-                    text: 'طلبات الأحداث الخاص',
+                    icon: 'stars',
+                    text: 'طلبات التمييز',
                     url: '/ask-special-event',
-                    subtext: 'طلبات الموافقه على الأحداث الخاصة',
+                    subtext: 'طلبات الموافقه على الأحداث المميزة',
                 },
                 // {
                 //     icon: 'ballot',

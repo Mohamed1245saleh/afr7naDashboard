@@ -2,16 +2,16 @@
   <div class="elevation-2">
     <vuetify-alert @message="alert.message = ''" :message="alert.message" />
       <v-toolbar flat color="white">
-          <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="بحث"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" />
+        <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="بحث"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" />
             
           <v-dialog v-model="dialog" max-width="500px">
 
@@ -21,51 +21,56 @@
                 color="primary" 
                 fab dark small
                 class="mb-2" 
-                @click="edit = false"
+                @click="edit = false;region={}"
               > 
                 <v-icon>add</v-icon>
               </v-btn>
               <span>إضافة منطقة جديد</span>
             </v-tooltip>
 
-              <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon>إضافة دولة</v-btn> -->
               <v-card>
-                  <v-card-title>
-                      <span class="headline">{{formTitle}}</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <ul>
-                      <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                        <ul>
-                          <li v-for="err in error" :key="err + Math.random()">
-                            {{err}}
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </v-card-text>
-                  <v-card-text>
-                      <v-container grid-list-md>
-                          <v-layout wrap>
-                              <v-flex>
-                                <v-text-field v-model="region.title_ar" label=" اسم المنطقة بالعربية" />
-                                <v-text-field v-model="region.title_en"  label="اسم المنطقة بالانجليزية" />
-                                <v-select style="max-width:150px;height:32px" 
-                                  v-model="region.country_id" 
-                                  flat dense 
-                                  :items="[{title_ar:'الاقسام', id:null},...addEditCountries]" 
-                                  item-text="title_ar" item-value="id" 
-                                />
-                              </v-flex>
-                          </v-layout>
-                      </v-container>
-                  </v-card-text>
+                <v-card-title>
+                  <span class="headline">{{formTitle}}</span>
+                </v-card-title>
+                <v-card-text>
+                  <!--  -->
+                  <v-list>
+                    <template v-for="error in errors" >
+                      <v-list-tile :key="error[0] + Math.random()">
+                        <v-list-tile-content>
+                          <v-list-tile-title class="text-xs-center">
+                            <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                              {{err}} <v-icon color="red">error</v-icon>
+                            </span>
+                          </v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </template>
+                  </v-list>
+                  <!--  -->
+                </v-card-text>
+                <v-card-text>
+                  <v-container grid-list-md>
+                    <v-layout wrap>
+                      <v-flex>
+                        <v-text-field v-model="region.title_ar" label=" اسم المنطقة بالعربية" />
+                        <v-text-field v-model="region.title_en"  label="اسم المنطقة بالانجليزية" />
+                        <v-select style="" 
+                          v-model="region.country_id" 
+                          flat dense 
+                          :items="[{title_ar:'الدول', id:null},...addEditCountries]" 
+                          item-text="title_ar" item-value="id" 
+                        />
+                      </v-flex>
+                      </v-layout>
+                  </v-container>
+                </v-card-text>
 
-                  <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                      <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-                  </v-card-actions>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="" class="ma-2" small @click.native="close">الغاء</v-btn>
+                  <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
+                </v-card-actions>
               </v-card>
           </v-dialog>
       </v-toolbar>
@@ -115,12 +120,12 @@
           </template>
           <template slot="no-data">
             <v-alert :value="true" color="success" icon="warning" outline>
-              لا يوجد اعلانات بهذا القسم
+              لا يوجد نتائج للبحث
             </v-alert>
           </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="blue" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
       </div>
       <v-dialog
         v-model="deleteDialog"
@@ -201,30 +206,12 @@ export default {
         value: "userName",
         sortable: false
       },
-      // {
-      //   text: "الصورة",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
       {
         text: "المنطقة",
         align: "right",
         value: "country",
         sortable: false
       },
-      // {
-      //   text: "العملة",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
-      // {
-      //   text: "العملة بالانجليزية",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
       {
         text: "عمليات",
         align: "cneter",
@@ -406,7 +393,7 @@ export default {
             };
           })
           .catch(({ response }) => {
-            this.errors = response.data.errors;
+            this.errors = response.data.error;
           });
       } else {
         this.$http
@@ -426,7 +413,7 @@ export default {
             this.getDataFromApi()
           })
           .catch(({ response }) => {
-            this.errors = response.data.errors;
+            this.errors = response.data.error;
           });
       }
     },

@@ -5,7 +5,7 @@
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
-              <v-toolbar dark  color="blue">
+              <v-toolbar dark color="primary">
                 <v-toolbar-title>
                     لوحة تحكم تطبيق أفراحنا
                 </v-toolbar-title>
@@ -24,12 +24,12 @@
               </v-toolbar>
               <form @submit.prevent="login">
               <v-card-text>
-                  <v-text-field v-model="user.email" prepend-icon="person" name="login" label="البريد الإليكتروني" type="email"></v-text-field>
-                  <v-text-field v-model="user.password" id="password" prepend-icon="lock" name="password" label="كلمة السر" type="password"></v-text-field>
+                <v-text-field v-model="user.email" prepend-icon="person" name="login" label="البريد الإليكتروني" type="email"></v-text-field>
+                <v-text-field v-model="user.password" id="password" prepend-icon="lock" name="password" label="كلمة السر" type="password"></v-text-field>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn type="submit" :loading="connecting" dark color="blue" >دخول</v-btn>
+                <v-btn type="submit" :loading="connecting" dark color="primary" >دخول</v-btn>
               </v-card-actions>
               </form>
             </v-card>

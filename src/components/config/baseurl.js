@@ -1,5 +1,5 @@
 
-// const baseURL = 'http://souq24app.com/'
-const baseURL = 'http://134.209.18.160/api/'
+// const baseURL = 'http://souq24app.com/'afr7na.com
+const baseURL = 'http://afr7na.com/api/'
 
 export default baseURL;
