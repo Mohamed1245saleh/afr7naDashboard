@@ -10,13 +10,14 @@
             v-model="specialEvent"
           ></v-checkbox>
           <v-text-field
+            style="max-width:200px;height:42px;font-size: 11px"
             v-model="search"
             append-icon="search"
             label="بحث"
             single-line
             hide-details
           ></v-text-field>
-          <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
+          <v-select style="max-width:200px;height:42px;font-size: 11px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
           <v-dialog v-model="dialog" max-width="500px">
             <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
             <v-card>
@@ -90,7 +91,7 @@
 
           <td class="text-xs-center"  v-if="props.item.region.title_ar">{{ props.item.region.title_ar }}</td>
           <td class="text-xs-center" v-else>لا يوجد مسمى</td>
-\
+
           <td class="justify-center layout px-0">
 
             <v-tooltip v-if="specialEvent === true" top>

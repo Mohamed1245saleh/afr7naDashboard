@@ -24,7 +24,7 @@ import DatetimePicker from 'vuetify-datetime-picker'
 import 'vuetify-datetime-picker/src/stylus/main.styl'
 
 import baseURL from './components/config/baseurl'
-import Notifications from "./components/pages/Notifications";
+// import Notifications from "./components/pages/Notifications";
 import ReadMore from 'vue-read-more';
 import moment from 'moment';
 
@@ -47,7 +47,7 @@ Vue.use(Vuetify, {
 Vue.component('nav-bar', Navbar)
 Vue.component('vuetify-alert', VuetifyAlert)
 Vue.component('search-select', SearchSelect)
-Vue.component("notifications", Notifications);
+// Vue.component("notifications", Notifications);
 
 Vue.config.productionTip = false
 

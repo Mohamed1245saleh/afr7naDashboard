@@ -14,7 +14,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false;errors=[];ad={}"
+            @click="edit = false;errors=[];errors=[];ad={}"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -105,20 +105,20 @@
     >
       <template v-if="requests" slot="items" slot-scope="props">
         
-        <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
-        <td class="text-xs-right" v-else>لا يوجد اسم</td>
+        <td class="text-xs-center"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
+        <td class="text-xs-center" v-else>لا يوجد اسم</td>
 
-        <td class="text-xs-right"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
-        <td class="text-xs-right" v-else>لا يوجد اسم</td>
+        <td class="text-xs-center"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
+        <td class="text-xs-center" v-else>لا يوجد اسم</td>
 
-        <td class="text-xs-right" v-if="props.item.link">{{ props.item.link }}</td>
-        <td class="text-xs-right" v-else>لا يوجد رابط</td>
+        <td class="text-xs-center" v-if="props.item.link">{{ props.item.link }}</td>
+        <td class="text-xs-center" v-else>لا يوجد رابط</td>
 
-        <td class="text-xs-right">
+        <td class="text-xs-center">
           <img style="cursor:pointer" @click="() => {media = [...props.item.media, {image:props.item.spec_image}];dialog = true;}"  :src="`http://afr7na.com/${props.item.image}`" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
         </td>
 
-        <td class="justify-right layout px-0">
+        <td class="justify-center layout px-0">
           <v-tooltip top>
             <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
               <v-icon  class="mr-2 blue--text" >
@@ -151,7 +151,7 @@
 
       <template slot="no-data">
         <v-alert :value="true" color="success" icon="warning" outline>
-          لا يوجد تسجيلات
+          لا يوجد اعلانات
         </v-alert>
       </template>
 
@@ -238,31 +238,31 @@ export default {
     headers: [
       {
         text: 'الاسم بالعربية',
-        align: 'right',
+        align: 'center',
         value: 'country',
         sortable: false
       },
       {
         text: 'الاسم بالانجليزية',
-        align: 'right',
+        align: 'center',
         value: 'country',
         sortable: false
       },
       {
         text: 'الرابط',
-        align: 'right',
+        align: 'center',
         value: 'link',
         sortable: false
       },
       {
         text: 'صوره',
-        align: 'right',
+        align: 'center',
         value: 'image',
         sortable: false
       },
       {
         text: 'عمليات',
-        align: 'right',
+        align: 'center',
         value: 'actions',
         sortable: false
       }

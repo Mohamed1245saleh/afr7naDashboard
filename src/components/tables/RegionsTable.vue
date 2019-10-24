@@ -5,13 +5,14 @@
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-text-field
+          style="max-width:200px;height:42px;font-size: 11px"
           v-model="search"
           append-icon="search"
           label="بحث"
           single-line
           hide-details
         ></v-text-field>
-        <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" />
+        <v-select style="max-width:200px;height:42px;font-size: 11px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" label="الدول"/>
             
           <v-dialog v-model="dialog" max-width="500px">
 
@@ -21,7 +22,7 @@
                 color="primary" 
                 fab dark small
                 class="mb-2" 
-                @click="edit = false;region={}"
+                @click="edit = false;errors=[];region={}"
               > 
                 <v-icon>add</v-icon>
               </v-btn>
@@ -59,7 +60,7 @@
                           v-model="region.country_id" 
                           flat dense 
                           :items="[{title_ar:'الدول', id:null},...addEditCountries]" 
-                          item-text="title_ar" item-value="id" 
+                          item-text="title_ar" item-value="id" label="الدولة"
                         />
                       </v-flex>
                       </v-layout>
@@ -189,6 +190,7 @@ export default {
     requests: [],
     totalRequests: 0,
     pagination: {},
+    page: 1,
     search: "",
     loading: false,
     disapprove: false,
@@ -224,7 +226,6 @@ export default {
       message: "",
       type: "success"
     },
-    page: 1,
     index: null,
     filterCountry:null,
     searchCountries: [],

@@ -14,7 +14,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false;errors=[];ad={}"
+            @click="edit = false;errors=[];errors=[];ad={}"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -46,7 +46,9 @@
                 <v-layout wrap>
                   <v-flex>
                     <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
-                    <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" /> 
+                    <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
+                    <v-text-field v-model="ad.phone" label=" الهاتف" />
+                    <v-text-field v-model="ad.link"  label="رابط الإعلان" />  
                     <v-select style="" 
                       v-model="ad.ads_category_id" 
                       flat dense 
@@ -71,7 +73,7 @@
         </v-card>
       </v-dialog>
 
-      <v-select style="max-width:150px;height:32px" 
+      <v-select style="max-width:200px;height:42px;font-size: 11px" 
         v-model="filterCategory" 
         flat dense 
         :items="[{title_ar:'الاقسام', id:null},...searchCategories]" 
@@ -79,7 +81,6 @@
       />
 
     </v-toolbar>
-
 
     <v-data-table
       v-model="selected"
@@ -103,6 +104,12 @@
         <td class="text-xs-right" v-else>لا يوجد اسم</td>
 
         <td class="text-xs-right" v-if="props.item.ads_category">{{ props.item.ads_category.title_ar }}</td>
+        <td class="text-xs-right" v-else>لا يوجد قسم</td>
+
+        <td class="text-xs-right" v-if="props.item.phone">{{ props.item.phone }}</td>
+        <td class="text-xs-right" v-else>لا يوجد قسم</td>
+
+        <td class="text-xs-right" v-if="props.item.link">{{ props.item.link }}</td>
         <td class="text-xs-right" v-else>لا يوجد قسم</td>
 
         <td class="text-xs-right">
@@ -223,6 +230,8 @@ export default {
       id: null,
       title_ar: null,
       title_en: null,
+      link: null,
+      phone: null,
       image:"",
       ads_category_id: '',
     },
@@ -241,6 +250,18 @@ export default {
       },
       {
         text: 'القسم',
+        align: 'right',
+        value: 'category',
+        sortable: false
+      },
+      {
+        text: 'الهاتف',
+        align: 'right',
+        value: 'category',
+        sortable: false
+      },
+      {
+        text: 'الرابط',
         align: 'right',
         value: 'category',
         sortable: false
@@ -530,7 +551,6 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true;
     },
-
     stopItem (item) {
       this.disapprove = true
       const index = this.requests.indexOf(item)
@@ -553,7 +573,7 @@ export default {
       }
     },
     reshareItem(item){
-    this.reshare = true
+      this.reshare = true
       
       if(confirm('هل تريد اعادة مشاركة الاعلان ؟؟')) {
 
@@ -621,6 +641,8 @@ export default {
           id: null,
           title_ar: null,
           title_en: null,
+          phone: null,
+          link: null,
           ads_category_id: null
         };
     },
@@ -631,6 +653,8 @@ export default {
       this.ad.id = item.id;
       this.ad.title_ar = item.title_ar;
       this.ad.title_en = item.title_en;
+      this.ad.phone = item.phone;
+      this.ad.link = item.link;
       this.ad.ads_category_id = item.ads_category_id;
 
       this.index = this.requests.indexOf(item)
@@ -645,6 +669,10 @@ export default {
         newformdata.append("title_ar", this.ad.title_ar);
       if (this.ad.title_en)
         newformdata.append("title_en", this.ad.title_en);
+      if (this.ad.phone)
+        newformdata.append("phone", this.ad.phone);
+      if (this.ad.link)
+        newformdata.append("link", this.ad.link);
       if (this.ad.ads_category_id)
         newformdata.append("ads_category_id", this.ad.ads_category_id);
 

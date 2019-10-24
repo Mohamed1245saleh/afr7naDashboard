@@ -6,11 +6,12 @@
         <v-spacer></v-spacer>
         
         <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="بحث"
-            single-line
-            hide-details
+          style="max-width:200px;height:42px;font-size: 11px"
+          v-model="search"
+          append-icon="search"
+          label="بحث"
+          single-line
+          hide-details
         ></v-text-field>
         
         <!-- <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الاقسام', category_id:null},...categories]" item-text="title_ar" item-value="category_id" /> -->
@@ -29,18 +30,24 @@
             </v-tooltip>
             <v-card>
                 <v-card-title>
-                    <span class="headline">تصنيف جديد</span>
+                    <span class="headline">{{formTitle}}</span>
                 </v-card-title>
                 <v-card-text>
-                  <ul>
-                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                      <ul>
-                        <li v-for="err in error" :key="err + Math.random()">
-                          {{err}}
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
+                  <!--  -->
+                  <v-list>
+                    <template v-for="error in errors" >
+                      <v-list-tile :key="error[0] + Math.random()">
+                        <v-list-tile-content>
+                          <v-list-tile-title class="text-xs-center">
+                            <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                              {{err}} <v-icon color="red">error</v-icon>
+                            </span>
+                          </v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </template>
+                  </v-list>
+                  <!--  -->
                 </v-card-text>
                 <v-card-text>
                     <v-container grid-list-md>
@@ -53,10 +60,6 @@
                                 صورة
                               </v-btn>
                               <input style="display:none" type="file" ref="image_input">
-                              <!-- <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" /> -->
-
-                              <!-- <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  /> -->
-                              
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -79,16 +82,15 @@
         hide-actions
         :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
-            <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right">
+            <td class="text-xs-center"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
+            <td class="text-xs-center" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-center"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
+            <td class="text-xs-center" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-center">
               <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
-            <td class="text-xs-right" v-if="props.item.sub_category">{{ props.item.sub_category.category.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right"  v-if="props.item.sub_category">{{ props.item.sub_category.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="justify-right layout px-0">
                 <v-tooltip top>
                     <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
                     <v-icon  class="mr-2 blue--text" >
@@ -121,7 +123,7 @@
         </template>
         <template slot="no-data">
           <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد اعلانات بهذا القسم
+            لا يوجد نتائج
           </v-alert>
         </template>
     </v-data-table>
@@ -166,31 +168,25 @@ export default {
     deleteLoading: false,
     headers: [
       {
-        text: 'التصنيف',
-        align: 'right',
+        text: 'الإسم العربي',
+        align: 'center',
         value: 'userName',
         sortable: false
       },
       {
-        text: 'صورة',
-        align: 'right',
+        text: 'الإسم الإنجليزي',
+        align: 'center',
         sortable: false
       },
       {
-        text: 'القسم الرئيسى',
-        align: 'right',
+        text: 'صورة',
+        align: 'center',
         value: 'country',
         sortable: false
       },
       {
-        text: 'القسم الفرعى',
-        align: 'right',
-        value: 'category',
-        sortable: false
-      },
-      {
         text: 'عمليات',
-        align: 'right',
+        align: 'center',
         value: 'actions',
         sortable: false
       }
@@ -206,6 +202,9 @@ export default {
   }),
 
   computed: {
+    formTitle(){
+      return (this.edit) ? 'تعديل قسم' : 'إضافة قسم';
+    },
     pages () {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
@@ -382,7 +381,7 @@ export default {
             }
           })
           .catch( ({response}) => {
-            this.errors = response.data.errors
+            this.errors = response.data.error
           })
       }
     },

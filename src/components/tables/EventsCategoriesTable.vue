@@ -4,44 +4,63 @@
     <v-toolbar flat color="white">
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-text-field
+        
+        <!-- <v-text-field
             v-model="search"
             append-icon="search"
             label="بحث"
             single-line
             hide-details
-        ></v-text-field>
-                <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الاقسام', category_id:null},...categories]" item-text="title_ar" item-value="category_id" />
-
+        ></v-text-field> -->
+                
         <v-dialog v-model="dialog" max-width="500px">
-            <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> إضافة </v-btn>
+            <!-- <v-tooltip slot="activator" top>
+                <v-btn 
+                    slot="activator" 
+                    color="primary" 
+                    fab small dark class="mb-2" 
+                    @click="edit = false"
+                > 
+                    <v-icon>add</v-icon> 
+                </v-btn>
+                <span>تصنيف جديد</span>
+            </v-tooltip> -->
             <v-card>
                 <v-card-title>
                     <span class="headline">{{formTitle}}</span>
                 </v-card-title>
                 <v-card-text>
-                  <ul>
-                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                      <ul>
-                        <li v-for="err in error" :key="err + Math.random()">
-                          {{err}}
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
+                  <!--  -->
+                  <v-list>
+                    <template v-for="error in errors" >
+                      <v-list-tile :key="error[0] + Math.random()">
+                        <v-list-tile-content>
+                          <v-list-tile-title class="text-xs-center">
+                            <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                              {{err}} <v-icon color="red">error</v-icon>
+                            </span>
+                          </v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </template>
+                  </v-list>
+                  <!--  -->
                 </v-card-text>
                 <v-card-text>
                     <v-container grid-list-md>
                         <v-layout wrap>
                             <v-flex>
-                              <v-text-field v-model="newCategory.title_ar" label=" اسم القسم الفرعى بالعربية" />
-                              <v-text-field v-model="newCategory.title_en"  label="اسم القسم الفرعى بالانجليزية" />
+                              <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
+                              <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
                               <v-btn color="info" @click="$refs.image_input.click()">
                                 <v-icon>image</v-icon>
                                 صورة
                               </v-btn>
                               <input style="display:none" type="file" ref="image_input">
-                              <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
+                              <!-- <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" /> -->
+
+                              <!-- <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  /> -->
+                              
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -49,8 +68,8 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+                    <v-btn color="" class="ma-2" small @click.native="close">الغاء</v-btn>
+                    <v-btn color="primary" class="ma-2" dark small @click.native="save">حفظ</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -64,28 +83,39 @@
         hide-actions
         :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
-            <td class="text-xs-right"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right"  v-if="props.item.category">{{ props.item.category.title_ar }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
-            <td class="text-xs-right">
-              <img style="cursor:pointer"  :src="$root.$data.baseURL+props.item.image" alt="صورة الاعلان" title="صورة الاعلان" width="50px" height="50px">
+            <td class="text-xs-center"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
+            <td class="text-xs-center" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-center"  v-if="props.item.title_en">{{ props.item.title_en }}</td>
+            <td class="text-xs-center" v-else>لا يوجد مسمى</td>
+
+            <td class="text-xs-center">
+              <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
-            <td class="justify-right layout px-0">
-                <v-btn small flat color="blue" @click="editing(props.item)"> 
-                  تعديل
-                  <v-icon  class="mr-2 blue--text" >
-                      edit
-                  </v-icon>
-                </v-btn>
-                <v-btn :loading="disapprove" small flat color="red" @click="deleteItem(props.item)">
-                  مسح
-                  <v-icon class="red--text"  >
-                      clear
-                  </v-icon>
-                </v-btn>
+
+            <td class="justify-center layout px-0">
+                <v-tooltip top>
+                    <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
+                    <v-icon  class="mr-2 blue--text" >
+                        edit
+                    </v-icon>
+                    </v-btn>
+                    <span>تعديل التصنيف</span>
+                </v-tooltip>
+
+                <!-- <v-tooltip top>
+                    <v-btn 
+                        slot="activator" 
+                        :loading="deleteLoading"
+                        icon flat color="red" 
+                        @click="deleteItem(props.item)"
+                    >
+                        <v-icon class="red--text"  >
+                            delete
+                        </v-icon>
+                    </v-btn>
+                    <span>مسح التصنيف</span>
+                </v-tooltip> -->
             </td>
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -96,7 +126,7 @@
         </template>
         <template slot="no-data">
           <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد تسجيلات
+            لا يوجد نتائج
           </v-alert>
         </template>
     </v-data-table>
@@ -124,84 +154,87 @@ export default {
       id:null,
       title_ar: null,
       title_en: null,
-      category: {
-        id: null,
-        title: null
-      }
     },
     edit:false,
     dialog:false,
+    optionsDialog:false,
     imagesdialog:false,
+    menu1:false,
+    dateFormatted:null,
+    date: null,
     requests:[],
+    media:[],
     totalRequests:0,
     pagination: {},
     search: '',
     loading: false,
-    disapprove: false,
+    deleteLoading: false,
     headers: [
       {
-        text: 'الاسم بالعربية',
-        align: 'right',
+        text: 'الإسم العربي',
+        align: 'center',
+        value: 'userName',
         sortable: false
       },
       {
-        text: 'الاسم بالانجليزية',
-        align: 'right',
-        sortable: false
-      },
-      {
-        text: 'القسم الرئيسى',
-        align: 'right',
+        text: 'الإسم الإنجليزي',
+        align: 'center',
         sortable: false
       },
       {
         text: 'صورة',
-        align: 'right',
+        align: 'center',
+        value: 'country',
         sortable: false
       },
       {
         text: 'عمليات',
-        align: 'right',
+        align: 'center',
         value: 'actions',
         sortable: false
       }
     ],
+    editedItem: null,
     alert: {
       message: '',
       type: 'success'
     },
     page:1,
     filterCategory:null,
-    categories:null
+    categories: []
   }),
 
   computed: {
+    formTitle(){
+      return (this.edit) ? 'تعديل قسم' : 'إضافة قسم';
+    },
     pages () {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
       ) return 0
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
-    },
-    formTitle (){
-      return (this.edit)? 'تعديل' : 'اضافة'
     }
   },
 
   watch: {
     dialog (val) {
+      if(!val){
+        this.newCategory = {
+            id:null,
+            title_ar: null,
+            title_en: null,
+        }
+      }
       val || this.close()
     },
     pagination: {
       handler () {
         this.page = this.pagination.page
-        if(!this.loading) {
-
-          this.getDataFromApi()
+        this.getDataFromApi()
         .then(data => {
           this.requests = data.items
           this.totalRequests = data.total
         })
-        }
       },
       deep: true
     },
@@ -211,25 +244,20 @@ export default {
       this.requests = data.items
       this.totalRequests = data.total
     });
-    }
+    },
   },
   created () {
-    this.fetch();
+    // this.fetchCategories();
+    this.getDataFromApi()
+    .then(data => {
+      this.requests = data.items
+      this.totalRequests = data.total
+    })
   },
   methods: {
-    fetch(){
-      this.fetchCategories();
-      if(!this.loading)
-      this.getDataFromApi()
-      .then(data => {
-        this.requests = data.items
-        this.totalRequests = data.total
-      })
-    },
     fetchCategories() {
       this.$http.get('api/admin/categories/main/get/all')
       .then( (res) => {
-        
         this.categories = res.data.data
       })
     },
@@ -242,26 +270,22 @@ export default {
           const total = res.data.total
           this.pagination.rowsPerPage = res.data.per_page
           this.pagination.totalItems = res.data.total
-          setTimeout(() => {
-            this.loading = false
-          }, 300);
+          this.loading = false
           resolve({
             items,
             total
           })
         }
         else {
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/subcategories/search/' + this.search + '?category='+this.filterCategory:'api/admin/subcategories?page=' + page + '&category='+this.filterCategory
+        //   const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory          
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/main_category?paginate=1`:`admin/main_category?paginate=1`
         this.$http.get(endpoint)
         .then( (res) => {
-           
           let items = res.data.data
           const total = res.data.total
           this.pagination.rowsPerPage = res.data.per_page
           this.pagination.totalItems = res.data.total
-          setTimeout(() => {
-            this.loading = false
-          }, 300);
+          this.loading = false
           resolve({
             items,
             total
@@ -275,57 +299,36 @@ export default {
     },
 
     deleteItem (item) {
-      this.disapprove = true
-      // const index = this.requests.indexOf(item)
-      if(confirm('هل انت متأكد من مسح الاعلان')) {
+      this.deleteLoading = true
+      const index = this.requests.indexOf(item)
+      if(confirm('هل انت متأكد من مسح القسم')) {
 
-        this.$http.delete('api/admin/subcategories/'+ item.rel_category_id+'?page=' + this.page)
+        this.$http.delete(`admin/ads-category/${item.id}?page=${this.page}`)
         .then( res => {
-           
-          this.getDataFromApi(res)
-          .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
-          // this.requests.splice(index, 1)
+          this.getDataFromApi(res);
+          this.requests.splice(index, 1)
           this.alert.message = 'تم مسح القسم!'
           this.alert.type = 'info'
-          this.disapprove = false
+          this.deleteLoading = false
         })
       }else{
-        this.disapprove = false
+        this.deleteLoading = false
       }
     },
 
     close () {
       this.dialog = false
       setTimeout(() => {
-        this.edit = false
-        this.newCategory = {
-              id:null,
-              title_ar: null,
-              title_en: null,
-              category:{
-                id: null,
-                title: null,
-              },
-              rel_category: {
-                id: null,
-                title: null,
-              }
-            }
+        this.editedItem = -1
       }, 300)
     },
     editing(item) {
       this.dialog = !this.dialog;
       this.edit=true;
 
-      this.newCategory.id = item.rel_category_id
-
+      this.newCategory.id = item.id
       this.newCategory.title_ar = item.title_ar;
       this.newCategory.title_en = item.title_en;
-      this.newCategory.category.id = item.category.category_id;
-      this.newCategory.category.title = item.category.title_ar;
     },
     save () {
       let image =this.$refs.image_input.files[0]
@@ -335,16 +338,13 @@ export default {
       if(image)
       formdata.append('image', image)
       if(this.newCategory.title_ar)
-      formdata.append('sub_category_title_ar', this.newCategory.title_ar)
+      formdata.append('title_ar', this.newCategory.title_ar)
       if(this.newCategory.title_en)
-      formdata.append('sub_category_title_en', this.newCategory.title_en)
-      if(this.newCategory.category.id)
-      formdata.append('category_id', this.newCategory.category.id)
+      formdata.append('title_en', this.newCategory.title_en)
 
       if(this.edit){
-        this.$http.post('api/admin/subcategories/'+ this.newCategory.id+'?page=' + this.page, formdata)
+        this.$http.post(`admin/main_category/${this.newCategory.id}`, formdata)
           .then( res => {
-             
             this.getDataFromApi(res)
             .then(data => {
               this.requests = data.items
@@ -358,22 +358,14 @@ export default {
               id:null,
               title_ar: null,
               title_en: null,
-              category:{
-                id: null,
-                title: null,
-              },
-              rel_category: {
-                id: null,
-                title: null,
-              }
             }
           })
           .catch( ({response}) => {
-            this.errors = response.data.errors
+            this.errors = response.data.error
           })
       }
       else{
-        this.$http.post('api/admin/subcategories'+'?page=' + this.page, formdata)
+        this.$http.post(`admin/main_category?page=${this.page}`, formdata)
           .then( res => {
              
             this.getDataFromApi(res)
@@ -381,28 +373,18 @@ export default {
               this.requests = data.items
               this.totalRequests = data.total
             });
-            // this.requests.splice(index, 1)
             this.alert.type = 'info'
             this.alert.message = 'تم اضافة القسم!'
-            // this.approve = false
             this.close()
             this.errors = []
             this.newCategory = {
               id:null,
               title_ar: null,
               title_en: null,
-              category:{
-                id: null,
-                title: null,
-              },
-              rel_category: {
-                id: null,
-                title: null,
-              }
             }
           })
           .catch( ({response}) => {
-            this.errors = response.data.errors
+            this.errors = response.data.error
           })
       }
     },

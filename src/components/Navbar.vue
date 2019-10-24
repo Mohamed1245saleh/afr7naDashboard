@@ -188,11 +188,6 @@ export default {
                     url: '/admins',
                     subtext: 'إضافة | حذف | تعديل',
                 },
-                // {
-                //     icon: 'ballot',
-                //     text: 'التصنيفات',
-                //     url: '/dashboard/categories/link'
-                // }
             ]
         },
         {
@@ -212,12 +207,11 @@ export default {
                     url: '/ask-special-event',
                     subtext: 'طلبات الموافقه على الأحداث المميزة',
                 },
-                // {
-                //     icon: 'ballot',
-                //     text: 'التصنيفات',
-                //     url: '/dashboard/categories/link',
-                //     subtext: 'رفع | حذف | تعديل',
-                // }
+                {
+                    icon: 'ballot',
+                    text: 'التصنيفات',
+                    url: '/events-categories'
+                }
             ]
         },
         {

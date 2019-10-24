@@ -2,65 +2,66 @@
   <div class="elevation-2">
       <vuetify-alert @message="alert.message = ''" :message="alert.message" />
       <v-toolbar flat color="white">
-          <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-checkbox
-            class="mt-4"
-            label="متميز"
-            v-model="specialEvent"
-          ></v-checkbox>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="بحث"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
-          <v-dialog v-model="dialog" max-width="500px">
-            <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
-            <v-card>
-                <v-card-title>
-                    <span class="headline">تصنيف جديد</span>
-                </v-card-title>
-                <v-card-text>
-                <ul>
-                    <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                    <ul>
-                        <li v-for="err in error" :key="err + Math.random()">
-                        {{err}}
-                        </li>
-                    </ul>
-                    </li>
-                </ul>
-                </v-card-text>
-                <v-card-text>
-                  <v-container grid-list-md>
-                    <v-layout wrap>
-                      <v-flex>
-                      <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
-                      <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
-                      <v-btn color="info" @click="$refs.image_input.click()">
-                          <v-icon>image</v-icon>
-                          صورة
-                      </v-btn>
-                      <input style="display:none" type="file" ref="image_input">
-                      <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
+        <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-checkbox
+          class="mt-4"
+          label="متميز"
+          v-model="specialEvent"
+        ></v-checkbox>
+        <v-text-field
+          style="max-width:200px;height:42px;font-size: 11px"
+          v-model="search"
+          append-icon="search"
+          label="بحث"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-select style="max-width:200px;height:42px;font-size: 11px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...countries]" item-text="title_ar" item-value="id" />
+        <v-dialog v-model="dialog" max-width="500px">
+          <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
+          <v-card>
+              <v-card-title>
+                  <span class="headline">تصنيف جديد</span>
+              </v-card-title>
+              <v-card-text>
+              <ul>
+                  <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
+                  <ul>
+                      <li v-for="err in error" :key="err + Math.random()">
+                      {{err}}
+                      </li>
+                  </ul>
+                  </li>
+              </ul>
+              </v-card-text>
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout wrap>
+                    <v-flex>
+                    <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
+                    <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
+                    <v-btn color="info" @click="$refs.image_input.click()">
+                        <v-icon>image</v-icon>
+                        صورة
+                    </v-btn>
+                    <input style="display:none" type="file" ref="image_input">
+                    <search-select label="القسم الرئيسى" endpoint="api/admin/categories/main/get/all" :initVal="newCategory.category.id"  @returnValue="(val) => {newCategory.category.id = val}" itemValue="category_id" :main="true" />
 
-                      <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
-                      
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-card-text>
+                    <search-select v-if="newCategory.category.id" label="القسم الفرعى" :endpoint="'api/admin/categories/sub/'+newCategory.category.id +'/get/all'" :initVal="newCategory.rel_category.id" :depends="newCategory.category.id"  @returnValue="(val) => {newCategory.rel_category.id = val}" itemValue="rel_category_id"  />
+                    
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-card-text>
 
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
-                </v-card-actions>
-            </v-card> -->
-          </v-dialog>
+              <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" flat @click.native="close">الغاء</v-btn>
+                  <v-btn color="blue darken-1" flat @click.native="save">حفظ</v-btn>
+              </v-card-actions>
+          </v-card> -->
+        </v-dialog>
       </v-toolbar>
       <v-data-table
         :headers="headers"
@@ -96,17 +97,17 @@
 
           <td class="justify-right layout px-0">
 
-            <v-tooltip v-if="specialEvent === true" top>
+            <!-- <v-tooltip v-if="specialEvent === true" top>
               <v-btn slot="activator" icon small flat color="blue" @click="sendNotifications(props.item)"> 
                 <v-icon  class="mr-2 blue--text" >
                   add_alert
                 </v-icon>
               </v-btn>
               <span>ارسال الإشعارات</span>
-            </v-tooltip>
+            </v-tooltip> -->
 
             <v-tooltip top>
-              <v-btn slot="activator" icon small flat color="blue" @click="sendNotifications(props.item)"> 
+              <v-btn slot="activator" icon small flat color="blue" @click="prepareSendingNoti(props.item)"> 
                 <v-icon  class="mr-2 blue--text" >
                   add_alert
                 </v-icon>
@@ -142,8 +143,6 @@
               <span>تنشيط</span>
             </v-tooltip>
           </td>
-
-
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
             لا يوجد نتائج للبحث "{{search}}"
@@ -153,7 +152,7 @@
         </template>
         <template slot="no-data">
           <v-alert :value="true" color="success" icon="warning" outline>
-              لا يوجد أحداث بهذا القسم
+              لا يوجد دعوات
           </v-alert>
         </template>
       </v-data-table>
@@ -166,9 +165,9 @@
         max-width="290"
       >
         <v-card>
-          <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
+          <v-card-title  class="title red--text">متأكد من إيقاف الدعوة</v-card-title>
           <v-card-text>
-            <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
+            <v-checkbox color="red" label="حذف الدعوة نهائيا" v-model="forceDelete"></v-checkbox>        
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -187,6 +186,71 @@
               نعم
             </v-btn>
           </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!--  -->
+
+      <!--  -->
+      <v-dialog v-model="notiControl.sendNotiDialog" max-width="500px">
+        <v-card>
+            <v-card-title>
+                <span class="headline">ارسال الإشعارات</span>
+            </v-card-title>
+            <v-card-text>
+              <!--  -->
+              <v-list>
+                <template v-for="error in errors" >
+                  <v-list-tile :key="error[0] + Math.random()">
+                    <v-list-tile-content>
+                      <v-list-tile-title class="text-xs-center">
+                        <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                          {{err}} <v-icon color="red">error</v-icon>
+                        </span>
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </template>
+              </v-list>
+              <!--  -->
+            </v-card-text>
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                  <v-flex xs8>
+                    <v-select style="" 
+                      @change="selectedCountryChanged($event)"
+                      v-model="notiControl.selectedCountry" 
+                      flat dense 
+                      :items="[...notiControl.countries]" 
+                      item-text="title_ar" item-value="id" label="الدولة"  
+                    />
+                  </v-flex>
+                  <v-flex xs4>
+                    <v-checkbox
+                      @change="allcountryChanged($event)"
+                      color="primary"
+                      class="mt-4"
+                      label="كل مناطق الدولة"
+                      v-model="notiControl.allCountry"
+                    ></v-checkbox>
+                  </v-flex>
+                  <v-flex v-if="notiControl.showRegionSelectBox" xs12>
+                    <v-select
+                      v-model="notiControl.selectedRegion"
+                      :items="[{title_ar:'المناطق', id:null},...notiControl.regions]"
+                      item-text="title_ar" item-value="id"
+                      label="المناطق"
+                    ></v-select>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="" class="ma-2" small @click.native="notiControl.sendNotiDialog = false;close">الغاء</v-btn>
+                <v-btn color="primary" class="ma-2" :laoding="notiControl.loading" dark small @click.native="sendNotifications(notiControl)">حفظ</v-btn>
+            </v-card-actions>
         </v-card>
       </v-dialog>
       <!--  -->
@@ -211,6 +275,18 @@ export default {
     forceDelete: false,
     edit:false,
     dialog:false,
+    sendNotiDialog: false,
+    notiControl: {
+      laoding: false,
+      sendNotiDialog: false,
+      countries: [],
+      regions: [],
+      eventId: null,
+      selectedCountry: null,
+      selectedRegion: null,
+      showRegionSelectBox: true,
+      allCountry: false
+    },
     optionsDialog:false,
     imagesdialog:false,
     menu1:false,
@@ -287,7 +363,7 @@ export default {
     page:1,
     filterCountry:null,
     specialEvent:false,
-    categories: []
+    countries: []
   }),
 
   computed: {
@@ -300,24 +376,6 @@ export default {
   },
 
   watch: {
-    dialog (val) {
-      if(!val){
-        this.newCategory = {
-          id:null,
-          title_ar: null,
-          title_en: null,
-          category:{
-            id: null,
-            title: null,
-          },
-          rel_category: {
-            id: null,
-            title: null,
-          }
-        }
-      }
-      val || this.close()
-    },
     pagination: {
       handler () {
         this.page = this.pagination.page
@@ -359,8 +417,8 @@ export default {
     fetchCountries() {
       this.$http.get('admin/country')
       .then( (res) => {
-        
-        this.categories = res.data.data
+        this.notiControl.countries = res.data.data
+        this.countries = res.data.data
       })
     },
     getDataFromApi (res = null) {
@@ -465,26 +523,64 @@ export default {
       this.newCategory.rel_category.id = item.sub_category.category.category_id;
       this.newCategory.rel_category.title = item.sub_category.title_ar;
     },
+    prepareSendingNoti(item) {
+      this.notiControl.sendNotiDialog = !this.notiControl.sendNotiDialog;
+      this.edit=true;
+
+      this.notiControl.eventId = item.id
+    },
     sendNotifications(item){
       console.log(item);
+      let formdata = new FormData();
+
+      if(this.notiControl.selectedCountry != null)
+      formdata.append('country', this.notiControl.selectedCountry )
+      if(this.notiControl.selectedRegion != null)
+      formdata.append('region', this.notiControl.selectedRegion)
       
-      this.approve = true
-      if(confirm('هل تود ارسال الإشعارت لهذه المناسبة')) {
-        this.$http.post(`admin/send-notification/${item.id}`)
+      this.notiControl.loading = true
+      
+        this.$http.post(`admin/send-notification/${item.eventId}`, formdata)
         .then( res => {
-           
+      
           this.getDataFromApi()
           .then(data => {
             this.requests = data.items
             this.totalRequests = data.total
           })
-          // this.requests.splice(index, 1)
           this.alert.message = 'تم ارسال الإشعارت'
           this.alert.type = 'success'
-          this.approve = false
+          this.notiControl.loading = false
         })
-      }else{
-        this.approve = false
+        .catch( ({response}) => {
+          this.errors = response.data.error
+        })
+    },
+    selectedCountryChanged(newValue) {
+      console.log(newValue);
+      this.$http.get(`admin/region?country_id=${newValue}`)
+      .then( (res) => {
+        console.log(res);
+        
+        this.notiControl.regions = res.data.data
+      })
+      
+      // this.notiControl.selectedRegion = null
+      // if (newValue === true) {
+      //   this.notiControl.showRegionSelectBox = false
+      //   this.notiControl.selectedRegion = null
+      // } else {
+      //   this.notiControl.showRegionSelectBox = true
+      //   this.notiControl.selectedRegion = null
+      // }
+    },
+    allcountryChanged(newValue) {
+      if (newValue === true) {
+        this.notiControl.showRegionSelectBox = false
+        this.notiControl.selectedRegion = null
+      } else {
+        this.notiControl.showRegionSelectBox = true
+        this.notiControl.selectedRegion = null
       }
     },
     save () {

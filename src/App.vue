@@ -26,4 +26,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+.inputs-textField-select{
+  max-width:200px;
+  height:42px;
+  font-size: 11px;
+}
 </style>

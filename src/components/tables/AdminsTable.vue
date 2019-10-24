@@ -13,7 +13,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false;newUser={}"
+            @click="edit = false;errors=[];newUser={}"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -25,15 +25,21 @@
                 <span class="headline">{{formTitle}}</span>
             </v-card-title>
             <v-card-text>
-            <ul>
-                <li class="red--text" v-for="error in errors" :key="error[0] + Math.random()">
-                <ul>
-                    <li v-for="err in error" :key="err + Math.random()">
-                    {{err}}
-                    </li>
-                </ul>
-                </li>
-            </ul>
+              <!--  -->
+              <v-list>
+                <template v-for="error in errors" >
+                  <v-list-tile :key="error[0] + Math.random()">
+                    <v-list-tile-content>
+                      <v-list-tile-title class="text-xs-center">
+                        <span class="red--text" v-for="err in error" :key="err + Math.random()">
+                          {{err}} <v-icon color="red">error</v-icon>
+                        </span>
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </template>
+              </v-list>
+              <!--  -->
             </v-card-text>
             <v-card-text>
               <v-container grid-list-md>
@@ -50,13 +56,14 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="" class="ma-2" dark small @click.native="close">الغاء</v-btn>
+                <v-btn color="" class="ma-2"  small @click.native="close">الغاء</v-btn>
                 <v-btn color="primary" class="ma-2" depressed small @click.native="save">حفظ</v-btn>
             </v-card-actions>
         </v-card> 
       </v-dialog>
       <v-spacer></v-spacer>
       <v-text-field
+        style="max-width:250px;height:42px;font-size: 11px"
         v-model="search"
         append-icon="search"
         label="بحث"
@@ -75,84 +82,84 @@
       hide-actions
       :pagination.sync="pagination"
     >
-        <template slot="items" slot-scope="props">
-            <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
+        <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right"  v-if="props.item.email">{{ props.item.email }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+        <td class="text-xs-right"  v-if="props.item.email">{{ props.item.email }}</td>
+        <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right"  v-if="props.item.phone">{{ props.item.phone }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+        <td class="text-xs-right"  v-if="props.item.phone">{{ props.item.phone }}</td>
+        <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <!-- <td class="text-xs-right">
-              <img v-if="props.item.image"  :src="$root.$data.baseURL+props.item.image" :ref="'user_'+props.item.id" @error="imageFallBack(props.item.id)" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" @click="() => {image = props.item.image;mdialog = true;}">
-              
-              <img v-else  src="@/assets/avatar.png" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" >
-            </td> -->
+        <!-- <td class="text-xs-right">
+          <img v-if="props.item.image"  :src="$root.$data.baseURL+props.item.image" :ref="'user_'+props.item.id" @error="imageFallBack(props.item.id)" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" @click="() => {image = props.item.image;mdialog = true;}">
+          
+          <img v-else  src="@/assets/avatar.png" alt="صورة المستخدم" title="صورة المستخدم" width="50px" height="50px" style="cursor:pointer" >
+        </td> -->
 
-            <td class="justify-right layout px-0">
-              <!-- <v-btn small flat color="blue" @click="editing(props.item)"> 
-                تعديل
-                <v-icon  class="mr-2 blue--text" >
-                    edit
-                </v-icon>
-              </v-btn> -->
-              <v-tooltip v-if="props.item.deleted_at == null" top>
-                <v-btn
-                  slot="activator" 
-                  :loading="disapprove" 
-                  small flat icon color="red" 
-                  @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
-                >
-                  <v-icon class="red--text"  >
-                      delete
-                  </v-icon>
-                </v-btn> 
-                <span>تعطيل</span>
-              </v-tooltip>
+        <td class="justify-right layout px-0">
+          <!-- <v-btn small flat color="blue" @click="editing(props.item)"> 
+            تعديل
+            <v-icon  class="mr-2 blue--text" >
+                edit
+            </v-icon>
+          </v-btn> -->
+          <v-tooltip v-if="props.item.deleted_at == null" top>
+            <v-btn
+              slot="activator" 
+              :loading="disapprove" 
+              small flat icon color="red" 
+              @click="selectedItem = props.item;askToDeleteDialog = !askToDeleteDialog"
+            >
+              <v-icon class="red--text"  >
+                  delete
+              </v-icon>
+            </v-btn> 
+            <span>تعطيل</span>
+          </v-tooltip>
 
-              <v-tooltip v-else top>
-                <v-btn
-                  slot="activator"  
-                  :loading="approve" 
-                  small flat icon color="green" 
-                  @click="restoreItem(props.item)"
-                >
-                  <v-icon class="green--text"  >
-                      restore
-                  </v-icon>
-                </v-btn>
-                <span>تنشيط</span>
-              </v-tooltip>
-            </td>
+          <v-tooltip v-else top>
+            <v-btn
+              slot="activator"  
+              :loading="approve" 
+              small flat icon color="green" 
+              @click="restoreItem(props.item)"
+            >
+              <v-icon class="green--text"  >
+                  restore
+              </v-icon>
+            </v-btn>
+            <span>تنشيط</span>
+          </v-tooltip>
+        </td>
 
-            <!-- <td class="justify-right layout px-0">
-                <v-btn v-if="props.item.status" :loading="disapprove" small flat color="red" @click="dialog = true;user = props.item" >
-                  ايقاف
-                  <v-icon class="red--text"  >
-                      not_interested
-                  </v-icon>
-                </v-btn>
-                <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)" >
-                  استرجاع
-                  <v-icon class="green--text"  >
-                      restore
-                  </v-icon>
-                </v-btn>
-            </td> -->
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-            لا يوجد نتائج للبحث "{{search}}"
+        <!-- <td class="justify-right layout px-0">
+            <v-btn v-if="props.item.status" :loading="disapprove" small flat color="red" @click="dialog = true;user = props.item" >
+              ايقاف
+              <v-icon class="red--text"  >
+                  not_interested
+              </v-icon>
+            </v-btn>
+            <v-btn v-else :loading="approve" small flat color="green" @click="restoreItem(props.item)" >
+              استرجاع
+              <v-icon class="green--text"  >
+                  restore
+              </v-icon>
+            </v-btn>
+        </td> -->
+      </template>
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          لا يوجد نتائج للبحث "{{search}}"
+      </v-alert>
+      <template slot="pageText" slot-scope="props">
+        الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
+      </template>
+      <template slot="no-data">
+        <v-alert :value="true" color="success" icon="warning" outline>
+          لا يوجد مستخدمين
         </v-alert>
-        <template slot="pageText" slot-scope="props">
-          الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
-        </template>
-        <template slot="no-data">
-          <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد مستخدمين
-          </v-alert>
-        </template>
+      </template>
     </v-data-table>
     
     <div class="text-xs-center pt-2">
@@ -469,7 +476,7 @@ export default {
             };
           })
           .catch(({ response }) => {
-            this.errors = response.data.errors;
+            this.errors = response.data.error;
           });
       }
     },

@@ -7,11 +7,12 @@
       
       <v-spacer></v-spacer>
       <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="بحث"
-          single-line
-          hide-details
+        style="max-width:200px;height:42px;font-size: 11px"
+        v-model="search"
+        append-icon="search"
+        label="بحث"
+        single-line
+        hide-details
       >
       </v-text-field>
     </v-toolbar>
@@ -25,40 +26,40 @@
       hide-actions
       :pagination.sync="pagination"
     >
-        <template slot="items" slot-scope="props">
-            <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-right"  v-if="props.item.name">{{ props.item.name }}</td>
+        <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <td class="text-xs-right"  v-if="props.item.email">{{ props.item.email }}</td>
-            <td class="text-xs-right" v-else>لا يوجد مسمى</td>
+        <td class="text-xs-right"  v-if="props.item.email">{{ props.item.email }}</td>
+        <td class="text-xs-right" v-else>لا يوجد مسمى</td>
 
-            <td v-if="props.item.message != null">
-               <read-more more-str="read more"  :text="props.item.message" link="#" less-str="read less" :max-chars="100"></read-more>
-            </td>
-            <td class="text-xs-right" v-else>لم يحدد</td>
+        <td v-if="props.item.message != null">
+            <read-more more-str="read more"  :text="props.item.message" link="#" less-str="read less" :max-chars="100"></read-more>
+        </td>
+        <td class="text-xs-right" v-else>لم يحدد</td>
 
-            <td class="justify-right layout px-0">
-              <v-tooltip top>
-                <v-btn slot="activator" icon flat color="red" @click="deleteItem(props.item)">
-                  <v-icon class="red--text"  >
-                      delete
-                  </v-icon>
-                </v-btn>
-                <span>مسح الإعلان</span>
-              </v-tooltip>
-            </td>
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-            لا يوجد نتائج للبحث "{{search}}"
+        <td class="justify-right layout px-0">
+          <v-tooltip top>
+            <v-btn slot="activator" icon flat color="red" @click="deleteItem(props.item)">
+              <v-icon class="red--text"  >
+                  delete
+              </v-icon>
+            </v-btn>
+            <span>مسح الإعلان</span>
+          </v-tooltip>
+        </td>
+      </template>
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          لا يوجد نتائج للبحث "{{search}}"
+      </v-alert>
+      <template slot="pageText" slot-scope="props">
+        الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
+      </template>
+      <template slot="no-data">
+        <v-alert :value="true" color="success" icon="warning" outline>
+          لا يوجد الرسالة
         </v-alert>
-        <template slot="pageText" slot-scope="props">
-          الصفحات {{ props.pageStart }} - {{ props.pageStop }} من {{ props.itemsLength }}
-        </template>
-        <template slot="no-data">
-          <v-alert :value="true" color="success" icon="warning" outline>
-            لا يوجد الرسالة
-          </v-alert>
-        </template>
+      </template>
     </v-data-table>
     
     <div class="text-xs-center pt-2">

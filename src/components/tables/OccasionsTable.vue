@@ -10,13 +10,14 @@
               v-model="specialEvent"
             ></v-checkbox>
             <v-text-field
+              style="max-width:200px;height:42px;font-size: 11px"
               v-model="search"
               append-icon="search"
               label="بحث"
               single-line
               hide-details
             ></v-text-field>
-            <v-select style="max-width:150px;height:32px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
+            <v-select style="max-width:200px;height:42px;font-size: 11px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...categories]" item-text="title_ar" item-value="id" />
             <v-dialog v-model="dialog" max-width="500px">
               <!-- <v-btn slot="activator" color="primary" dark class="mb-2" @click="edit = false"> <v-icon>add</v-icon> تصنيف جديد</v-btn>
               <v-card>
@@ -165,7 +166,7 @@
           </template>
           <template slot="no-data">
             <v-alert :value="true" color="success" icon="warning" outline>
-                لا يوجد أحداث بهذا القسم
+                لا توجد مناسبات
             </v-alert>
           </template>
         </v-data-table>
@@ -178,9 +179,9 @@
           max-width="290"
         >
           <v-card>
-            <v-card-title  class="title red--text">متأكد من إيقاف الفرح</v-card-title>
+            <v-card-title  class="title red--text">متأكد من إيقاف المناسبة</v-card-title>
             <v-card-text>
-              <v-checkbox color="red" label="حذف الفرح نهائيا" v-model="forceDelete"></v-checkbox>        
+              <v-checkbox color="red" label="حذف المناسبة نهائيا" v-model="forceDelete"></v-checkbox>        
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
