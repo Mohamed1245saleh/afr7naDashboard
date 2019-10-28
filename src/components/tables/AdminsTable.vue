@@ -64,7 +64,7 @@
       <v-spacer></v-spacer>
       <v-text-field
         style="max-width:250px;height:42px;font-size: 11px"
-        v-model="search"
+        @keyup.native="makeSearch($event)"
         append-icon="search"
         label="بحث"
         single-line
@@ -163,7 +163,7 @@
     </v-data-table>
     
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
     </div>
     
     <v-dialog
@@ -240,6 +240,7 @@ export default {
     requests:[],
     totalRequests:0,
     pagination: {},
+    page:1,
     search: '',
     loading: false,
     disapprove: false,
@@ -276,7 +277,7 @@ export default {
       message: '',
       type: 'success'
     },
-    page:1
+    
   }),
 
   computed: {
@@ -294,20 +295,10 @@ export default {
     dialog (val) {
       val || this.close()
     },
-    pagination: {
-      handler () {
-        this.page = this.pagination.page
-        if(!this.loading) {
-
-          this.getDataFromApi()
-          .then(data => {
-            this.requests = data.items
-            this.totalRequests = data.total
-          })
-        }
-      },
-      deep: true
-    }
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
+    },
   },
   created () {
     if(!this.loading)
@@ -318,6 +309,18 @@ export default {
     })
   },
   methods: {
+    makeSearch(){
+      this.search=event.target.value;
+      this.fetch();
+    },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -336,24 +339,30 @@ export default {
           })
         }
         else {
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/admins?filter=${this.search}` :`admin/admins?page=${page}`
-        this.$http.get(endpoint)
-        .then( (res) => {
-          console.log('admins', res);
-          
-          let items = res.data.admins.data
-          const total = res.data.admins.total
-          this.pagination.rowsPerPage = res.data.admins.per_page
-          this.pagination.totalItems = res.data.admins.total
-          setTimeout(() => {
-            this.loading = false
-          }, 300);
-          resolve({
-            items,
-            total
+
+          let filterBySearch = (this.search == "") 
+          ? '' 
+          : `&filter=${this.search}`
+
+          const endpoint = `admin/admins?page=${page}${filterBySearch}`
+
+          this.$http.get(endpoint)
+          .then( (res) => {
+            console.log('admins', res);
+            
+            let items = res.data.admins.data
+            const total = res.data.admins.total
+            this.pagination.rowsPerPage = res.data.admins.per_page
+            this.pagination.totalItems = res.data.admins.total
+            setTimeout(() => {
+              this.loading = false
+            }, 300);
+            resolve({
+              items,
+              total
+            })
           })
-        })
-      }
+        }
       })
     },
     selectImage () {

@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
       <v-text-field
         style="max-width:200px;height:42px;font-size: 11px"
-        v-model="search"
+        @keyup.native="makeSearch($event)"
         append-icon="search"
         label="بحث"
         single-line
@@ -161,7 +161,6 @@ export default {
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     }
   },
-
   watch: {
     dialog (val) {
       val || this.close()
@@ -190,6 +189,10 @@ export default {
     })
   },
   methods: {
+    makeSearch(){
+      this.search=event.target.value;
+      this.fetch();
+    },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -227,6 +230,14 @@ export default {
         })
       }
       })
+    },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
     },
     selectImage () {
       document.getElementById('image_choose').click()

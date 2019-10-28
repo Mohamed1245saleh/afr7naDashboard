@@ -47,7 +47,7 @@
                     <v-flex>
                       <v-text-field v-model="ad.title_ar" label=" اسم الإعلان بالعربية" />
                       <v-text-field v-model="ad.title_en"  label="اسم الإعلان بالانجليزية" />
-                      <v-text-field v-model="ad.link"  label=" رابط الإعلان" />
+                      <v-text-field prefix="http://" v-model="ad.link"  label=" رابط الإعلان" />
                       <!-- <v-select style="max-width:150px;height:32px" 
                         v-model="ad.ads_category_id" 
                         flat dense 
@@ -157,7 +157,7 @@
 
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-if="media.length"
@@ -308,19 +308,9 @@ export default {
     dialog (val) {
       val || this.close()
     },
-    pagination: {
-      handler () {
-        this.page = this.pagination.page
-        if(!this.loading)
-        {
-          this.getDataFromApi()
-        .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
-        }
-      },
-      deep: true
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
     },
     filterCategory(val){
       this.getDataFromApi()
@@ -346,8 +336,8 @@ export default {
     }
   },
   created () {
-    this.fetchCountries();
-    this.fetchCategories();
+    // this.fetchCountries();
+    // this.fetchCategories();
     this.getDataFromApi()
     .then(data => {
       this.requests = data.items
@@ -482,6 +472,14 @@ export default {
     //     this.watchersDialog = false
     //   })
     // },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -617,7 +615,6 @@ export default {
         this.deleting = false
       }
     },
-
     close () {
       this.dialog = false
       setTimeout(() => {

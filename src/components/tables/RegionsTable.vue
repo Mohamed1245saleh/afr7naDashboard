@@ -4,15 +4,19 @@
       <v-toolbar flat color="white">
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-text-field
+        <!-- <v-text-field
           style="max-width:200px;height:42px;font-size: 11px"
           v-model="search"
           append-icon="search"
           label="بحث"
           single-line
           hide-details
-        ></v-text-field>
-        <v-select style="max-width:200px;height:42px;font-size: 11px" v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" item-text="title_ar" item-value="id" label="الدول"/>
+        ></v-text-field> -->
+        <v-select 
+          style="max-width:200px;height:42px;font-size: 11px" 
+          v-model="filterCountry" flat dense :items="[{title_ar:'الدول', id:null},...searchCountries]" 
+          item-text="title_ar" item-value="id" label="الدول"
+        />
             
           <v-dialog v-model="dialog" max-width="500px">
 
@@ -126,7 +130,7 @@
           </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
       </div>
       <v-dialog
         v-model="deleteDialog"
@@ -260,16 +264,23 @@ export default {
       }
       val || this.close();
     },
-    pagination: {
-      handler() {
-        this.page = this.pagination.page;
-        if (this.loading) return;
-        this.getDataFromApi().then(data => {
-          this.requests = data.items;
-          this.totalRequests = data.total;
-        });
-      },
-      deep: true
+    // pagination: {
+    //   handler() {
+    //     this.page = this.pagination.page;
+    //     if(!this.loading)
+    //     {
+    //       this.getDataFromApi()
+    //       .then(data => {
+    //         this.requests = data.items
+    //         this.totalRequests = data.total
+    //       })
+    //     }
+    //   },
+    //   deep: true
+    // },
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
     },
     filterCountry(val){
       this.getDataFromApi()
@@ -288,6 +299,14 @@ export default {
     });
   },
   methods: {
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     getDataFromApi(res = null) {
       this.loading = true;
       return new Promise((resolve, reject) => {
@@ -297,25 +316,35 @@ export default {
           const total = res.data.total;
           this.pagination.rowsPerPage = res.data.per_page;
           this.pagination.totalItems = res.data.total;
-          this.loading = false;
+    
+          setTimeout(() => {
+            this.loading = false
+          }, 300)
+    
           resolve({
             items,
             total
           });
         } else {
-          let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/region?title=${this.search}${filterByCountry}&page=${page}`
+          let filterByCountry = (this.filterCountry == null) 
+          ? '' 
+          : `&country_id=${this.filterCountry}`
+          const endpoint = (this.search.replace(/\s/g, '').length>0)
+          ? `admin/region?title=${this.search}${filterByCountry}`
           : `admin/region?page=${page}${filterByCountry}`
           this.$http.get(endpoint).then(res => {
             let items = res.data.data;
             const total = res.data.total;
             this.pagination.rowsPerPage = res.data.per_page;
             this.pagination.totalItems = res.data.total;
-            this.loading = false;
+            setTimeout(() => {
+              this.loading = false
+            }, 300)
             resolve({
               items,
               total
             });
+      
           });
         }
       });
@@ -334,7 +363,11 @@ export default {
 
         this.$http.delete(`admin/region/${item.id}`)
         .then( res => {
-          this.requests.splice(index, 1)
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
           this.alert.message = 'تم مسح المنطقة!'
           this.alert.type = 'success'
           this.deleting = false

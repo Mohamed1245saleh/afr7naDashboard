@@ -5,14 +5,14 @@
         <v-toolbar-title class=""><v-icon medium>{{icon}}</v-icon> {{title}}</v-toolbar-title>
         <v-spacer></v-spacer>
         
-        <v-text-field
+        <!-- <v-text-field
           style="max-width:200px;height:42px;font-size: 11px"
-          v-model="search"
+          @keyup.native="makeSearch($event)"
           append-icon="search"
           label="بحث"
           single-line
           hide-details
-        ></v-text-field>
+        ></v-text-field> -->
         
         <!-- <v-select style="max-width:150px;height:32px" v-model="filterCategory" flat dense :items="[{title_ar:'الاقسام', category_id:null},...categories]" item-text="title_ar" item-value="category_id" /> -->
         
@@ -55,7 +55,7 @@
                             <v-flex>
                               <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
                               <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
-                              <v-btn color="info" @click="$refs.image_input.click()">
+                              <v-btn color="primary" @click="$refs.image_input.click()">
                                 <v-icon>image</v-icon>
                                 صورة
                               </v-btn>
@@ -74,13 +74,13 @@
         </v-dialog>
     </v-toolbar>
     <v-data-table
-        :headers="headers"
-        :items="requests"
-        :total-items="totalRequests"
-        :loading="loading"
-        :search="search"
-        hide-actions
-        :pagination.sync="pagination">
+      :headers="headers"
+      :items="requests"
+      :total-items="totalRequests"
+      :loading="loading"
+      :search="search"
+      hide-actions
+      :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
             <td class="text-xs-center"  v-if="props.item.title_ar">{{ props.item.title_ar }}</td>
             <td class="text-xs-center" v-else>لا يوجد مسمى</td>
@@ -91,28 +91,28 @@
             <td class="text-xs-center">
               <img style="cursor:pointer" :src="`http://afr7na.com/${props.item.image}`" alt="ايقونة " title="صورة " width="50px" height="50px">
             </td>
-                <v-tooltip top>
-                    <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
-                    <v-icon  class="mr-2 blue--text" >
-                        edit
-                    </v-icon>
-                    </v-btn>
-                    <span>تعديل التصنيف</span>
-                </v-tooltip>
+              <v-tooltip top>
+                  <v-btn slot="activator" icon :loading="approve"  flat color="blue" @click="editing(props.item)"> 
+                  <v-icon  class="mr-2 blue--text" >
+                      edit
+                  </v-icon>
+                  </v-btn>
+                  <span>تعديل التصنيف</span>
+              </v-tooltip>
 
-                <v-tooltip top>
-                    <v-btn 
-                        slot="activator" 
-                        :loading="deleteLoading"
-                        icon flat color="red" 
-                        @click="deleteItem(props.item)"
-                    >
-                        <v-icon class="red--text"  >
-                            delete
-                        </v-icon>
-                    </v-btn>
-                    <span>مسح التصنيف</span>
-                </v-tooltip>
+              <v-tooltip top>
+                  <v-btn 
+                      slot="activator" 
+                      :loading="deleteLoading"
+                      icon flat color="red" 
+                      @click="deleteItem(props.item)"
+                  >
+                      <v-icon class="red--text"  >
+                          delete
+                      </v-icon>
+                  </v-btn>
+                  <span>مسح التصنيف</span>
+              </v-tooltip>
             </td>
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -128,7 +128,7 @@
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
     </div>
 </div>
 </template>
@@ -198,7 +198,8 @@ export default {
     },
     page:1,
     filterCategory:null,
-    categories: []
+    categories: [],
+    approve: false
   }),
 
   computed: {
@@ -224,24 +225,11 @@ export default {
       }
       val || this.close()
     },
-    pagination: {
-      handler () {
-        this.page = this.pagination.page
-        this.getDataFromApi()
-        .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
-      },
-      deep: true
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
     },
-    filterCategory(val){
-      this.getDataFromApi()
-      .then(data => {
-      this.requests = data.items
-      this.totalRequests = data.total
-    });
-    },
+
   },
   created () {
     // this.fetchCategories();
@@ -252,6 +240,18 @@ export default {
     })
   },
   methods: {
+    makeSearch(){
+      this.search=event.target.value;
+      this.fetch();
+    },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     fetchCategories() {
       this.$http.get('api/admin/categories/main/get/all')
       .then( (res) => {
@@ -274,21 +274,20 @@ export default {
           })
         }
         else {
-        //   const endpoint = (this.search.replace(/\s/g, '').length>0)?'api/admin/categories/search/' + this.search + '?category='+this.filterCategory :'api/admin/categories?page=' + page + '&category='+this.filterCategory          
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/ads-category`:`admin/ads-category`
-        this.$http.get(endpoint)
-        .then( (res) => {
-          let items = res.data.data
-          const total = res.data.total
-          this.pagination.rowsPerPage = res.data.per_page
-          this.pagination.totalItems = res.data.total
-          this.loading = false
-          resolve({
-            items,
-            total
+          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/ads-category?page=${page}`:`admin/ads-category?page=${page}`
+          this.$http.get(endpoint)
+          .then( (res) => {
+            let items = res.data.data
+            const total = res.data.total
+            this.pagination.rowsPerPage = res.data.per_page
+            this.pagination.totalItems = res.data.total
+            this.loading = false
+            resolve({
+              items,
+              total
+            })
           })
-        })
-      }
+        }
       })
     },
     selectImage () {
@@ -302,7 +301,7 @@ export default {
 
         this.$http.delete(`admin/ads-category/${item.id}?page=${this.page}`)
         .then( res => {
-          this.getDataFromApi(res);
+          this.getDataFromApi();
           this.requests.splice(index, 1)
           this.alert.message = 'تم مسح القسم!'
           this.alert.type = 'info'
@@ -342,7 +341,7 @@ export default {
       if(this.edit){
         this.$http.post(`admin/ads-category/${this.newCategory.id}`, formdata)
           .then( res => {
-            this.getDataFromApi(res)
+            this.getDataFromApi()
             .then(data => {
               this.requests = data.items
               this.totalRequests = data.total
@@ -365,7 +364,7 @@ export default {
         this.$http.post(`admin/ads-category?page=${this.page}`, formdata)
           .then( res => {
              
-            this.getDataFromApi(res)
+            this.getDataFromApi()
             .then(data => {
               this.requests = data.items
               this.totalRequests = data.total

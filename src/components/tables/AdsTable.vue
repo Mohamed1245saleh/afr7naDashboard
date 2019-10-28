@@ -55,7 +55,7 @@
                       :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
                       item-text="title_ar" item-value="id" 
                     />
-                    <v-btn color="info" @click="$refs.image_input.click()">
+                    <v-btn color="primary" @click="$refs.image_input.click()">
                       <v-icon>image</v-icon>
                       صورة
                     </v-btn>
@@ -155,7 +155,7 @@
 
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-if="media.length"
@@ -283,7 +283,6 @@ export default {
       message: '',
       type: 'success'
     },
-
     page:1,
     filterCategory:null,
     categories:[],
@@ -320,19 +319,9 @@ export default {
     dialog (val) {
       val || this.close()
     },
-    pagination: {
-      handler () {
-        this.page = this.pagination.page
-        if(!this.loading)
-        {
-          this.getDataFromApi()
-        .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
-        }
-      },
-      deep: true
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
     },
     filterCategory(val){
       this.getDataFromApi()
@@ -494,6 +483,14 @@ export default {
         this.watchersDialog = false
       })
     },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -619,7 +616,12 @@ export default {
 
         this.$http.delete(`admin/ads/${item.id}`)
         .then( res => {
-          this.requests.splice(index, 1)
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
+          // this.requests.splice(index, 1)
           this.alert.message = 'تم مسح الاعلان!'
           this.alert.type = 'success'
           this.deleting = false

@@ -296,8 +296,11 @@ export default {
 
         this.$http.delete('api/admin/categories/'+ item.id+'?page=' + this.page)
         .then( res => {
-          this.getDataFromApi(res);
-          this.requests.splice(index, 1)
+          this.getDataFromApi()
+          .then(data => {
+            this.requests = data.items
+            this.totalRequests = data.total
+          })
           this.alert.message = 'تم مسح القسم!'
           this.alert.type = 'info'
           this.disapprove = false

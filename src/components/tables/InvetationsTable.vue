@@ -11,7 +11,7 @@
         ></v-checkbox>
         <v-text-field
           style="max-width:200px;height:42px;font-size: 11px"
-          v-model="search"
+          @keyup.native="makeSearch($event)"
           append-icon="search"
           label="بحث"
           single-line
@@ -157,7 +157,7 @@
         </template>
       </v-data-table>
       <div class="text-xs-center pt-2">
-        <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+        <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
       </div>
       <!--  -->
       <v-dialog
@@ -376,19 +376,9 @@ export default {
   },
 
   watch: {
-    pagination: {
-      handler () {
-        this.page = this.pagination.page
-        if(!this.loading) {
-
-          this.getDataFromApi()
-        .then(data => {
-          this.requests = data.items
-          this.totalRequests = data.total
-        })
-        }
-      },
-      deep: true
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
     },
     filterCountry(val){
       this.getDataFromApi()
@@ -421,6 +411,10 @@ export default {
         this.countries = res.data.data
       })
     },
+    makeSearch(){
+      this.search=event.target.value;
+      this.fetch();
+    },
     getDataFromApi (res = null) {
       this.loading = true
       return new Promise((resolve, reject) => {
@@ -437,10 +431,19 @@ export default {
           })
         }
         else {
-          let bySpecialEvent = this.specialEvent == false ? '' : `&special_for_admin`
-          let filterByCountry = this.filterCountry == null ? '' : `&country_id=${this.filterCountry}`
-          const endpoint = (this.search.replace(/\s/g, '').length>0)?`admin/event?title=${this.search}${filterByCountry}&category=3&page=${page}${bySpecialEvent}`
-          : `admin/event?category=3${filterByCountry}&page=${page}${bySpecialEvent}`
+          let filterBySearch = (this.search == "") 
+          ? '' 
+          : `&title=${this.search}`
+
+          let bySpecialEvent = (this.specialEvent == false) 
+          ? '' 
+          : `&special_for_admin`
+
+          let filterByCountry = (this.filterCountry == null) 
+          ? '' 
+          : `&country_id=${this.filterCountry}`
+
+          const endpoint = `admin/event?category=3${filterByCountry}${filterBySearch}&page=${page}${bySpecialEvent}`
           this.$http.get(endpoint)
             .then( (res) => {
               console.log(res);
@@ -458,10 +461,17 @@ export default {
       }
       })
     },
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     selectImage () {
       document.getElementById('image_choose').click()
     },
-
     deleteItem() {
       const item = this.selectedItem
       this.disapprove = true

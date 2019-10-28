@@ -132,7 +132,7 @@
         </template>
     </v-data-table>
     <div class="text-xs-center pt-2">
-      <v-pagination total-visible="6" color="primary" v-model="pagination.page" :length="pages"></v-pagination>
+      <v-pagination total-visible="6" color="primary" v-model="page" :length="pages"></v-pagination>
     </div>
     <v-dialog
       v-model="deleteDialog"
@@ -284,17 +284,10 @@ export default {
       }
       val || this.close();
     },
-    pagination: {
-      handler() {
-        this.page = this.pagination.page;
-        if (this.loading) return;
-        this.getDataFromApi().then(data => {
-          this.requests = data.items;
-          this.totalRequests = data.total;
-        });
-      },
-      deep: true
-    }
+    page(val) {
+      this.pagination.page = val
+      this.fetch();
+    },
   },
   created() {
     if (this.loading) return;
@@ -304,6 +297,14 @@ export default {
     });
   },
   methods: {
+    fetch(){
+      this.getDataFromApi().then(data => {
+        this.requests = data.items;
+        this.totalRequests = data.total;
+      });
+      if(this.loading) return;
+
+    },
     getDataFromApi(res = null) {
       this.loading = true;
       return new Promise((resolve, reject) => {

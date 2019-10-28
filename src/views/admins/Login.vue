@@ -61,8 +61,8 @@ export default {
       .then(res=> { 
         console.log('res', res);
         
-        this.$ls.set('token', res.data.access_token, 24 * 60 * 60 * 1000)
-        this.$ls.set('admin', res.data.admin, 24 * 60 * 60 * 1000)
+        this.$ls.set('token', res.data.access_token)
+        this.$ls.set('admin', res.data.admin)
 
         //this.$ls.set('admin', this.user.username, 24 * 60 * 60 * 1000)
         // this.$ls.set('country_id', res.data.admin.default_country, 24 * 60 * 60 * 1000)
