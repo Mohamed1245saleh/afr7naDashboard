@@ -11,7 +11,7 @@
               color="primary" 
               fab dark small 
               class="mb-2" 
-              @click="edit = false"
+              @click="edit = false,errors = []"
             > 
               <v-icon>add</v-icon>
             </v-btn>
@@ -46,14 +46,14 @@
                             <v-flex>
                               <v-text-field v-model="country.title_ar" label=" اسم الدولة بالعربية" />
                               <v-text-field v-model="country.title_en"  label="اسم الدولة بالانجليزية" />
-                               <v-text-field v-model="country.currency"  label=" عملة الدولة بالعربية" />
-                                <!-- <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" /> -->
-                              <!-- <v-btn color="info" @click="$refs.image_input.click()">
+                              <v-text-field v-model="country.currency_ar"  label=" عملة الدولة بالعربية" />
+                              <v-text-field v-model="country.currency_en"  label="عملة الدولة بالانجليزية" />
+                              <v-text-field v-model="country.code"  label="كود الدولة" />
+                              <v-btn color="primary" @click="$refs.image_input.click()">
                                 <v-icon>image</v-icon>
                                 صورة
-                              </v-btn> -->
-                              <!-- <input style="display:none" type="file" ref="image_input" > -->
-                              <v-text-field v-model="country.code"  label="كود الدولة" />
+                              </v-btn>
+                              <input style="display:none" type="file" ref="image_input" >
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -82,19 +82,19 @@
             <td class="text-xs-right" v-if="props.item.title_en">{{ props.item.title_en }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
-            <!-- <td class="text-xs-right">
-              <img @click="openDialogue(props.item)" style="cursor:pointer" :src="$root.$data.baseURL +props.item.image" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
-            </td> -->
+            <td class="text-xs-right">
+              <img @click="openDialogue(props.item)" style="cursor:pointer" :src="`http://afr7na.com/${props.item.image}`" alt="ايقونة الدولة" title="صورة الاعلان" width="50px" height="50px">
+            </td>
 
             <td class="text-xs-right"  v-if="props.item.code">{{ props.item.code }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
 
-            <td class="text-xs-right" v-if="props.item.currency">{{ props.item.currency }}</td>
+            <td class="text-xs-right" v-if="props.item.currency_ar">{{ props.item.currency_ar }}</td>
             <td class="text-xs-right" v-else>لم يحدد</td>
 
-            <!-- <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
-            <td class="text-xs-right" v-else>لم يحدد</td> -->
+            <td class="text-xs-right" v-if="props.item.currency_en">{{ props.item.currency_en }}</td>
+            <td class="text-xs-right" v-else>لم يحدد</td>
 
             <td class="justify-right layout px-0">
 
@@ -214,12 +214,12 @@ export default {
         value: "userName",
         sortable: false
       },
-      // {
-      //   text: "الصورة",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
+      {
+        text: "الصورة",
+        align: "right",
+        value: "category",
+        sortable: false
+      },
       {
         text: "كود الدولة",
         align: "right",
@@ -227,17 +227,17 @@ export default {
         sortable: false
       },
        {
-        text: "العملة",
+        text: "العملة بالعربية",
         align: "right",
         value: "category",
         sortable: false
       },
-      // {
-      //   text: "العملة بالانجليزية",
-      //   align: "right",
-      //   value: "category",
-      //   sortable: false
-      // },
+      {
+        text: "العملة بالانجليزية",
+        align: "right",
+        value: "category",
+        sortable: false
+      },
       {
         text: "عمليات",
         align: "cneter",
@@ -358,24 +358,25 @@ export default {
       }, 300);
     },
     editing(item) {
+      this.errors = []
       this.dialog = !this.dialog;
       this.edit = true;
       this.country.id = item.id;
       this.country.title_ar = item.title_ar;
       this.country.title_en = item.title_en;
       this.country.code = item.code;
-      this.country.currency = item.currency;
-      // this.country.currency_ar = item.currency_ar;
+      this.country.currency_ar = item.currency_ar;
+      this.country.currency_en = item.currency_en;
 
       this.index = this.requests.indexOf(item)
     },
     save() {
       const index = this.index
-      // let image = this.$refs.image_input.files[0];
-      // if (typeof image == "undefined") image = null;
+      let image = this.$refs.image_input.files[0];
+      if (typeof image == "undefined") image = null;
       let newformdata = new FormData();
       const editformdata = {};
-      // if (image) formdata.append("image", image);
+      if (image) newformdata.append("image", image);
       if (this.country.title_ar)
         newformdata.append("title_ar", this.country.title_ar);
         editformdata.title_ar = this.country.title_ar
@@ -385,40 +386,20 @@ export default {
       if (this.country.code)
         newformdata.append("code", this.country.code);
         editformdata.code = this.country.code
-      if (this.country.currency)
-        newformdata.append("currency", this.country.currency);
-        editformdata.currency = this.country.currency
-      // if (this.country.currency_en)
-      //   newformdata.append("currency_en", this.country.currency_en);
+      if (this.country.currency_ar)
+        newformdata.append("currency_ar", this.country.currency_ar);
+        editformdata.currency_ar = this.country.currency_ar
+      if (this.country.currency_en)
+        newformdata.append("currency_en", this.country.currency_en);
       console.log('editformdata', editformdata);
-      
-      if (this.edit) {
-        this.$http.put(`admin/country/${this.country.id}`, editformdata)
+      const endpoint = this.edit ? `admin/country/${this.country.id}` : `admin/country?page="${this.page}`
+      this.$http
+          .post(endpoint, newformdata)
           .then(res => {
-            console.log(res.data);
-            
-            this.$set(this.requests, index, editformdata)
-            this.alert.type = "warning";
-            this.alert.message = "تم تعديل الدولة!";
-            this.close();
-            this.errors = [];
-            this.country = {
-              id: null,
-              title_ar: null,
-              title_en: null,
-              code: null
-            };
-          })
-          .catch(({ response }) => {
-            this.errors = response.data.error;
-          });
-      } else {
-        this.$http
-          .post("admin/country" + "?page=" + this.page, newformdata)
-          .then(res => {
-            this.requests.push(res.data)
+            // this.requests.push(res.data)
             this.alert.type = "info";
-            this.alert.message = "تم اضافة الدولة!";
+            // this.alert.message = "تم اضافة الدولة!";
+            this.alert.message = this.edit ? `تم تعديل الدولة` : `تم حفظ الدولة`
             this.close();
             this.errors = [];
             this.country = {
@@ -432,6 +413,46 @@ export default {
           .catch(({ response }) => {
             this.errors = response.data.error;
           });
+      if (this.edit) {
+        // this.$http.put(`admin/country/${this.country.id}`, editformdata)
+        //   .then(res => {
+        //     console.log(res.data);
+            
+        //     this.$set(this.requests, index, editformdata)
+        //     this.alert.type = "warning";
+        //     this.alert.message = "تم تعديل الدولة!";
+        //     this.close();
+        //     this.errors = [];
+        //     this.country = {
+        //       id: null,
+        //       title_ar: null,
+        //       title_en: null,
+        //       code: null
+        //     };
+        //   })
+        //   .catch(({ response }) => {
+        //     this.errors = response.data.error;
+        //   });
+      } else {
+        // this.$http
+        //   .post("admin/country" + "?page=" + this.page, newformdata)
+        //   .then(res => {
+        //     this.requests.push(res.data)
+        //     this.alert.type = "info";
+        //     this.alert.message = "تم اضافة الدولة!";
+        //     this.close();
+        //     this.errors = [];
+        //     this.country = {
+        //       id: null,
+        //       title_ar: null,
+        //       title_en: null,
+        //       code: null
+        //     };
+        //     this.getDataFromApi()
+        //   })
+        //   .catch(({ response }) => {
+        //     this.errors = response.data.error;
+        //   });
       }
     },
     parseDate(date) {

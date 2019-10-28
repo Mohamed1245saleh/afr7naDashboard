@@ -52,7 +52,7 @@
                             <v-flex>
                               <v-text-field v-model="newCategory.title_ar" label=" اسم التصنيف بالعربية" />
                               <v-text-field v-model="newCategory.title_en"  label="اسم التصنيف بالانجليزية" />
-                              <v-btn color="info" @click="$refs.image_input.click()">
+                              <v-btn color="primary" @click="$refs.image_input.click()">
                                 <v-icon>image</v-icon>
                                 صورة
                               </v-btn>
@@ -323,6 +323,7 @@ export default {
       }, 300)
     },
     editing(item) {
+      this.errors = []
       this.dialog = !this.dialog;
       this.edit=true;
 

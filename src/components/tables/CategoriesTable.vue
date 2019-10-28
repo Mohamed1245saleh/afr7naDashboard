@@ -375,7 +375,7 @@ export default {
             }
           })
           .catch( ({response}) => {
-            this.errors = response.data.errors
+            this.errors = response.data.error
           })
       }
       else{

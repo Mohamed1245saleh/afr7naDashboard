@@ -383,6 +383,7 @@ export default {
       }, 300);
     },
     editing(item) {
+      this.errors = []
       this.dialog = !this.dialog;
       this.edit = true;
       this.region.id = item.id;

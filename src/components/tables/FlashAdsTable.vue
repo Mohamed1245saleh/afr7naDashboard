@@ -54,7 +54,7 @@
                         :items="[{title_ar:'الاقسام', id:null},...addEditCategories]" 
                         item-text="title_ar" item-value="id" 
                       /> -->
-                      <v-btn color="info" @click="$refs.image_input.click()">
+                      <v-btn color="primary" @click="$refs.image_input.click()">
                         <v-icon>image</v-icon>
                         صورة
                       </v-btn>

@@ -22,7 +22,7 @@
                     slot="activator" 
                     color="primary" 
                     fab small dark class="mb-2" 
-                    @click="edit = false"
+                    @click="edit = false;errors = []"
                 > 
                     <v-icon>add</v-icon> 
                 </v-btn>
@@ -319,6 +319,7 @@ export default {
       }, 300)
     },
     editing(item) {
+      this.errors = []
       this.dialog = !this.dialog;
       this.edit=true;
 
@@ -357,7 +358,7 @@ export default {
             }
           })
           .catch( ({response}) => {
-            this.errors = response.data.errors
+            this.errors = response.data.error
           })
       }
       else{

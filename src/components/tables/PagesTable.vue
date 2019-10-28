@@ -409,6 +409,7 @@ export default {
         };
     },
     editing(item) {
+      this.errors = []
       this.addEditDialog = !this.addEditDialog;
       this.edit = true;
       this.pageItem.id = item.id;
