@@ -14,7 +14,7 @@
             color="primary" 
             fab dark small
             class="mb-2" 
-            @click="edit = false;errors=[];errors=[];ad={};this.isHttps = 'http://';"
+            @click="edit = false;errors=[];errors=[];ad={};isHttps = false;http = 'http://'"
           > 
             <v-icon>add</v-icon>
           </v-btn>
@@ -208,6 +208,7 @@ export default {
     }
   },
   data: () => ({
+    linkPrifix:'',
     http: 'http://',
     isHttps: false,
     selected:[],
@@ -316,7 +317,7 @@ export default {
       val || this.close();
     },
     dialog (val) {
-      val || this.close()
+      val || this.close() 
     },
     page(val) {
       this.pagination.page = val
@@ -463,6 +464,10 @@ export default {
     },
     close () {
       this.dialog = false
+      if (this.index != null) {
+        this.requests[this.index].link = this.linkPrifix
+        // alert(this.requests[this.index].link)
+      }
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
@@ -476,6 +481,10 @@ export default {
           title_en: null,
           ads_category_id: null
         };
+        if (this.index != null) {
+        this.requests[this.index].link = this.linkPrifix
+        // alert(this.requests[this.index].link)
+      }
     },
     editing(item) {
       this.errors=[];
@@ -489,23 +498,22 @@ export default {
       if (item.link.search("http://") > -1) {
         item.link = item.link.replace("http://", "");
         this.http = 'http://';
+        this.linkPrifix = `${this.http}${item.link}`
         this.isHttps = false;
         this.ad.link = item.link;
 
       } else if(item.link.search("https://") > -1) {
         item.link = item.link.replace("https://", "");
         this.http = 'https://';
+        this.linkPrifix = `${this.http}${item.link}`
         this.isHttps = true;
         this.ad.link = item.link;
       } else {
         this.http = 'http://';
+        this.linkPrifix = `${item.link}`
         this.isHttps = false;
         this.ad.link = item.link;
       }
-      // const https = (item.link.search("http") > -1) ? true : false
-      // alert(https)
-      // this.ad.link = item.link;
-      // 
 
       this.index = this.requests.indexOf(item)
     },
@@ -526,7 +534,7 @@ export default {
       const endpoint = this.edit ? `admin/flash-ads/${this.ad.id}` : `admin/flash-ads`
       this.$http.post(endpoint, newformdata)
         .then(res => {            
-          this.$set(this.requests, index, newformdata)
+          // this.$set(this.requests, index, newformdata)
           this.alert.type = "warning";
           this.alert.message = this.edit ? `تم تعديل الإعلان` : `تم حفظ الإعلان`
           this.close();
@@ -542,25 +550,26 @@ export default {
           this.$refs.image_input.value="";
           setTimeout(() => {
             this.addEditDialog = false
+            this.getDataFromApi()
+            .then(data => {
+              this.requests = data.items
+              this.totalRequests = data.total
+            });
           }, 300);
           this.edit = false
-          this.getDataFromApi()
-          .then(data => {
-            this.requests = data.items
-            this.totalRequests = data.total
-          });
+          
         })
         .catch(({ response }) => {
           console.log(response)
           this.errors = response.data.error;
           setTimeout(() => {
               this.ad = {
-                    id: null,
-                    title_ar: null,
-                    title_en: null,
-                    link: null
+                    id: this.ad.id,
+                    title_ar: this.ad.title_ar,
+                    title_en: this.ad.title_en,
+                    link: this.ad.link.replace(this.http, "")
                 };
-          }, 5000);
+          }, 200);
         });
     },
     parseDate (date) {
