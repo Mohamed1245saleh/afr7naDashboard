@@ -360,6 +360,7 @@ export default {
               title_ar: null,
               title_en: null,
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.error
@@ -383,6 +384,7 @@ export default {
               title_ar: null,
               title_en: null,
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.error

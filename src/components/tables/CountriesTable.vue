@@ -408,52 +408,16 @@ export default {
               title_en: null,
               code: null
             };
+            this.$refs.image_input.value="";
             this.getDataFromApi()
+            .then(data => {
+              this.requests = data.items
+              this.totalRequests = data.total
+            });
           })
           .catch(({ response }) => {
             this.errors = response.data.error;
           });
-      if (this.edit) {
-        // this.$http.put(`admin/country/${this.country.id}`, editformdata)
-        //   .then(res => {
-        //     console.log(res.data);
-            
-        //     this.$set(this.requests, index, editformdata)
-        //     this.alert.type = "warning";
-        //     this.alert.message = "تم تعديل الدولة!";
-        //     this.close();
-        //     this.errors = [];
-        //     this.country = {
-        //       id: null,
-        //       title_ar: null,
-        //       title_en: null,
-        //       code: null
-        //     };
-        //   })
-        //   .catch(({ response }) => {
-        //     this.errors = response.data.error;
-        //   });
-      } else {
-        // this.$http
-        //   .post("admin/country" + "?page=" + this.page, newformdata)
-        //   .then(res => {
-        //     this.requests.push(res.data)
-        //     this.alert.type = "info";
-        //     this.alert.message = "تم اضافة الدولة!";
-        //     this.close();
-        //     this.errors = [];
-        //     this.country = {
-        //       id: null,
-        //       title_ar: null,
-        //       title_en: null,
-        //       code: null
-        //     };
-        //     this.getDataFromApi()
-        //   })
-        //   .catch(({ response }) => {
-        //     this.errors = response.data.error;
-        //   });
-      }
     },
     parseDate(date) {
       if (!date) return null;

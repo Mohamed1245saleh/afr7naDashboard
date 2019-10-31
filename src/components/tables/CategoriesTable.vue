@@ -373,6 +373,7 @@ export default {
                 title: null,
               }
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.error
@@ -404,6 +405,7 @@ export default {
                 title: null,
               }
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.errors

@@ -635,6 +635,7 @@ export default {
                 title: null,
               }
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.errors
@@ -666,6 +667,7 @@ export default {
                 title: null,
               }
             }
+            this.$refs.image_input.value="";
           })
           .catch( ({response}) => {
             this.errors = response.data.errors

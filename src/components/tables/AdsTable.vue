@@ -692,6 +692,7 @@ export default {
             title_en: null,
             ads_category_id: null
           };
+          this.$refs.image_input.value="";
           setTimeout(() => {
             this.addEditDialog = false
           }, 300);
