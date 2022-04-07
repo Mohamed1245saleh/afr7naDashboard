@@ -16,6 +16,7 @@ import Login from '@/components/pages/Login'
 import baseURL from '@/components/config/baseurl'
 
 function loadView(view) {
+  console.log('view',view)
   return () => import(`@/views/${view}.vue`)
 }
 
@@ -69,6 +70,15 @@ const router = new Router({
       path: '/events-categories',
       name: 'EventsCategories',
       component: loadView('events/EventsCategories'),
+      secure: true,
+      meta: {
+        requiresAuth: true,
+      }
+    },
+    {
+      path: '/notifications',
+      name: 'Notifications',
+      component: loadView('notifications/Notifications'),
       secure: true,
       meta: {
         requiresAuth: true,
@@ -153,7 +163,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   console.log(localStorage.getItem('admin'));
-  
+
   if(to.matched.some(record => record.meta.requiresAuth)) {
       if (localStorage.getItem('admin') == null) {
           window.location.href = '/login'
@@ -168,13 +178,13 @@ router.beforeEach((to, from, next) => {
           next({ name: 'Events'})
       }
   }else {
-      next() 
+      next()
   }
 })
 
 
 // router.beforeEach((to, from, next) => {
-  
+
 //   if(to.matched.some(record => record.meta.secure)) {
 //     if (localStorage.getItem('admin') == null || !localStorage.getItem('admin')) {
 //         window.location.href = '/login'
@@ -189,7 +199,7 @@ router.beforeEach((to, from, next) => {
 //         next({ name: 'Events'})
 //     }
 //   }else {
-//       next() 
+//       next()
 //   }
 // })
 

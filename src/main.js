@@ -51,7 +51,7 @@ Vue.component('search-select', SearchSelect)
 
 Vue.config.productionTip = false
 
-// enhance the original axios adapter with throttle and cache enhancer 
+// enhance the original axios adapter with throttle and cache enhancer
 
 const http = axios.create({
   baseURL,
