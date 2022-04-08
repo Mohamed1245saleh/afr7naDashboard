@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     login() {
-      alert("hello from login");
+      // alert("hello from login");
       this.connecting = true
       this.$http.post('admin/adminLogin', this.user)
       .then(res=> {
